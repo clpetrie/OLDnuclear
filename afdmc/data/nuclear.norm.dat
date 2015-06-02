@@ -1,0 +1,117 @@
+17              # A random number
+20.73554        # hbar^2/2m
+0               # 0 = vmc, 1=psitrial wt, 2 = elocal weight, 3 spazzatura
+.false.         # use lattice sites if true
+1               # default number of walkers
+1               # equilibrium blocks
+1               # averaging blocks, if negative write out configurations after each block
+1               # steps/block, if negative don't compute averages and just write out confs
+0.001           # time step
+0.05            # time step spin (vmc)
+3.2             # trial energy
+0.0             # drift cut off
+1.1             # drastic walker upperbound
+0.9             # drastic walker lowerbound
+1.0             # rebalance if walker number fluctuate more than this (per cpu)
+20.0            # weight cut off
+8000            # table points for jastrow and potential
+11              # Bob's potential number
+11              # lpotpr
+1.0             # central factor
+1.0             # tau factor
+1.0             # sigma factor
+1.0             # sigma tau factor
+1.0             # t factor
+1.0             # t tau factor
+0.0             # LS factor
+0.0             # LS tau tau factor
+no3
+0.0             # multiply A2pi by this
+0.0             # multiply A2pi_xd by this
+0.0             # multiply A2pi_dd by this
+1               # lattice sum for potential
+0.01            # density
+28              # particle number
+1.0             # rcut in LS pair sampling
+5.0             # acut in LS pair sampling
+0.2             # a constant in psig
+0               # number of pairing functions
+(0.0,0.0) (0.0,0.0) (0.0,0.0) (1.0,0.0)   #spinor amplitudes
+(0.0,0.0) (0.0,0.0) (-1.0,0.0) (0.0,0.0)
+(0.0,0.0) (1.0,0.0) (0.0,0.0) (0.0,0.0)
+(-1.0,0.0) (0.0,0.0) (0.0,0.0) (0.0,0.0)
+28              # number of unpaired states
+ 0  0  0     (1.0,0.0) (0.0,0.0) (0.0,0.0) (0.0,0.0)
+ 1  0  0     (1.0,0.0) (0.0,0.0) (0.0,0.0) (0.0,0.0)
+-1  0  0     (1.0,0.0) (0.0,0.0) (0.0,0.0) (0.0,0.0)
+ 0  1  0     (1.0,0.0) (0.0,0.0) (0.0,0.0) (0.0,0.0)
+ 0 -1  0     (1.0,0.0) (0.0,0.0) (0.0,0.0) (0.0,0.0)
+ 0  0  1     (1.0,0.0) (0.0,0.0) (0.0,0.0) (0.0,0.0)
+ 0  0 -1     (1.0,0.0) (0.0,0.0) (0.0,0.0) (0.0,0.0)
+ 0  0  0     (0.0,0.0) (1.0,0.0) (0.0,0.0) (0.0,0.0)
+ 1  0  0     (0.0,0.0) (1.0,0.0) (0.0,0.0) (0.0,0.0)
+-1  0  0     (0.0,0.0) (1.0,0.0) (0.0,0.0) (0.0,0.0)
+ 0  1  0     (0.0,0.0) (1.0,0.0) (0.0,0.0) (0.0,0.0)
+ 0 -1  0     (0.0,0.0) (1.0,0.0) (0.0,0.0) (0.0,0.0)
+ 0  0  1     (0.0,0.0) (1.0,0.0) (0.0,0.0) (0.0,0.0)
+ 0  0 -1     (0.0,0.0) (1.0,0.0) (0.0,0.0) (0.0,0.0)
+ 0  0  0     (0.0,0.0) (0.0,0.0) (1.0,0.0) (0.0,0.0)
+ 1  0  0     (0.0,0.0) (0.0,0.0) (1.0,0.0) (0.0,0.0)
+-1  0  0     (0.0,0.0) (0.0,0.0) (1.0,0.0) (0.0,0.0)
+ 0  1  0     (0.0,0.0) (0.0,0.0) (1.0,0.0) (0.0,0.0)
+ 0 -1  0     (0.0,0.0) (0.0,0.0) (1.0,0.0) (0.0,0.0)
+ 0  0  1     (0.0,0.0) (0.0,0.0) (1.0,0.0) (0.0,0.0)
+ 0  0 -1     (0.0,0.0) (0.0,0.0) (1.0,0.0) (0.0,0.0)
+ 0  0  0     (0.0,0.0) (0.0,0.0) (0.0,0.0) (1.0,0.0)
+ 1  0  0     (0.0,0.0) (0.0,0.0) (0.0,0.0) (1.0,0.0)
+-1  0  0     (0.0,0.0) (0.0,0.0) (0.0,0.0) (1.0,0.0)
+ 0  1  0     (0.0,0.0) (0.0,0.0) (0.0,0.0) (1.0,0.0)
+ 0 -1  0     (0.0,0.0) (0.0,0.0) (0.0,0.0) (1.0,0.0)
+ 0  0  1     (0.0,0.0) (0.0,0.0) (0.0,0.0) (1.0,0.0)
+ 0  0 -1     (0.0,0.0) (0.0,0.0) (0.0,0.0) (1.0,0.0)
+ 5.0007      # jastrow central healing distance
+ 5.7854      # jastrow tensor healing distance
+ 1.5726      # jastrow quencher central potential
+ 4.4954      # jastrow quencher tau potential
+-2.5462      # jastrow quencher sigma potential
+-0.4763      # jastrow quencher sigma-tau potential
+-1.1073      # jastrow quencher tensor potential
+-0.6813      # jastrow quencher tensor-tau potential
+ 1.0000      # jastrow quencher LS potential
+-0.3349      # jastrow quencher tau correlation
+ 0.1902      # jastrow quencher sigma correlation
+-1.0115      # jastrow quencher sigma-tau correlation
+ 0.2433      # jastrow quencher tensor correlation
+ 0.4495      # jastrow quencher tensor-tau correlation
+ 0.9998      # jastrow quencher LS correlation
+ 8.8563      # q1c parameter in fijk
+ 1.6523      # q2c parameter in fijk
+ 0.6522      # q1p parameter in fijk
+ 1.9104      # q2p parameter in fijk
+ 1.0000      # rscal in tnicor
+ 0.0000      # eps_cent in tnicor
+ 0.0000      # eps_anti in tnicor
+ 0.0000      # eps_tm in tnicor
+ 0.0000      # eps_vd1 in tnicor
+ 0.0000      # eps_vd2 in tnicor
+ 0.0000      # eps_vdc3 in tnicor
+ 0.0000      # eps_vec3 in tnicor
+ 0.0000      # eps_ve in tnicor
+ 0.5255      # rscal pp in CSBcor
+ 0.4664      # rscal nn in CSBcor
+ 0.0309      # quencher pp CSBcor
+ 0.0105      # quencher nn CSBcor
+500             # number of iterations for optimization
+0.0025          # delta step in the optimization
+0.00001         # epsilon parameter to regularize the optimization
+
+
+
+
+
+1               # number of pairing functions
+1.0             
+(0.0,0.0) (0.0,0.0) (0.0,0.0) (1.0,0.0)   #spinor amplitudes
+(0.0,0.0) (0.0,0.0) (-1.0,0.0) (0.0,0.0)
+(0.0,0.0) (1.0,0.0) (0.0,0.0) (0.0,0.0)
+(-1.0,0.0) (0.0,0.0) (0.0,0.0) (0.0,0.0)

@@ -1,0 +1,46 @@
+\documentclass[12pt]{extarticle}
+\usepackage[margin=1in]{geometry}
+\usepackage{amssymb}
+
+%My commands
+\newcommand{\Oop}{\mathcal{O}^p_{ij}}
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\braket}[2]{\left < #1 | #2 \right>}
+
+\title{Derivation of Trial Wave Function for Nuclear Monte Carlo}
+\author{Cody Petrie}
+
+\begin{document}
+\maketitle
+
+\section{Trial Wave Function}
+To obtain the trial wave function for nuclear Monte Carlo there are two parts, the antisymmetric long range part ($ket{\Phi}$) and the symmetric short range correlation operator ($\mathcal{F}$). That is
+\begin{equation}
+  \ket{\psi_T} = \mathcal{F} \ket{\Phi}.
+\end{equation}
+The antisymmetric part is made up of single particle orbitals in the form of a slater determinant. It is the symmetric correlation operator that I am not sure about. By reading other papers this is what I have understood. If you ignore three-body correlations then
+\begin{equation}
+  \mathcal{F} = \mathcal{S} \prod_{i<j} F_{ij},
+\end{equation}
+where
+\begin{equation}
+  F_{ij} = \sum_{p} f^p(r_{ij}) \Oop,
+\end{equation}
+where $\mathcal{S}$ is the symmetrization operator and $\Oop = 1, \sigma_i \cdot \sigma_j, 3\sigma_i \cdot \hat{r}_{ij} \sigma_j \cdot \hat{r}_{ij} - \sigma_i \cdot \sigma_j$ plus each of these terms times $\tau_i \cdot \tau_j$. To write this more like what other papers have written it I will pull the $1$ term out of the sum and let $f^1(r_{ij}) = f^c(r_{ij})$ since that term is a central term and I will call $u^p_{ij} = f^p(r_{ij})/f^1(r_{ij})$. This gives us
+\begin{equation}
+  F_{ij} = \sum_p f_c(r_{ij}) \left( 1 + \sum_p u^p(r_{ij}) \right).
+\end{equation}
+Putting all of these pieces together the trial wave function becomes
+\begin{equation}
+  \ket{\Phi_T} = \left[ \mathcal{S} \prod_{i<j} f_c(r_{ij}) \left(1+\sum_p u^p(r_{ij})\Oop\right) \right] \ket{\Phi}.
+  \label{equ:mine}
+\end{equation}
+When we spoke the trial general trial wave function was supposed to be
+\begin{equation}
+  \ket{\Phi_T} = \left[ \prod_{i<j} f_c(r_{ij}) \left(1+\sum_{i<j}\sum_{p} u^p(r_{ij}) \Oop\right) \right]\ket{\Phi}.
+  \label{equ:correct}
+\end{equation}
+Where the only differences are $\mathcal{S}$ in equation~\ref{equ:mine} and the double sum in equation ~\ref{equ:correct}. Does the double sum come from the symmetrization operator or am I just wrong with my derivation?
+
+\end{document}

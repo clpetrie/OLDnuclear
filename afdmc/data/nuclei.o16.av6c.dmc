@@ -1,0 +1,94 @@
+17              # A random number
+20.73554        # hbar^2/2m
+6               # 0 = vmc, 1=psitrial wt, 2 = elocal weight, 3 spazzatura
+.false.         # use lattice sites if true
+10240           # default number of walkers
+0               # equilibrium blocks
+-5000           # averaging blocks, if negative write out configurations after each block
+-200            # steps/block, if negative don't compute averages and just write out confs
+0.000025        # time step
+0.05            # time step spin (vmc)
+-100.0          # trial energy
+0.0             # drift cut off
+1.1             # drastic walker upperbound
+0.9             # drastic walker lowerbound
+1.0             # rebalance if walker number fluctuate more than this % (per cpu)
+20.0            # weight cut off
+8000            # table points for jastrow and potential
+11              # Bob's potential number
+11              # lpotpr
+1.0             # central factor
+1.0             # tau factor
+1.0             # sigma factor
+1.0             # sigma tau factor
+1.0             # t factor
+1.0             # t tau factor
+0.0             # LS factor
+0.0             # LS tau tau factor
+no3
+0.0             # multiply A2pi by this
+0.0             # multiply A2pi_xd by this
+0.0             # multiply A2pi_dd by this
+0               # NOT USED
+2000            # table points for radial functions
+20.0            # rmax for orbitals
+.true.          # divide by r?
+16              # particle number
+0               # external potential
+1.0             # rcut in LS pair sampling
+5.0             # acut in LS pair sampling
+0.0             # a constant in psig
+3               # number of radial functions
+o16.n1s1_2.orb    0   0.975  # radial file, then L, then rscal
+o16.n1p3_2.orb    1   0.975  # radial file, then L, then rscal
+o16.n1p1_2.orb    1   0.975  # radial file, then L, then rscal
+1               # number of determinants
+1
+1 1.0
+(1.0,0.0)       # determinant coefficient
+1  1  0  1  o16.n1s1_2.orb  # 2J,2M,L,tau radial_file for state
+1 -1  0  1  o16.n1s1_2.orb  # 2J,2M,L,tau radial_file for state
+3  3  1  1  o16.n1p3_2.orb  # 2J,2M,L,tau radial_file for state
+3  1  1  1  o16.n1p3_2.orb  # 2J,2M,L,tau radial_file for state
+3 -1  1  1  o16.n1p3_2.orb  # 2J,2M,L,tau radial_file for state
+3 -3  1  1  o16.n1p3_2.orb  # 2J,2M,L,tau radial_file for state
+1  1  1  1  o16.n1p1_2.orb  # 2J,2M,L,tau radial_file for state
+1 -1  1  1  o16.n1p1_2.orb  # 2J,2M,L,tau radial_file for state
+1  1  0 -1  o16.n1s1_2.orb  # 2J,2M,L,tau radial_file for state
+1 -1  0 -1  o16.n1s1_2.orb  # 2J,2M,L,tau radial_file for state
+3  3  1 -1  o16.n1p3_2.orb  # 2J,2M,L,tau radial_file for state
+3  1  1 -1  o16.n1p3_2.orb  # 2J,2M,L,tau radial_file for state
+3 -1  1 -1  o16.n1p3_2.orb  # 2J,2M,L,tau radial_file for state
+3 -3  1 -1  o16.n1p3_2.orb  # 2J,2M,L,tau radial_file for state
+1  1  1 -1  o16.n1p1_2.orb  # 2J,2M,L,tau radial_file for state
+1 -1  1 -1  o16.n1p1_2.orb  # 2J,2M,L,tau radial_file for state
+ 2.36662976     # jastrow central healing distance
+ 6.46607502     # jastrow tensor healing distance
+ 1.63020774     # jastrow quencher central potential
+ 6.51012132     # jastrow quencher tau potential
+ 1.32466451     # jastrow quencher sigma potential
+ 0.86880397     # jastrow quencher sigma-tau potential
+ 0.21942887     # jastrow quencher tensor potential
+ 0.08763770     # jastrow quencher tensor-tau potential
+ 0.99999999     # jastrow quencher LS potential
+ 0.05593519     # jastrow quencher tau correlation
+ 0.46670471     # jastrow quencher sigma correlation
+ 0.45269765     # jastrow quencher sigma-tau correlation
+ 3.90188271     # jastrow quencher tensor correlation
+ 6.11768765     # jastrow quencher tensor-tau correlation
+ 0.05315330     # q1c parameter in fijk
+ 0.82912056     # q2c parameter in fijk
+ 0.57799348     # q1c parameter in fijk
+ 1.90138476     # q2c parameter in fijk
+ 1.0            # rscal in tnicor
+ 0.00000000     # eps_cent in tnicor
+ 0.00000000     # eps_anti in tnicor
+ 0.00000000     # eps_tm in tnicor
+ 0.00000000     # eps_vd1 in tnicor
+ 0.00000000     # eps_vd2 in tnicor
+ 0.00000000     # eps_vdc3 in tnicor
+ 0.00000000     # eps_vec3 in tnicor
+ 0.00000000     # eps_ve in tnicor
+200             # number of iterations for optimization
+0.000075        # delta step in the optimization
+0.00001         # epsilon parameter to regularize the optimization

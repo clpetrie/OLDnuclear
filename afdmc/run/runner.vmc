@@ -1,0 +1,11 @@
+#!/bin/sh
+#time mpirun -bind-to-core -bycore -np 20 kevin/afnucmatmpi\
+#    < nucleiop.he4.vmc.dat > temp.vmc.out
+#time mpirun --mca btl self,sm,tcp -bind-to socket -map-by core -np 20 ../f90/afnucmatmpi\
+#    < nuclear.dat > nuclear.out
+#time mpirun --mca btl_tcp_if_include lo,eth0 -bind-to-core -bycore -np 20 \
+#    ../f90/afnucmatmpi < nuclear.dat > nuclear.out
+#time mpirun --mca btl_tcp_if_include lo,eth0 -rf rankfile.txt -np 20 \
+#    ../f90/afnucmatmpi < nuclear.dat > nuclear.out
+time mpirun --mca btl_tcp_if_include lo,eth0 -np 20 \
+    ../f90/afnucmatmpi < temp.dat > nuclear.out

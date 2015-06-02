@@ -1,0 +1,727 @@
+module correlator
+   implicit none
+   integer, private, parameter :: i4=selected_int_kind(9)
+   integer, private, parameter :: r8=selected_real_kind(15,9)
+   complex(kind=r8), private, parameter :: czero=(0.0_r8,0.0_r8)
+   complex(kind=r8), private, parameter :: ci=(0.0_r8,1.0_r8)
+   complex(kind=r8), private, parameter :: cone=(1.0_r8,0.0_r8)
+   real(kind=r8), private, parameter :: tiny=1e-5_r8
+   integer(kind=i4), private, save :: npart,npair
+   complex(kind=r8), private, save, allocatable :: sxmallz(:,:,:),sp(:,:) &
+      ,spx(:,:,:),sxmall(:,:,:)
+   complex(kind=r8), private, save, allocatable :: vsz(:,:,:),vcoulz(:,:,:)
+   real(kind=r8), private, save, allocatable :: fstvec(:,:,:),fstval(:,:) &
+      ,ft(:),vsvec(:,:,:),vsval(:,:),vstvec(:,:,:),vstval(:,:)
+   integer(kind=i4), private, save, allocatable :: ijp(:,:)
+   logical, private, save, allocatable :: dofst(:),doft(:) &
+      ,dovs(:),dovcoul(:)
+   logical, private, save :: docoul
+   integer(kind=i4), private, parameter :: levi(2,3) = &
+      reshape((/2,3, 3,1, 1,2/),(/2,3/))
+   private :: opmult
+   complex(kind=r8), private, save, allocatable :: tau(:,:,:),tauz(:,:,:,:,:) &
+      ,sigma(:,:,:),sigmaz(:,:,:,:,:),sigtau(:,:,:,:,:),sigtauz(:,:,:,:,:,:,:)
+   real(kind=r8), private, save, allocatable :: v2(:),v3(:),v4(:),v5(:,:,:) &
+      ,v6(:,:,:)
+   logical, private, save :: isdiag=.true. ! calculate only tau.tau operators, not other components
+   logical, private, save :: opcalc=.true. ! store all the spin/isospin operators
+contains
+   subroutine initcormod(npartin,docoulin)
+   integer(kind=i4) :: npartin
+   logical :: docoulin
+   integer(kind=i4) :: i,j,ij
+   docoul=docoulin
+   npart=npartin
+   npair=(npart*(npart-1))/2
+   if (allocated(sxmallz)) then
+      deallocate(sxmallz,sp,spx,sxmall,vstvec,vstval)
+      deallocate(vsvec,vsval,fstvec,fstval,ft)
+      deallocate(dofst,doft,dovs,dovcoul)
+      deallocate(vsz,ijp)
+   endif
+   allocate(sxmallz(npart,4,npart),sp(4,npart),spx(4,15,npart))
+   allocate(sxmall(npart,15,npart),vstvec(3,3,npair),vstval(3,npair))
+   allocate(vsvec(3,3,npair),vsval(3,npair),fstvec(3,3,npair),fstval(3,npair))
+   allocate(ft(npair),dofst(npair),doft(npair),dovs(npair),dovcoul(npair))
+   allocate(vsz(4,4,npair),vcoulz(4,4,npair))
+   if (opcalc) then
+      allocate(tau(3,3,npair),tauz(4,4,3,3,npair))
+      allocate(sigma(3,3,npair),sigmaz(4,4,3,3,npair))
+      allocate(sigtau(3,3,3,3,npair),sigtauz(4,4,3,3,3,3,npair))
+   endif
+   allocate(v2(npair),v3(npair),v4(npair))
+   allocate(v5(3,3,npair),v6(3,3,npair),ijp(2,npair))
+   ij=0
+   do j=2,npart
+      do i=1,j-1
+         ij=ij+1
+         ijp(1,ij)=i
+         ijp(2,ij)=j
+      enddo
+   enddo
+   end subroutine initcormod
+
+   subroutine calfop(ftauin,fsigtauin,cut)
+   use matrixmod
+   real(kind=r8) :: ftauin(:,:),fsigtauin(:,:,:,:),cut
+   integer(kind=i4) :: i,j,ij
+   ij=0
+   do j=2,npart
+      do i=1,j-1
+         ij=ij+1
+         dofst(ij)=maxval(abs(fsigtauin(:,i,:,j))).gt.cut
+         doft(ij)=abs(ftauin(i,j)).gt.cut
+         if (dofst(ij)) then
+            fstvec(:,:,ij)=fsigtauin(:,i,:,j)
+            call eigenrs(fstvec(:,:,ij),fstval(:,ij),3)
+         else
+            fstval(:,ij)=0.0_r8
+         endif
+         if (doft(ij)) then
+            ft(ij)=ftauin(i,j)
+         else
+            ft(ij)=0.0_r8
+         endif
+      enddo
+   enddo
+   end subroutine calfop
+
+   subroutine calvop(spin,v2in,v3in,v4in,v5in,v6in,vcoulin,cut)
+   use matrixmod
+   complex(kind=r8) :: spin(:,:)
+   real(kind=r8) :: vtau(npair),vsig(3,3,npair),vsigtau(3,3,npair),cut
+   real(kind=r8) :: v2in(:,:),v3in(:,:),v4in(:,:),v5in(:,:,:,:),v6in(:,:,:,:)
+   real(kind=r8) :: vcoulin(:,:)
+   integer(kind=i4) :: i,j,ij,ic,jc,js,it,jt
+   spx=opmult(spin)
+   ij=0
+   do j=2,npart
+      do i=1,j-1
+         ij=ij+1
+         v2(ij)=v2in(i,j)
+         v3(ij)=v3in(i,j)
+         v4(ij)=v4in(i,j)
+         v5(:,:,ij)=v5in(:,i,:,j)
+         v6(:,:,ij)=v6in(:,i,:,j)
+      enddo
+   enddo
+   vtau=v2
+   vsig=0.0_r8
+   vsigtau=0.0_r8
+   do ic=1,3
+      vsig(ic,ic,:)=v3
+      vsigtau(ic,ic,:)=v4
+   enddo
+   vsig=vsig+v5
+   vsigtau=vsigtau+v6
+   vsz=czero
+   vcoulz=czero
+   if (opcalc) then
+      tauz=czero
+      sigmaz=czero
+      sigtauz=czero
+   endif
+   ij=0
+   do j=2,npart
+      do i=1,j-1
+         ij=ij+1
+         if (.not.opcalc) then
+            dovs(ij)=maxval(abs(vsig(:,:,ij))).gt.cut.or. &
+               maxval(abs(vsigtau(:,:,ij))).gt.cut.or.abs(vtau(ij)).gt.cut
+            dovcoul(ij)=docoul
+            if (docoul) dovcoul(ij)=abs(vcoulin(i,j)).gt.cut
+         endif
+         if (dovs(ij).or.opcalc) then
+            do js=1,4
+               do ic=1,3
+                  do jc=1,3
+                     if (opcalc) then
+                        sigmaz(:,js,ic,jc,ij)=sigmaz(:,js,ic,jc,ij)+spx(:,ic,i)*spx(js,jc,j)
+                     else
+                        vsz(:,js,ij)=vsz(:,js,ij) &
+                           +spx(:,ic,i)*spx(js,jc,j)*vsig(ic,jc,ij)
+                     endif
+                  enddo
+               enddo
+            enddo
+            do js=1,4
+               do ic=1,3
+                  do jc=1,3
+                     if (opcalc) then
+                        do it=1,3
+                           if (isdiag) then
+                              sigtauz(:,js,ic,jc,it,it,ij)=sigtauz(:,js,ic,jc,it,it,ij) &
+                                 +  spx(:,3*(ic-1)+it+6,i)*spx(js,3*(jc-1)+it+6,j)
+                           else
+                              do jt=1,3
+                                 sigtauz(:,js,ic,jc,it,jt,ij)=sigtauz(:,js,ic,jc,it,jt,ij) &
+                                    +  spx(:,3*(ic-1)+it+6,i)*spx(js,3*(jc-1)+jt+6,j)
+                              enddo
+                           endif
+                        enddo
+                     else
+                        vsz(:,js,ij)=vsz(:,js,ij) &
+                           +(spx(:,3*ic+4,i)*spx(js,3*jc+4,j) &
+                            +spx(:,3*ic+5,i)*spx(js,3*jc+5,j) &
+                            +spx(:,3*ic+6,i)*spx(js,3*jc+6,j))*vsigtau(ic,jc,ij)
+                     endif
+                  enddo
+               enddo
+            enddo
+            do js=1,4
+               if (opcalc) then
+                  do it=1,3
+                     if (isdiag) then
+                        tauz(:,js,it,it,ij)=tauz(:,js,it,it,ij) &
+                              +spx(:,it+3,i)*spx(js,it+3,j)
+                     else
+                        do jt=1,3
+                           tauz(:,js,it,jt,ij)=tauz(:,js,it,jt,ij) &
+                                 +spx(:,it+3,i)*spx(js,jt+3,j)
+                        enddo
+                     endif
+                  enddo
+               else
+                  vsz(:,js,ij)=vsz(:,js,ij)+(spx(:,4,i)*spx(js,4,j) &
+                      +spx(:,5,i)*spx(js,5,j)+spx(:,6,i)*spx(js,6,j))*vtau(ij)
+               endif
+            enddo
+         endif
+         if (dovcoul(ij)) then
+            do js=1,2
+               vcoulz(1:2,js,ij)=vcoulz(1:2,js,ij) &
+                  +spin(1:2,i)*spin(js,j)*vcoulin(i,j)
+            enddo
+         endif
+      enddo
+   enddo
+   end subroutine calvop
+
+   subroutine cordet(detrat,sxmallzin,spin)
+! calfop must be called first
+   complex(kind=r8) :: detrat,sxmallzin(:,:,:),spin(:,:)
+   complex(kind=r8) :: ctmp1,d1,d2,d3,d4
+   integer(kind=i4) :: i,j,ij,is,it
+   sp=spin
+   sxmallz=sxmallzin
+   spx=opmult(sp)
+   do i=1,npart
+      sxmall(:,:,i)=matmul(sxmallz(:,:,i),spx(:,:,i))
+   enddo
+   ij=0
+   detrat=czero
+   do j=2,npart
+      do i=1,j-1
+         ij=ij+1
+         if (dofst(ij)) then
+!dir$ ivdep
+            do is=1,3
+               ctmp1=czero
+!dir$ ivdep
+               do it=1,3
+                  d1=sum(sxmall(i,it+6:it+12:3,i)*fstvec(:,is,ij))
+                  d2=sum(sxmall(j,it+6:it+12:3,j)*fstvec(:,is,ij))
+                  d3=sum(sxmall(i,it+6:it+12:3,j)*fstvec(:,is,ij))
+                  d4=sum(sxmall(j,it+6:it+12:3,i)*fstvec(:,is,ij))
+                  ctmp1=ctmp1+d1*d2-d3*d4
+               enddo
+               detrat=detrat+ctmp1*fstval(is,ij)
+            enddo
+         endif
+         if (doft(ij)) then
+            ctmp1=czero
+!dir$ ivdep
+            do it=4,6
+               d1=sxmall(i,it,i)
+               d2=sxmall(j,it,j)
+               d3=sxmall(i,it,j)
+               d4=sxmall(j,it,i)
+               ctmp1=ctmp1+d1*d2-d3*d4
+            enddo
+            detrat=detrat+ctmp1*ft(ij)
+         endif
+      enddo
+   enddo
+   detrat=detrat+cone
+   end subroutine cordet
+
+   subroutine g2bval(d2b,sxz)
+   complex(kind=r8), intent(out) :: d2b(:,:,:)
+   complex(kind=r8), intent(in) :: sxz(:,:,:)
+   integer(kind=i4) :: i,j,ij,js
+   ij=0
+   do j=2,npart
+      do i=1,j-1
+         ij=ij+1
+         do js=1,4
+            d2b(:,js,ij)=sxz(:,i,i)*sxz(js,j,j)-sxz(:,i,j)*sxz(js,j,i)
+         enddo
+      enddo
+   enddo
+   end subroutine g2bval
+
+   subroutine v6val(cvs,cvcoul,d2b)
+! calvop must be called first.
+   complex(kind=r8), intent(out) :: cvs,cvcoul
+   complex(kind=r8), intent(in) :: d2b(:,:,:)
+   integer(kind=i4) :: i,j,ij
+   cvs=czero
+   cvcoul=czero
+   ij=0
+   do j=2,npart
+      do i=1,j-1
+         ij=ij+1
+         if (dovs(ij)) cvs=cvs+sum(d2b(:,:,ij)*vsz(:,:,ij))
+         if (dovcoul(ij)) cvcoul=cvcoul+sum(d2b(:,:,ij)*vcoulz(:,:,ij))
+      enddo
+   enddo
+   end subroutine v6val
+
+   subroutine v3bvalz(v32ppwa,v32psw,v32ppwc,v33paa,v33pss,ss3pi,sxz)
+   complex(kind=r8), intent(out):: v32ppwa,v32psw,v32ppwc,v33paa,v33pss,ss3pi
+   complex(kind=r8), intent(in):: sxz(4,npart,npart)
+   integer(kind=i4) :: i,j,k,js,ks,ijk
+   complex(kind=r8) :: d3(4,4,4)
+   v32ppwa=czero
+   v32psw=czero
+   v32ppwc=czero
+   v33paa=czero
+   v33pss=czero
+   ss3pi=czero
+   ijk=0
+   do i=1,npart-2
+      do j=i+1,npart-1
+         do k=j+1,npart
+            ijk=ijk+1
+!           if (dov3b(ijk)) then
+               do ks=1,4
+                  do js=1,4
+                     d3(:,js,ks)= &
+                          sxz(:,i,i) &
+                            *(sxz(js,j,j)*sxz(ks,k,k)-sxz(js,j,k)*sxz(ks,k,j)) &
+                          +sxz(:,i,j) &
+                            *(sxz(js,j,k)*sxz(ks,k,i)-sxz(js,j,i)*sxz(ks,k,k)) &
+                          +sxz(:,i,k) &
+                            *(sxz(js,j,i)*sxz(ks,k,j)-sxz(js,j,j)*sxz(ks,k,i))
+                  enddo
+               enddo
+!           endif
+         enddo
+      enddo
+   enddo
+   end subroutine v3bvalz
+
+   subroutine v3bval(v32ppwa,v32psw,v32ppwc,v33paa,v33pss,ss3pi &
+      ,asigtau1,asigtau2,xpi,xxpi,dov3b2,a2p3b,a3p3b,sxm)
+   complex(kind=r8) :: v32ppwa,v32psw,v32ppwc,v33paa,v33pss &
+      ,sxm(:,:,:),detiso,d1,d2,d3,d4,aa3pi1,aa3pi2,aa3pi
+   real(kind=r8) :: asigtau1(:,:,:,:),asigtau2(:,:,:,:) &
+      ,xpi(:,:,:,:),xxpi(:,:,:,:)
+   complex(kind=r8) :: ss3pi1,ss3pi2,ss3pi3,ss3pi4,ss3pi5,ss3pi
+   real(kind=r8) :: vsum,a2p3b,a3p3b
+   integer(kind=i4) :: it,ic1,ic2,jc1,jc2,i1,i2,is,j,js,k,ks,ks3,js3,jc
+   integer(kind=i4) :: is3,ic,i
+   logical :: dov3b2
+! a2piPW anticommutator term plus a2piSW
+      v32ppwa=czero
+      v32psw=czero
+      do it=1,3
+         do ic1=1,3
+            jc1=3*(ic1-1)+6+it
+            do i1=1,npart-1
+               d1=sxm(i1,jc1,i1)
+               do ic2=1,3
+                  jc2=3*(ic2-1)+6+it
+                  do i2=i1+1,npart
+                     d2=sxm(i2,jc2,i2)
+                     d3=sxm(i1,jc2,i2)
+                     d4=sxm(i2,jc1,i1)
+                     v32ppwa=v32ppwa+(d1*d2-d3*d4)*asigtau1(ic1,i1,ic2,i2)
+                     v32psw=v32psw+(d1*d2-d3*d4)*asigtau2(ic1,i1,ic2,i2)
+                  enddo
+               enddo
+            enddo
+         enddo
+      enddo
+!
+! a2piPW commutators term and a3pi, added perturbatively
+!
+      v32ppwc=czero
+      aa3pi1=czero
+      aa3pi2=czero
+      ss3pi1=czero
+      ss3pi2=czero
+      ss3pi3=czero
+      ss3pi4=czero
+      ss3pi5=czero
+      do i=2,npart
+         do is=1,3
+            is3=(is+1)*3
+            do j=1,i-1
+               do js=1,3
+                  js3=(js+1)*3
+                  do k=1,npart
+                     do ks=1,3
+                     ks3=(ks+1)*3
+                         detiso=det3(is3+1,i,js3+2,j,ks3+3,k) &
+                           +det3(is3+2,i,js3+3,j,ks3+1,k) &
+                           +det3(is3+3,i,js3+1,j,ks3+2,k) &
+                           -det3(is3+2,i,js3+1,j,ks3+3,k) &
+                           -det3(is3+1,i,js3+3,j,ks3+2,k) &
+                           -det3(is3+3,i,js3+2,j,ks3+1,k)  
+                        v32ppwc=v32ppwc-detiso*( &
+                            xpi(is,i,levi(1,ks),k)*xpi(levi(2,ks),k,js,j) &
+                           -xpi(is,i,levi(2,ks),k)*xpi(levi(1,ks),k,js,j))
+                        if(dov3b2) then
+                           aa3pi1=aa3pi1+detiso*( &
+                              xpi(levi(1,is),i,levi(2,js),j) &
+                              *xpi(levi(1,js),j,levi(2,ks),k) &
+                              *xpi(levi(1,ks),k,levi(2,is),i) &
+                              -xpi(levi(2,is),i,levi(2,js),j) &
+                              *xpi(levi(1,js),j,levi(2,ks),k) &
+                              *xpi(levi(1,ks),k,levi(1,is),i) &
+                              -xpi(levi(1,is),i,levi(1,js),j) &
+                              *xpi(levi(2,js),j,levi(2,ks),k) &
+                              *xpi(levi(1,ks),k,levi(2,is),i) &
+                              +xpi(levi(2,is),i,levi(1,js),j) &
+                              *xpi(levi(2,js),j,levi(2,ks),k) &
+                              *xpi(levi(1,ks),k,levi(1,is),i) &
+                              -xpi(levi(1,is),i,levi(2,js),j) &
+                              *xpi(levi(1,js),j,levi(1,ks),k) &
+                              *xpi(levi(2,ks),k,levi(2,is),i) &
+                              +xpi(levi(2,is),i,levi(2,js),j) &
+                              *xpi(levi(1,js),j,levi(1,ks),k) &
+                              *xpi(levi(2,ks),k,levi(1,is),i) &
+                              +xpi(levi(1,is),i,levi(1,js),j) &
+                              *xpi(levi(2,js),j,levi(1,ks),k) &
+                              *xpi(levi(2,ks),k,levi(2,is),i) &
+                              -xpi(levi(2,is),i,levi(1,js),j) &
+                              *xpi(levi(2,js),j,levi(1,ks),k) &
+                              *xpi(levi(2,ks),k,levi(1,is),i))
+                        endif
+                     enddo
+                  enddo
+               enddo
+            enddo
+         enddo
+      enddo
+      if(dov3b2) then
+         do i=2,npart
+            do j=1,i-1
+               do k=1,npart
+                  do ks=1,3
+                     ks3=3*(ks+1)
+                     detiso=det3(4,i,5,j,ks3+3,k) &
+                           +det3(5,i,6,j,ks3+1,k) &
+                           +det3(6,i,4,j,ks3+2,k) &
+                           -det3(5,i,4,j,ks3+3,k) &
+                           -det3(4,i,6,j,ks3+2,k) &
+                           -det3(6,i,5,j,ks3+1,k)  
+                     do ic=1,3
+                        do jc=1,3
+                           aa3pi2=aa3pi2+detiso*( &
+                              xpi(ic,i,jc,j)*xpi(jc,j,levi(2,ks),k) &
+                              *xpi(levi(1,ks),k,ic,i) &
+                             -xpi(ic,i,jc,j)*xpi(jc,j,levi(1,ks),k) &
+                              *xpi(levi(2,ks),k,ic,i))
+                        enddo
+                     enddo
+                  enddo
+               enddo
+            enddo
+         enddo
+         aa3pi=-2.0_r8/9.0_r8*aa3pi2-1.0_r8/27.0_r8*aa3pi1
+         do i=2,npart
+            do j=1,i-1
+               vsum=sum(xxpi(:,i,:,j)*xpi(:,i,:,j))
+               ss3pi1=ss3pi1+vsum
+               ss3pi2=ss3pi2+vsum*(det2(4,i,4,j)+det2(5,i,5,j)+det2(6,i,6,j))
+            enddo
+         enddo
+         do i=2,npart
+            do is=1,3
+               is3=(is+1)*3
+               do j=1,i-1
+                  do js=1,3
+                     js3=(js+1)*3
+                     ss3pi3=ss3pi3+det2(is,i,js,j)*( &
+                         xxpi(levi(2,is),i,levi(1,js),j) &
+                        *xpi(levi(2,js),j,levi(1,is),i) &
+                        -xxpi(levi(1,is),i,levi(1,js),j) &
+                        *xpi(levi(2,js),j,levi(2,is),i) &
+                        -xxpi(levi(2,is),i,levi(2,js),j) &
+                        *xpi(levi(1,js),j,levi(1,is),i) &
+                        +xxpi(levi(1,is),i,levi(2,js),j) &
+                        *xpi(levi(1,js),j,levi(2,is),i))
+                     ss3pi4=ss3pi4+(det2(is3+1,i,js3+1,j)+det2(is3+2,i,js3+2,j) &
+                        +det2(is3+3,i,js3+3,j))*( &
+                        xxpi(levi(2,is),i,levi(1,js),j) &
+                        *xpi(levi(2,js),j,levi(1,is),i) &
+                       -xxpi(levi(1,is),i,levi(1,js),j) &
+                        *xpi(levi(2,js),j,levi(2,is),i) &
+                       -xxpi(levi(2,is),i,levi(2,js),j) &
+                        *xpi(levi(1,js),j,levi(1,is),i) &
+                       +xxpi(levi(1,is),i,levi(2,js),j) &
+                        *xpi(levi(1,js),j,levi(2,is),i))
+                     do k=1,npart
+                        detiso=det3(is3+1,i,js,j,4,k)+det3(is3+2,i,js,j,5,k) &
+                           +det3(is3+3,i,js,j,6,k)+det3(is,i,js3+1,j,4,k) &
+                           +det3(is,i,js3+2,j,5,k)+det3(is,i,js3+3,j,6,k)
+                        ss3pi5=ss3pi5+detiso*( &
+                           sum(xpi(levi(2,is),i,:,k)*xpi(:,k,levi(1,js),j)) &
+                           *xpi(levi(2,js),j,levi(1,is),i) &
+                          -sum(xpi(levi(1,is),i,:,k)*xpi(:,k,levi(1,js),j)) &
+                           *xpi(levi(2,js),j,levi(2,is),i) &
+                          -sum(xpi(levi(2,is),i,:,k)*xpi(:,k,levi(2,js),j)) &
+                           *xpi(levi(1,js),j,levi(1,is),i) &
+                          +sum(xpi(levi(1,is),i,:,k)*xpi(:,k,levi(2,js),j)) &
+                           *xpi(levi(1,js),j,levi(2,is),i))
+                     enddo
+                  enddo
+               enddo
+            enddo
+         enddo
+         ss3pi=4.0_r8/9.0_r8*(ss3pi1+ss3pi2)+2.0_r8/9.0_r8*(ss3pi3+1.0_r8/3.0_r8*(ss3pi4+ss3pi5))
+      endif
+      v32ppwc=v32ppwc*a2p3b
+      v33paa=aa3pi*a3p3b*26.0_r8/3.0_r8
+      v33pss=ss3pi*a3p3b*50.0_r8/3.0_r8
+      
+   contains
+      function det2(iop,i,jop,j)
+      integer(kind=i4) :: iop,i,jop,j
+      complex(kind=r8) :: det2
+      det2=sxm(i,iop,i)*sxm(j,jop,j)-sxm(j,iop,i)*sxm(i,jop,j)
+      end function det2
+   
+      function det3(iop,i,jop,j,kop,k)
+      integer(kind=i4) :: iop,i,jop,j,kop,k
+      complex(kind=r8) :: det3
+      det3=sxm(i,iop,i)*(sxm(j,jop,j)*sxm(k,kop,k) &
+                           -sxm(k,jop,j)*sxm(j,kop,k)) &
+          +sxm(j,iop,i)*(sxm(k,jop,j)*sxm(i,kop,k) &
+                           -sxm(i,jop,j)*sxm(k,kop,k)) &
+          +sxm(k,iop,i)*(sxm(i,jop,j)*sxm(j,kop,k) &
+                           -sxm(j,jop,j)*sxm(i,kop,k))
+      end function det3
+   end subroutine v3bval
+
+   subroutine v6tot(cvs,cvcoul)
+! calvop, calfop and cordet must be called first.
+   complex(kind=r8) :: cvs(:),cvcoul
+   complex(kind=r8) :: di(npart,12),dj(npart,12),fij(12)
+   complex(kind=r8) :: sxi(4,npart,12),sxj(4,npart,12),detrati(12)
+   complex(kind=r8) :: detrat(12),sxz(4,npart,npart)
+   complex(kind=r8) :: sinvijz(4,npart,npart),cvs1,cvst1,cvt1,cvcoul1
+   complex(kind=r8) :: sx15(4,15,npart,npart)
+   complex(kind=r8) :: d2b(4,4,npair),d2b1(4,4,npair)
+   integer(kind=i4) :: i,j,ij,iop,m,n,ktau,kval
+   logical :: doops(12)
+   real(kind=r8) :: vec(3,3)
+   complex(kind=r8) :: tau1(3,3,npart,npart),sigma1(3,3,npart,npart),sigtau1(3,3,3,3,npart,npart)
+   sxz=reshape(transpose(reshape(sxmallz,(/npart,4*npart/))),shape(sxz))
+   call g2bval(d2b,sxz)
+   do i=1,npart
+      sx15(:,:,:,i)=conjg(opmult(conjg(sxz(:,i,:))))
+   enddo
+!$omp parallel default(private), shared(sxz,sx15,doft, &
+!$omp&  dofst,ft,fstval,fstvec,sp,npart,npair,ijp,d2b)
+!$omp do schedule(static)
+    do ij=1,npair
+       i=ijp(1,ij)
+       j=ijp(2,ij)
+         fij=czero !if this remains zero, the rest is not calculated
+         if ((.not.doft(ij)).and.(.not.dofst(ij))) cycle
+         if (doft(ij)) fij(1:3)=ft(ij)
+         if (dofst(ij)) then
+            vec=fstvec(:,:,ij)
+            fij(4:6)=fstval(1,ij)
+            fij(7:9)=fstval(2,ij)
+            fij(10:12)=fstval(3,ij)
+         endif
+         doops(1:3)=doft(ij)
+         doops(4:12)=dofst(ij)
+         if (doft(ij)) then
+            do ktau=1,3
+               sxi(:,:,ktau)=sx15(:,ktau+3,:,i)
+               sxj(:,:,ktau)=sx15(:,ktau+3,:,j)
+            enddo
+            di(:,1:3)=sxi(1,:,1:3)*sp(1,i)+sxi(2,:,1:3)*sp(2,i) &
+                +sxi(3,:,1:3)*sp(3,i)+sxi(4,:,1:3)*sp(4,i)
+            dj(:,1:3)=sxj(1,:,1:3)*sp(1,j)+sxj(2,:,1:3)*sp(2,j) &
+                +sxj(3,:,1:3)*sp(3,j)+sxj(4,:,1:3)*sp(4,j)
+            detrat(1:3)=di(i,1:3)*dj(j,1:3)-di(j,1:3)*dj(i,1:3)
+            detrati(1:3)=cone/detrat(1:3)
+            fij(1:3)=detrat(1:3)*fij(1:3)
+         endif
+         if (dofst(ij)) then
+            do concurrent(m=1:npart,ktau=1:3,kval=1:3)
+               sxi(:,m,ktau+3*kval)=sx15(:,ktau+6,m,i)*vec(1,kval) &
+                 +sx15(:,ktau+9,m,i)*vec(2,kval) &
+                 +sx15(:,ktau+12,m,i)*vec(3,kval)
+               sxj(:,m,ktau+3*kval)=sx15(:,ktau+6,m,j)*vec(1,kval) &
+                 +sx15(:,ktau+9,m,j)*vec(2,kval) &
+                 +sx15(:,ktau+12,m,j)*vec(3,kval)
+               di(m,ktau+3*kval)=sum(sxi(:,m,ktau+3*kval)*sp(:,i))
+               dj(m,ktau+3*kval)=sum(sxj(:,m,ktau+3*kval)*sp(:,j))
+            enddo
+            detrat(4:12)=di(i,4:12)*dj(j,4:12)-di(j,4:12)*dj(i,4:12)
+            detrati(4:12)=cone/detrat(4:12)
+            fij(4:12)=detrat(4:12)*fij(4:12)
+         endif
+         do iop=1,12
+         if (.not.doops(iop)) cycle
+!dir$ ivdep
+            do m=1,npart
+               sinvijz(:,:,m)= &
+                  (di(i,iop)*dj(j,iop)-dj(i,iop)*di(j,iop))*sxz(:,:,m) &
+                 -(di(i,iop)*dj(m,iop)-dj(i,iop)*di(m,iop))*sxz(:,:,j) &
+                 +(di(j,iop)*dj(m,iop)-dj(j,iop)*di(m,iop))*sxz(:,:,i)
+            enddo
+            do m=1,npart
+               sinvijz(:,i,m)= &
+                  (di(i,iop)*dj(j,iop)-dj(i,iop)*di(j,iop))*sxi(:,m,iop) &
+                 -(di(i,iop)*dj(m,iop)-dj(i,iop)*di(m,iop))*sxi(:,j,iop) &
+                 +(di(j,iop)*dj(m,iop)-dj(j,iop)*di(m,iop))*sxi(:,i,iop)
+               sinvijz(:,j,m)= &
+                  (di(i,iop)*dj(j,iop)-dj(i,iop)*di(j,iop))*sxj(:,m,iop) &
+                 -(di(i,iop)*dj(m,iop)-dj(i,iop)*di(m,iop))*sxj(:,j,iop) &
+                 +(di(j,iop)*dj(m,iop)-dj(j,iop)*di(m,iop))*sxj(:,i,iop)
+            enddo
+            do n=1,npart
+               sinvijz(:,n,i)=dj(j,iop)*sxz(:,n,i)-dj(i,iop)*sxz(:,n,j)
+               sinvijz(:,n,j)=di(i,iop)*sxz(:,n,j)-di(j,iop)*sxz(:,n,i)
+            enddo
+            sinvijz(:,i,i)=dj(j,iop)*sxi(:,i,iop)-dj(i,iop)*sxi(:,j,iop)
+            sinvijz(:,j,j)=di(i,iop)*sxj(:,j,iop)-di(j,iop)*sxj(:,i,iop)
+            sinvijz(:,j,i)=dj(j,iop)*sxj(:,i,iop)-dj(i,iop)*sxj(:,j,iop)
+            sinvijz(:,i,j)=di(i,iop)*sxi(:,j,iop)-di(j,iop)*sxi(:,i,iop)
+            sinvijz(:,:,:)=detrati(iop)*sinvijz(:,:,:)
+            call g2bval(d2b1,sinvijz)
+            d2b1=d2b1*fij(iop)
+!$omp critical
+            d2b=d2b+d2b1
+!$omp end critical
+         enddo
+      enddo
+!$omp end do nowait
+!$omp end parallel
+   cvs=czero
+   if (opcalc) then
+      call opval(tau,sigma,sigtau,d2b)
+      call calpot(cvs,v2,v3,v4,v5,v6)
+   else
+      call v6val(cvs(1),cvcoul,d2b)
+   endif
+   end subroutine v6tot
+
+   function opmult(sp)
+   complex(kind=r8) :: sp(:,:),opmult(4,15,npart)
+!
+! The order is 1-3 sx,sy,sz, 4-6 tx,ty,tx, 7-9 sx*(tx,ty,tz)
+! 10-12 sy*(tx,ty,tz), 13-15 sz*(tx,ty,tz)
+!
+! multiply by sigma
+!
+   opmult(1,1,:)=sp(2,:)
+   opmult(2,1,:)=sp(1,:)
+   opmult(3,1,:)=sp(4,:)
+   opmult(4,1,:)=sp(3,:)
+   opmult(1,2,:)=-ci*sp(2,:)
+   opmult(2,2,:)=ci*sp(1,:)
+   opmult(3,2,:)=-ci*sp(4,:)
+   opmult(4,2,:)=ci*sp(3,:)
+   opmult(1,3,:)=sp(1,:)
+   opmult(2,3,:)=-sp(2,:)
+   opmult(3,3,:)=sp(3,:)
+   opmult(4,3,:)=-sp(4,:)
+!
+! multiply by tau
+!
+   opmult(1,4,:)=sp(3,:)
+   opmult(2,4,:)=sp(4,:)
+   opmult(3,4,:)=sp(1,:)
+   opmult(4,4,:)=sp(2,:)
+   opmult(1,5,:)=-ci*sp(3,:)
+   opmult(2,5,:)=-ci*sp(4,:)
+   opmult(3,5,:)=ci*sp(1,:)
+   opmult(4,5,:)=ci*sp(2,:)
+   opmult(1,6,:)=sp(1,:)
+   opmult(2,6,:)=sp(2,:)
+   opmult(3,6,:)=-sp(3,:)
+   opmult(4,6,:)=-sp(4,:)
+!
+! multiply by sigma tau
+!
+   opmult(1,7:13:3,:)=opmult(3,1:3:1,:)
+   opmult(2,7:13:3,:)=opmult(4,1:3:1,:)
+   opmult(3,7:13:3,:)=opmult(1,1:3:1,:)
+   opmult(4,7:13:3,:)=opmult(2,1:3:1,:)
+   opmult(1,8:14:3,:)=-ci*opmult(3,1:3:1,:)
+   opmult(2,8:14:3,:)=-ci*opmult(4,1:3:1,:)
+   opmult(3,8:14:3,:)=ci*opmult(1,1:3:1,:)
+   opmult(4,8:14:3,:)=ci*opmult(2,1:3:1,:)
+   opmult(1,9:15:3,:)=opmult(1,1:3:1,:)
+   opmult(2,9:15:3,:)=opmult(2,1:3:1,:)
+   opmult(3,9:15:3,:)=-opmult(3,1:3:1,:)
+   opmult(4,9:15:3,:)=-opmult(4,1:3:1,:)
+   end function opmult
+
+   subroutine opval(ttau,ssigma,ssigtau,d2b)
+! calvop must be called first.
+   complex(kind=r8), intent(out) :: ttau(:,:,:),ssigma(:,:,:),ssigtau(:,:,:,:,:)
+   complex(kind=r8), intent(in) :: d2b(:,:,:)
+   integer(kind=i4) :: i,j,js,ic,jc,it,jt,ij
+   ttau=czero
+   ssigma=czero
+   ssigtau=czero
+   ij=0
+   do j=2,npart
+      do i=1,j-1
+         ij=ij+1
+         do ic=1,3
+            do jc=1,3
+               ttau(ic,jc,ij)=ttau(ic,jc,ij)+sum(d2b(:,:,ij)*tauz(:,:,ic,jc,ij))
+               ssigma(ic,jc,ij)=ssigma(ic,jc,ij)+sum(d2b(:,:,ij)*sigmaz(:,:,ic,jc,ij))
+               do it=1,3
+                  if (isdiag) then
+                     ssigtau(ic,jc,it,it,ij)=ssigtau(ic,jc,it,it,ij) &
+                              +sum(d2b(:,:,ij)*sigtauz(:,:,ic,jc,it,it,ij))
+                  else
+                     do jt=1,3
+                        ssigtau(ic,jc,it,jt,ij)=ssigtau(ic,jc,it,jt,ij) &
+                                 +sum(d2b(:,:,ij)*sigtauz(:,:,ic,jc,it,jt,ij))
+                     enddo
+                  endif
+               enddo
+            enddo
+         enddo
+      enddo
+   enddo
+   end subroutine opval
+
+   subroutine calpot(cvs,v2,v3,v4,v5,v6)
+   real(kind=r8) :: v2(:),v3(:),v4(:),v5(:,:,:),v6(:,:,:)
+   complex(kind=r8) :: cvs(:)
+   integer(kind=i4) :: i,j,it,is,jt,js,ij
+   cvs=czero
+   do ij=1,npair
+      do it=1,3
+         cvs(2)=cvs(2)+tau(it,it,ij)*v2(ij)
+         do is=1,3
+            cvs(4)=cvs(4)+sigtau(is,is,it,it,ij)*v4(ij)
+         enddo
+      enddo
+      do is=1,3
+         cvs(3)=cvs(3)+sigma(is,is,ij)*v3(ij)
+         do js=1,3
+            cvs(5)=cvs(5)+sigma(is,js,ij)*v5(is,js,ij)
+            do it=1,3
+               cvs(6)=cvs(6)+sigtau(is,js,it,it,ij)*v6(is,js,ij)
+            enddo
+         enddo
+      enddo
+   enddo
+   end subroutine calpot
+
+end module correlator

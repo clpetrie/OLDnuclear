@@ -1,0 +1,38 @@
+\documentclass[12pt]{extarticle}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{color}
+\usepackage{graphicx}
+
+% my commands
+\newcommand{\R}{\mathbf{R}} % walker
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\braket}[2]{\left< #1 | #2 \right>}
+
+\title{Report on Research Rotation I}
+\author{Cody L. Petrie}
+
+\begin{document}
+\maketitle
+
+\abstract{I have learned how to use Variational Monte Carlo (VMC) and Diffusion Monte Carlo (DMC) methods to solve the Schr\"odinger equation for simple systems. I have applied these methods to both 1D and 3D harmonic oscillators, as well as systems with $x^4$ potentials. I was able to verify that my results agreed with the exact results for the harmonic oscillator systems. I have learned the basics of Auxiliary Field Diffusion Monte Carlo (AFDMC) and have described the additions that I plan to make to the existing AFDMC code.}
+
+% include sections here
+\input{intro}
+
+\input{vmc}
+
+\input{dmc}
+
+\input{dmcqho}
+
+\input{afdmc}
+
+\input{conclusion}
+
+\bibliographystyle{unsrt} % unsrt shows in order of citations
+\bibliography{references.bib}
+
+\end{document}

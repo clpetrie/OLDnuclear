@@ -1,0 +1,133 @@
+\section*{Diffusion Monte Carlo}
+This explanation also draws heavily from \cite{foulkes2001}, but also draws a good deal from \cite{kosztin1996}. The time dependent Schr\"odinger equation is
+\begin{equation}
+  \hat H \Psi = i \hbar \frac{\partial \Psi}{\partial t}
+\end{equation}
+where
+\begin{equation}
+  \hat H = -\frac{\hbar^2}{2m}\frac{\partial^2\Psi}{\partial t^2} + V.
+\end{equation}
+To get the imaginary time Schr\"odinger equation make the substitution $\tau=i t/\hbar$, or $t=-i \tau / \hbar$ to get
+\begin{equation}
+  \hat H \Psi = - \frac{\partial \Psi}{\partial \tau}.
+\end{equation}
+Notice that this is the diffusion equation (thus ``diffusion'' Monte Carlo), and thus the solutions to this are exponentials
+\begin{equation}
+  \Psi(r,\tau) = \sum\limits_{n=0}^\infty c_n \phi_n(r,\tau) e^{- \tau E_n}
+\end{equation}
+We now perform an energy shift to setting $V=V-E_0$ and $E_n=E_n-E_0$ to get
+\begin{equation}
+  \Psi(r,\tau) = \sum\limits_{n=0}^\infty c_n \phi_n(r,\tau) e^{- \tau (E_n-E_0)}
+\end{equation}
+Now here is a key part. As you let $\tau \rightarrow \infty$ to get that $\Psi(r,\tau) \rightarrow \Psi_0(r,\tau)$, which is the ground state wave function. This is because $E_n-E_0$ for $n>0$ is a large number and essentially goes to zero.
+\begin{equation}
+  \begin{split}
+    \lim_{\tau \to \infty} \Psi(r,\tau) &= \lim_{\tau \to \infty} \sum\limits_{n=0}^\infty c_n \phi_n(r,\tau) e^{- \tau (E_n-E_0)} \\
+    &= c_0 \phi_0(r,\tau) + \lim_{\tau \to \infty} \sum\limits_{n=1}^\infty c_n \phi_n(r,\tau) e^{- \tau (E_n-E_0)} \\
+    &= c_0 \phi_0(r)
+  \end{split}
+\end{equation}
+
+To determine how to diffuse each walker and how to do the birth/death algorithm lets look at the propagator (I'm just going to do the 1D case here) $\left| \psi(\tau) \right> = e^{-(H-E_r)\tau} \left| \psi(0) \right>$. The propogator often also called the Green's function and is given by.
+\begin{equation}
+  \begin{split}
+    \mathbf{G}(x) &= \left<x\right| e^{-(H-E_r)\tau} \left|x'\right>\\
+    &= \left<x\right| e^{-(V-Er)\Delta\tau/2} e^{(\frac{p^2}{2m})\Delta\tau} e^{-(V-Er)\Delta\tau/2} \left|x\right>\\
+    &= e^{-\Delta\tau\left(V(x)+V(x')-2E_r\right)/2} \left<x\right| e^{(\frac{p^2}{2m})\Delta\tau} \left|x\right>.
+  \end{split}
+\end{equation}
+Now do a Fourier transform on the kinetic part to get it in terms of x and you get the two parts,
+\begin{equation}
+  \exp{(-\Delta\tau\left(V(x)+V(x')-2E_r\right)/2)}
+  \label{equ:weight}
+\end{equation}
+\begin{equation}
+  \exp{(-\frac{mx^2}{2\Delta\tau})}
+  \label{equ:sample}
+\end{equation}
+Equation \ref{equ:weight} is used to do the birth/death algorithm and equation \ref{equ:sample} is sampled from to move the walkers at each step.
+
+\subsection*{Procedure}
+The steps for performing DMC are shown below.
+\begin{enumerate}
+\item \textbf{Initialize:}
+  \begin{enumerate}
+  \item Randomly choose a distribution of walkers from some trial wave function $\Psi_T$.
+  \item The reference energy is set to something like the energy that you get from VMC, or the energy of the trial wave function.
+  \end{enumerate}
+
+\item \textbf{Imaginary time propagation}
+  \begin{enumerate}
+  \item Advance the time by $\Delta \tau$.
+  \item Move each walkers according to Gaussian distribution with mean around the current walker and with standard deviation equal to
+    \begin{equation}
+      \sigma = \sqrt{\frac{\hbar \Delta \tau}{m}}
+    \end{equation}
+  \item The reference energy is then reset to the value
+    \begin{equation}
+      E_{R,i} = E_{R,i-1} + \frac{\hbar}{\Delta \tau} \left( 1-\frac{N_i}{N_{i-1}}\right)
+    \end{equation}
+  \item The birth/death process is carried out. The integer part of the parameter $m$ is gives the number of walkers that process from 1 walker, where
+    \begin{equation}
+      m = \mathrm{int} (W(r)+U),
+    \end{equation}
+    where $W(r)$ is given by
+    \begin{equation}
+      W(r) = e^{-\Delta\tau((V(r_i)+V(r_{i-1})/2 - E_R)/\hbar}.
+    \end{equation}
+    A maximum of two walkers can come from any walker \cite{kosztin1996}.
+  \end{enumerate}
+
+\item The ground state is then given by the average of successive iterations of $E_R$. The ground state wave function is then given by the distribution of walkers (histogram).
+\end{enumerate}
+
+\subsection*{Importance Sampling}
+Importance sampling is used in \cite{foulkes2001} to improve the stability of DMC. This is done by multiplying the time dependent imaginary time schr\"odinger equation,
+\begin{equation}
+  -\partial_t \Phi(\mathbf{R},t) = (\hat{H}-E_T) \Phi(\mathbf{R},t),
+\end{equation}
+by $\Psi_T$ on both sides and define $f(\mathbf{R},t) \equiv \Phi(\mathbf{R},t) \Psi_T(\mathbf{R})$. This gives us
+\begin{equation}
+  \begin{split}
+    -\partial_t f(\mathbf{R},t) &= \Psi_T(\mathbf{R}) \hat{H} \Phi(\mathbf{R},t) -E_T f(\mathbf{R},t) \\
+    &= -\Psi_T \frac{1}{2} \nabla^2 \Phi + (V-E_T)f \\
+    &= -\frac{1}{2}\nabla^2f + \frac{1}{2}\Phi\nabla^2\Psi_T + \frac{1}{2}2(\nabla\Phi)(\nabla\Psi_T) + \frac{1}{2}\Phi\nabla^2\Psi_T - \frac{1}{2}\Phi\nabla\Psi_T - E_Tf + Vf \\
+    &= -\frac{1}{2}\nabla^2f + \nabla \cdot (\Phi\nabla\Psi_T) - \frac{1}{2}\Phi\nabla^2\Psi_T-E_Tf+Vf \\
+    -\partial_t f(\mathbf{R},t) &= -\frac{1}{2}\nabla^2f(\mathbf{R},t) + \nabla \cdot (\mathbf{v_D}f(\mathbf{R},t)) + (E_L-E_T)f(\mathbf{R},t),
+  \end{split}
+\end{equation}
+
+where I have used
+
+\begin{equation}
+  \begin{split}
+    \nabla^2f &= \Phi\nabla^2\Psi_T + \Psi_T\nabla^2\Phi + 2(\nabla\Phi)(\nabla\Psi_T) \\
+    \nabla\cdot(\Phi\nabla\Psi_T) &= (\nabla\Phi)(\nabla\Psi_T) + \Phi\nabla^2\Psi_T \\
+    \mathbf{V_D} &= \Psi_T^{-1}\nabla\Psi_T = \nabla \ln(\Psi_T) \\
+    E_L &= \Psi_T^{-1}\hat{H}\Psi_T = -\Psi_T^{-1}\frac{1}{2}\nabla^2\Psi_T + V.
+  \end{split}
+\end{equation}
+
+Now the steps to do this method is described by \cite{foulkes2001} to be
+\begin{enumerate}
+  \item{Generate walkers from $\left| \Psi_T \right|^2$ distribution.}
+  \item{Calculate the local energies and $v_D$ for each walker.}
+  \item{Move each walker according to $\mathbf{R} = \mathbf{R}' + \chi + \Delta\tau \mathbf{v_D}(\mathbf{R}')$, where $\chi$ is draws from a Gaussian with variance $\Delta\tau$ and zero mean.}
+  \item{If the trial wave function changes sign move it back to the original position.}
+  \item{Accept the step with probability
+    \begin{equation}
+      P_{\mathrm{accept}}(\mathbf{R} \leftarrow \mathbf{R}') = \mathrm{min}\left[ 1, \frac{G_d(\mathbf{R}' \leftarrow \mathbf{R}, \Delta\tau) \Psi_T(\mathbf{R})^2}{G_d(\mathbf{R} \leftarrow \mathbf{R}', \Delta\tau) \Psi_T(\mathbf{R}')^2} \right]
+    \end{equation}
+    where $G_d(\mathbf{R} \leftarrow \mathbf{R}', \Delta\tau)$ is given by
+    \begin{equation}
+      G_d(\mathbf{R} \leftarrow \mathbf{R}', \Delta\tau) = (2\pi\Delta\tau)^{-3N/2} \exp{\left[ -\frac{[\mathbf{R}-\mathbf{R}'-\Delta\tau\mathbf{v_D}(\mathbf{R}')]^2}{2\Delta\tau} \right]}
+    \end{equation}
+  }
+  \item{Calculate how many walkers will come from each point using
+    \begin{equation}
+      M_{new} = \mathrm{int}(\eta+\exp\left\{-\Delta\tau[E_L(\mathbf{R})+E_L(\mathbf{R}')-2E_T/2]\right\}),
+    \end{equation}
+    where $\eta$ is drawn from a uniform distribution$[0,1]$.
+  }
+  \item{Accumulate the appropriate quantities.}
+\end{enumerate}

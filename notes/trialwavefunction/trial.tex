@@ -1,0 +1,76 @@
+\documentclass[12pt]{extarticle}
+\usepackage[margin=1in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{color}
+
+%My commands
+\newcommand{\Oopij}{\mathcal{O}^p_{ij}}
+\newcommand{\Oopkl}{\mathcal{O}^p_{kl}}
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\braket}[2]{\left< #1 | #2 \right>}
+\newcommand{\taui}{\bm{\tau}_i}
+\newcommand{\tauj}{\bm{\tau}_j}
+\newcommand{\sigmai}{\bm{\sigma}_i}
+\newcommand{\sigmaj}{\bm{\sigma}_j}
+\newcommand{\tauij}{\taui \cdot \tauj}
+\newcommand{\sigmaij}{\sigmai \cdot \sigmaj}
+
+\title{Calculating the Trial Wave Function for AFDMC}
+\author{Cody Petrie}
+
+\begin{document}
+\maketitle
+
+\section{Trial Wave Function}
+The trial wave function for AFDMC must be simple to evaluate. In the past the simple Slater determinant with pair-wise correlations has been used as shown in \cite{gandolfi2014},
+\begin{equation}
+  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oopij \right] \ket{\Phi},
+  \label{equ:simpletrial}
+\end{equation}
+where the $\Oopij$'s are $\tauij$, $\sigmaij$, and $t_{ij}\tauij$, where $t_{ij} = 3\sigmai \cdot \hat{r}_{ij} \sigmaj \cdot \hat{r}_{ij}-\sigmaij$. \textit{\textcolor{red}{Why weren't $\sigmaij$ and $t_{ij}$ used in this paper?}}
+
+My goal is to add the additional independent pair correlations.
+\begin{equation}
+  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oopij + \sum_{i<j}\sum_{k<l}\sum_p f_p(r_{ij})\Oopij f_p(r_{kl})\Oopkl \right] \ket{\Phi},
+\end{equation}
+
+\section{Evaluation the Trial Wave Function}
+To understand how to to this I'm going to just assume that $\Oopij$ only contains the term $\sigmaij$ and I'll start by looking at the trial wave function, equation~\ref{equ:simpletrial}, with only the linear term. So now
+\begin{equation}
+  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j} f_1(r_{ij})\sigmaij \right] \ket{\Phi}.
+\end{equation}
+Also since the central correlations don't change the states by any more than a multiplicative factor I am going to ignore that term as well. I will also just look at one term in the sum (a particular $i$ and $j$ value). So we are just looking at
+\begin{equation}
+  \bra{RS} \left[ 1+f_1(r_{ij})\sigmaij \right] \ket{\Phi}.
+  \label{equ:simpex}
+\end{equation}
+Now we also know that the Slater determinant is defined as
+\begin{equation}
+  \braket{RS}{\Phi} = \mathrm{det}(S_{ij}) = \frac{1}{\sqrt{N!}} \begin{vmatrix}
+  \phi_1(R_1S_1) & \phi_2(R_1S_1) & \cdots & \psi_N(R_1S_1) \\ 
+  \phi_1(R_2S_2) & \phi_2(R_2S_2) & \cdots & \phi_N(R_2S_2) \\
+  \vdots & \vdots & \ddots &\vdots \\
+  \phi_1(R_NS_N)& \phi_2(R_NS_N) & \cdots & \phi_N(R_NS_N) \end{vmatrix},
+\end{equation}
+where $\phi_i(R_jS_j)=\phi^r_i(R_j)\phi^s_i(S_j)$ and $S_{ij}$ is called the Slated Matrix.
+
+Now lets look at equation~\ref{equ:simpex} again for an example.
+\begin{align}
+  & ~ ~ ~ \bra{RS} \left[ 1+f_1(r_{ij})\sigmaij \right] \ket{\Phi} \\
+  &= \mathrm{det}(S_{ij}) + f_1(r_{ij}) \bra{RS}\sigmaij\ket{\Phi} \\
+  &= \mathrm{det}(S_{ij}) + f_1(r_{ij})\mathrm{det}(S'_{ij})
+\end{align}
+Here $S'_{ij}$ is the updated matrix. It only has two columns different than $S_{ij}$ and so we can get it's determinant of $S'_{ij}$ easily once we have the determinant of $S_{ij}$ by using the fact that
+\begin{equation}
+  \mathrm{det}(S^{-1}_{ij} S'_{ij}) = \frac{\mathrm{det}(S'_{ij})}{\mathrm{det}(S_{ij})}.
+\end{equation}
+When we solve for $\mathrm{det}(S_{ij})$ we finish solving for the inverse, $S^{-1}_{ij}$ and the product $S^{-1}_{ij}S'_{ij}$ is $1$ on the diagonal and $0$ everywhere else except the two columns $i$ and $j$. This makes the $\mathrm{det}(S^{-1}_{ij}S'_{ij})$ easy to solve for since it is simply the determinant of the submatrix. Thus once we have $\mathrm{det}(S_{ij})$ it is easier to solve for $\mathrm{det}(S'_{ij})$. All that is left is to do this over the pair loops and over each operator.
+
+\bibliographystyle{unsrt}
+\bibliography{../../papers/references.bib}
+
+\end{document}

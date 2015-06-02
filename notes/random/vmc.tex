@@ -1,0 +1,48 @@
+\section*{Variational Monte Carlo}
+\subsection*{Monte Carlo Integration}
+Before explaining variational monte carlo (VMC) I am going to describe the method for performing monte carlo integrations. Assume that we are trying to integrate the function
+\begin{equation}
+  I = \int g(\mathbf{R})d\mathbf{R}.
+\end{equation}
+This can be rewritten as
+\begin{equation}
+  I = \int f(\mathbf{R})P(\mathbf{R})d\mathbf{R}
+\end{equation}
+where $f(\mathbf{R})=g(\mathbf{R})/P(\mathbf{R})$, and $P(\mathbf{R})$ is the importance function (probability density). I think that $P(\mathbf{R})$ can be interpreted as $\left<\psi_T|\psi_T\right>$ where $\left|\psi_T\right>$ is the trial wavefunction. Also note that $\mathbf{R}=(\mathbf{r}_1, \mathbf{r}_2, \ldots, \mathbf{r}_n)$, where $\mathbf{r}_i$ is the position of the ith particle, and a specific $\mathbf{R}$ is called a {\it walker}. Now you say that the integral looks like the expectation value of the random variable $f(\mathbf{R})$ (Think of $\left< \hat{H} \right> = \int_{-\infty}^{\infty} \left<\psi\right|\hat{H}\left|\psi\right>$).
+
+Now the integral can be determined by drawing an infinite number of samples from $f(\mathbf{R})$ and computing the average.
+\begin{equation}
+  I = \lim_{N \to \infty} \frac{1}{N}\sum\limits_{n=1}^N f(\mathbf{R}_n)
+\end{equation}
+The integral can then be approximated by
+\begin{equation}
+  I \approx \frac{1}{N} \sum\limits_{n=1}^N f(\mathbf{R}_n).
+\end{equation}
+Notice that by the central limit theorem if $f(\mathbf{R})$ has mean $\mu$ and standard deviation $\sigma^2$ then $I$ will have mean $\mu$ and standard deviation $\sigma/\sqrt{N}$.
+
+\subsection*{The Metripolis Algorithm}
+Often times sampling from the distribution $P(\mathbf{R})$ is difficult because $P(\mathbf{R})$ is complecated and difficult to invert. The metripolis algorithm allows us to sample complicated $P(\mathbf{R})$'s. The steps are as follows.
+\begin{enumerate}
+  \item Start at some random walker $\mathbf{R}$.
+  \item Propose a move to a new position $\mathbf{R}'$, pulled for a distribution $T(\mathbf{R \leftarrow R'})$.
+  \item The probability of accepting the move is given by
+    \begin{equation}
+      A(\mathbf{R' \leftarrow R}) = \mathrm{Min}\left( 1, \frac{T(\mathbf{R' \leftarrow R}) P(\mathbf{R}'))}{T(\mathbf{R' \leftarrow R}) P(\mathbf{R}))} \right).
+    \end{equation}
+    $T(\mathbf{R' \leftarrow R})$ can be 1 or a Gaussian centered around the current walker, or something else entirely. A random number is then pulled from $r=U(0,1)$, and the move is accepted if $r<A(\mathbf{R' \leftarrow R})$.
+  \item Repeat from step 2.
+\end{enumerate}
+
+\subsection*{VMC}
+To do VMC you first state with a trail wave function $\Psi_T$. The accuracy of VMC is sensative to the choise of $\Psi$. The trial wave function is then used to find a rigid upper bound on the ground state energy, $E_0$.
+\begin{equation}
+  E_V = \frac{\int \Psi_T^*(\mathbf{R})\hat{H}\Psi_T(\mathbf{R})d\mathbf{R}}{\int \Psi_T^*(\mathbf{R})\Psi_T(\mathbf{R})d\mathbf{R}} \le E_0
+\end{equation}
+The methods above are used to evaluate this integral which can be written as
+\begin{equation}
+  E_V = \frac{\int |\Psi_T(\mathbf{R})|^2 [\Psi_T^{-1}(\mathbf{R})\hat{H}\Psi_T(\mathbf{R})d\mathbf{R}]}{\int |\Psi_T(\mathbf{R})|^2 d\mathbf{R}}.
+\end{equation}
+Random walkers are generated, $\{\mathbf{R}_n: n=1,N\}$, from the distribution $P(\mathbf{R}) = |\Psi_T(\mathbf{R})|^2/\int|\Psi_T(\mathbf{R})|^2d\mathbf{R}$. The local energy at each point is found using $E_L(\mathbf{R}) = \Psi_T^{-1}(\mathbf{R}) \hat{H} \Psi_T(\mathbf{R})$. The energy is then given by
+\begin{equation}
+  E_V \approx \frac{1}{N} \sum\limits_{n=1}^N E_L{\mathbf{R}_n}.
+\end{equation}

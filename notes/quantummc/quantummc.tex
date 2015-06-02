@@ -1,0 +1,32 @@
+\documentclass[12pt]{extarticle}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{color}
+\usepackage{graphicx}
+
+% my commands
+\newcommand{\R}{\mathbf{R}} % walker
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\braket}[2]{\left< #1 | #2 \right>}
+
+\title{Quantum Monte Carlo}
+\author{Cody L. Petrie}
+
+\begin{document}
+\maketitle
+
+% include sections here
+\input{intro}
+
+\input{vmc}
+
+\input{dmc}
+
+\input{afdmc}
+
+\bibliographystyle{unsrt} % unsrt shows in order of citations
+\bibliography{references.bib}
+
+\end{document}

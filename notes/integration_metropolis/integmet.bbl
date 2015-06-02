@@ -1,0 +1,19 @@
+\begin{thebibliography}{1}
+
+\bibitem{jarosz2008}
+Wojciech Jarosz.
+\newblock {\em Efficient Monte Carlo Methods for Light Transport in Scattering
+  Media}.
+\newblock PhD thesis, UC San Diego, September 2008.
+
+\bibitem{kent1999}
+Paul Richard~Charles Kent.
+\newblock {\em Techniques and Applications of Quantum Monte Carlo}.
+\newblock PhD thesis, Robinson College, Cambridge, August 1999.
+
+\bibitem{foulkes2001}
+W.~M.~C. Foulkes, L.~Mitas, R.~J. Needs, and G.~Rajagopal.
+\newblock Quantum monte carlo simulations of solids.
+\newblock {\em Rev. Mod. Phys.}, 73:33--83, 2001.
+
+\end{thebibliography}

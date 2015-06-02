@@ -1,0 +1,126 @@
+MPI=false
+
+ifeq ($(MPI),true)
+   FC=mpif90
+   MPIFILE=mympi
+   EXEC=afnucmatmpi
+else
+   FC=gfortran -pg
+   MPIFILE=nompi
+   EXEC=afnucmat
+endif
+
+MATRIX=matrixlapack
+MATRIX=matrixstupid
+
+#gfortran w/ATLAS
+FFLAGS=-Ofast
+F77FLAGS=$(FFLAGS) -fdefault-real-8 -fdefault-double-8
+LDFLAGS=-Ofast -flto
+LIBS=-llapack -lf77blas -lcblas -latlas
+
+#ifort
+#FFLAGS=-fast -fno-alias -mkl=sequential -align rec32byte -align array64byte
+#F77FLAGS=$(FFLAGS) -r8
+#LDFLAGS=-mkl=sequential
+
+.SUFFIXES:
+.SUFFIXES: .o .f .f90
+
+.f90.o:
+	$(FC) $(FFLAGS) -c $<
+
+OBJECTS=\
+   afnuclear.o\
+   confs.o\
+   estimator.o\
+   jastrowtabop.o\
+   kshellold.o\
+   lattice.o\
+   pot.o\
+   ran.o\
+   stack.o\
+   step.o\
+   v6pot.o\
+   $(MATRIX).o\
+   $(MPIFILE).o\
+   opwave.o\
+   nucma_fts.o\
+   density.o\
+   optimizer.o\
+   cheft.o\
+   backflow.o\
+   gofr.o\
+   v3bpot.o\
+   correlator.o
+
+$(EXEC): $(OBJECTS)
+	$(FC) $(LDFLAGS) -o ./$(EXEC) $(OBJECTS) $(LIBS)
+
+clean:
+	rm -f *\.mod *\.o *~
+
+afnuclear.o: stack.o lattice.o ran.o estimator.o $(MPIFILE).o v6pot.o\
+	jastrowtabop.o step.o opwave.o optimizer.o confs.o afnuclear.f90
+	$(FC) $(FFLAGS) -c afnuclear.f90
+
+stack.o: stack.f90
+	$(FC) $(FFLAGS) -c stack.f90
+
+lattice.o: lattice.f90
+	$(FC) $(FFLAGS) -c lattice.f90
+
+ran.o: ran.f90
+	$(FC) $(FFLAGS) -c ran.f90
+
+estimator.o: $(MPIFILE).o estimator.f90
+	$(FC) $(FFLAGS) -c estimator.f90
+
+$(MPIFILE).o: $(MPIFILE).f90
+	$(FC) $(FFLAGS) -c $(MPIFILE).f90
+
+$(MATRIX).o: $(MATRIX).f90
+	$(FC) $(FFLAGS) -c $(MATRIX).f90
+
+v6pot.o: cheft.o v6pot.f90 $(MPIFILE).o
+	$(FC) $(FFLAGS) -c v6pot.f90
+
+#CODY
+v3bpot.o: v3bpot.f90
+	$(FC) $(FFLAGS) -c v3bpot.f90
+
+jastrowtabop.o: $(MPIFILE).o nucma_fts.o jastrowtabop.f90
+	$(FC) $(FFLAGS) -c jastrowtabop.f90
+
+step.o: stack.o ran.o opwave.o estimator.o $(MPIFILE).o v6pot.o $(MATRIX).o density.o gofr.o step.f90 
+	$(FC) $(FFLAGS) -c step.f90
+
+opwave.o: stack.o jastrowtabop.o v6pot.o $(MATRIX).o backflow.o correlator.o opwave.f90
+	$(FC) $(FFLAGS) -c opwave.f90
+
+gofrop.o: kshellold.o stack.o $(MATRIX).o estimator.o gofrop.f90
+	$(FC) $(FFLAGS) -c gofrop.f90
+
+pot.o: pot.f
+	$(FC) $(F77FLAGS) -c pot.f
+
+nucma_fts.o: nucma_fts.f90
+	$(FC) $(FFLAGS) -c nucma_fts.f90
+
+density.o: density.f90
+	$(FC) $(FFLAGS) -c density.f90
+
+optimizer.o: $(MPIFILE).o stack.o $(MATRIX).o optimizer.f90
+	$(FC) $(FFLAGS) -c optimizer.f90
+
+cheft.o: cheft.f90
+	$(FC) $(FFLAGS) -c cheft.f90
+
+confs.o: confs.f90
+	$(FC) $(FFLAGS) -c confs.f90
+
+backflow.o: backflow.f90
+	$(FC) $(FFLAGS) -c backflow.f90
+
+correlator.o: $(MATRIX).o v3bpot.o correlator.f90
+	$(FC) $(FFLAGS) -c correlator.f90

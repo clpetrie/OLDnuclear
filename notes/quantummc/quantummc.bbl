@@ -1,0 +1,25 @@
+\begin{thebibliography}{1}
+
+\bibitem{foulkes2001}
+W.~M.~C. Foulkes, L.~Mitas, R.~J. Needs, and G.~Rajagopal.
+\newblock Quantum monte carlo simulations of solids.
+\newblock {\em Rev. Mod. Phys.}, 73:33--83, 2001.
+
+\bibitem{kosztin1996}
+Ioan Kosztin, Byron Faber, and Klaus Schulten.
+\newblock Introduction to the diffusion monte carlo method.
+\newblock {\em Am. J. Phys.}, 64:366, 1996.
+
+\bibitem{schmidt1999}
+K.E. Schmidt and S.~Fantoni.
+\newblock A quantum monte carlo method for nucleon systems.
+\newblock {\em Phys. Lett. B}, 446:99--103, 1999.
+
+\bibitem{gandolfi2014}
+S.~Gandolfi, A.~Lovato, J.~Carlson, and Kevin~E. Schmidt.
+\newblock From the lightest nuclei to the equation of state of asymmetric
+  nuclear matter with realistic nuclear interactions.
+\newblock 2014.
+\newblock arXiv:1406.3388v1 [nucl-th].
+
+\end{thebibliography}

@@ -1,0 +1,629 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 43.31     20.61    20.61      240     0.09     0.09  __correlator_MOD_v6tot
+ 35.32     37.42    16.81    41120     0.00     0.00  __v6pot_MOD_hspot
+  5.32     39.95     2.53  7425893     0.00     0.00  __matrixmod_MOD_eigenrs
+  4.16     41.93     1.98    41120     0.00     0.00  __matrixmod_MOD_cmatinv
+  4.06     43.86     1.93    41120     0.00     0.00  __correlator_MOD_cordet
+  3.05     45.31     1.45    41120     0.00     0.00  __wavefunction_MOD_hscor
+  1.51     46.03     0.72 15543360     0.00     0.00  __jastrow_MOD_jastro_nucma
+  1.01     46.51     0.48    41120     0.00     0.00  __correlator_MOD_calfop
+  0.74     46.86     0.35    40880     0.00     0.00  __wavefunction_MOD_vnpsi2.constprop.1
+  0.69     47.19     0.33      240     0.00     0.00  __correlator_MOD_calvop
+  0.36     47.36     0.17      240     0.00     0.00  __correlator_MOD_opval
+  0.27     47.49     0.13    48080     0.00     0.00  __correlator_MOD_opmult.constprop.8
+  0.15     47.56     0.07        1     0.07     0.07  __nucma_MOD_nmfts
+  0.02     47.57     0.01      240     0.00     0.00  __correlator_MOD_calpot
+  0.02     47.58     0.01      240     0.00     0.11  __wavefunction_MOD_tpsi
+  0.02     47.59     0.01      160     0.00     0.00  __step_MOD_spinnorm
+  0.00     47.59     0.00    16029     0.00     0.00  pot_
+  0.00     47.59     0.00     9120     0.00     0.00  __random_MOD_gaussian
+  0.00     47.59     0.00     8112     0.00     0.00  __mympi_MOD_myrank
+  0.00     47.59     0.00     8002     0.00     0.00  __nucma_MOD_vpot_op
+  0.00     47.59     0.00     3920     0.00     0.00  __estimator_MOD_addval
+  0.00     47.59     0.00     2673     0.00     0.00  __random_MOD_randn
+  0.00     47.59     0.00     1167     0.00     0.00  __stack_MOD_copywalker
+  0.00     47.59     0.00      560     0.00     0.08  __wavefunction_MOD_hpsi
+  0.00     47.59     0.00      486     0.00     0.00  __mympi_MOD_amaboss
+  0.00     47.59     0.00      484     0.00     0.00  __stack_MOD_pop
+  0.00     47.59     0.00      480     0.00     0.00  __stack_MOD_push
+  0.00     47.59     0.00      320     0.00     0.00  __estimator_MOD_addvalc
+  0.00     47.59     0.00      240     0.00     0.00  __correlator_MOD_getop1
+  0.00     47.59     0.00      240     0.00     0.09  __wavefunction_MOD_vnpsi2
+  0.00     47.59     0.00      162     0.00     0.00  __mympi_MOD_sharel
+  0.00     47.59     0.00      161     0.00     0.00  __random_MOD_setrn
+  0.00     47.59     0.00      160     0.00     0.00  __density_MOD_getradii
+  0.00     47.59     0.00      160     0.00     0.00  __mympi_MOD_sharew
+  0.00     47.59     0.00      160     0.00     0.00  __random_MOD_savern
+  0.00     47.59     0.00      160     0.00     0.00  __step_MOD_hspropvmc
+  0.00     47.59     0.00       90     0.00     0.00  __mympi_MOD_barrier
+  0.00     47.59     0.00       82     0.00     0.00  __mympi_MOD_nboss
+  0.00     47.59     0.00       80     0.00     0.00  __mympi_MOD_movewalkers
+  0.00     47.59     0.00       80     0.00     0.00  __random2_MOD_ran2
+  0.00     47.59     0.00       35     0.00     0.00  __mympi_MOD_nproc
+  0.00     47.59     0.00       29     0.00     0.00  __mympi_MOD_bcastr1
+  0.00     47.59     0.00       20     0.00     0.00  __estimator_MOD_addest
+  0.00     47.59     0.00       16     0.00     0.00  __mympi_MOD_addallr1
+  0.00     47.59     0.00       16     0.00     0.00  __mympi_MOD_bcasti1
+  0.00     47.59     0.00        9     0.00     0.00  __mympi_MOD_addallc1d
+  0.00     47.59     0.00        9     0.00     0.00  __mympi_MOD_addallr1d
+  0.00     47.59     0.00        8     0.00     0.00  __stack_MOD_numstack
+  0.00     47.59     0.00        7     0.00     0.00  __mympi_MOD_addalli1
+  0.00     47.59     0.00        5     0.00     0.00  __mympi_MOD_bcastl1
+  0.00     47.59     0.00        4     0.00     0.00  __mympi_MOD_addallc1
+  0.00     47.59     0.00        3     0.00     0.00  __estimator_MOD_resstring
+  0.00     47.59     0.00        3     0.00     0.00  __estimator_MOD_update
+  0.00     47.59     0.00        3     0.00     0.00  __estimator_MOD_zerest
+  0.00     47.59     0.00        3     0.00     0.00  __mympi_MOD_addalli1d
+  0.00     47.59     0.00        2     0.00     0.00  __mympi_MOD_bcasti1d
+  0.00     47.59     0.00        2     0.00     0.00  __mympi_MOD_checkpop
+  0.00     47.59     0.00        2     0.00     6.79  __step_MOD_calcop
+  0.00     47.59     0.00        2     0.00    13.58  __step_MOD_step1
+  0.00     47.59     0.00        2     0.00     0.00  __step_MOD_writewtisto
+  0.00     47.59     0.00        1     0.00     0.00  __correlator_MOD_initcormod
+  0.00     47.59     0.00        1     0.00     0.00  __estimator_MOD_setestnum
+  0.00     47.59     0.00        1     0.00     0.07  __jastrow_MOD_jasinit
+  0.00     47.59     0.00        1     0.00     0.07  __jastrow_MOD_jasinit_nucma
+  0.00     47.59     0.00        1     0.00     0.00  __lattice_MOD_bestcubic
+  0.00     47.59     0.00        1     0.00     0.00  __lattice_MOD_facecenteredcubic
+  0.00     47.59     0.00        1     0.00     0.00  __mympi_MOD_bcasti3d
+  0.00     47.59     0.00        1     0.00     0.00  __mympi_MOD_bcastr1d
+  0.00     47.59     0.00        1     0.00     0.00  __mympi_MOD_done
+  0.00     47.59     0.00        1     0.00     0.00  __mympi_MOD_gatheri1
+  0.00     47.59     0.00        1     0.00     0.00  __mympi_MOD_init0
+  0.00     47.59     0.00        1     0.00     0.00  __mympi_MOD_init1
+  0.00     47.59     0.00        1     0.00     0.00  __mympi_MOD_printmpilog
+  0.00     47.59     0.00        1     0.00     0.00  __mympi_MOD_zerotimebal
+  0.00     47.59     0.00        1     0.00     0.00  __stack_MOD_create
+  0.00     47.59     0.00        1     0.00     0.00  __step_MOD_setstep
+  0.00     47.59     0.00        1     0.00     0.00  __v6pot_MOD_v6potinit
+  0.00     47.59     0.00        1     0.00     0.00  __wavefunction_MOD_setpsi
+  0.00     47.59     0.00        1     0.00     0.00  setpot_
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+ 
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this 
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.02% of 47.59 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]    100.0    0.00   47.59                 MAIN__ [1]
+                0.00   27.16       2/2           __step_MOD_step1 [3]
+                0.00   13.57       2/2           __step_MOD_calcop [9]
+                0.00    6.79      80/560         __wavefunction_MOD_hpsi [2]
+                0.00    0.07       1/1           __jastrow_MOD_jasinit [19]
+                0.00    0.00    2353/2673        __random_MOD_randn [46]
+                0.00    0.00     720/3920        __estimator_MOD_addval [45]
+                0.00    0.00     160/1167        __stack_MOD_copywalker [47]
+                0.00    0.00     160/480         __stack_MOD_push [50]
+                0.00    0.00     160/484         __stack_MOD_pop [49]
+                0.00    0.00     100/8112        __mympi_MOD_myrank [43]
+                0.00    0.00      90/90          __mympi_MOD_barrier [59]
+                0.00    0.00      82/82          __mympi_MOD_nboss [60]
+                0.00    0.00      80/80          __random2_MOD_ran2 [62]
+                0.00    0.00      80/80          __mympi_MOD_movewalkers [61]
+                0.00    0.00      35/35          __mympi_MOD_nproc [63]
+                0.00    0.00      20/20          __estimator_MOD_addest [65]
+                0.00    0.00      16/16          __mympi_MOD_addallr1 [66]
+                0.00    0.00      15/16          __mympi_MOD_bcasti1 [67]
+                0.00    0.00      10/29          __mympi_MOD_bcastr1 [64]
+                0.00    0.00       8/8           __stack_MOD_numstack [70]
+                0.00    0.00       7/7           __mympi_MOD_addalli1 [71]
+                0.00    0.00       5/5           __mympi_MOD_bcastl1 [72]
+                0.00    0.00       4/486         __mympi_MOD_amaboss [48]
+                0.00    0.00       4/4           __mympi_MOD_addallc1 [73]
+                0.00    0.00       3/3           __estimator_MOD_zerest [76]
+                0.00    0.00       3/3           __estimator_MOD_update [75]
+                0.00    0.00       3/3           __estimator_MOD_resstring [74]
+                0.00    0.00       2/2           __mympi_MOD_checkpop [79]
+                0.00    0.00       2/2           __step_MOD_writewtisto [80]
+                0.00    0.00       1/1           __mympi_MOD_init0 [89]
+                0.00    0.00       1/1           __mympi_MOD_bcastr1d [86]
+                0.00    0.00       1/1           __wavefunction_MOD_setpsi [96]
+                0.00    0.00       1/1           __v6pot_MOD_v6potinit [95]
+                0.00    0.00       1/1           __step_MOD_setstep [94]
+                0.00    0.00       1/1           __estimator_MOD_setestnum [82]
+                0.00    0.00       1/1           __mympi_MOD_init1 [90]
+                0.00    0.00       1/1           __stack_MOD_create [93]
+                0.00    0.00       1/1           __mympi_MOD_zerotimebal [92]
+                0.00    0.00       1/1           __mympi_MOD_gatheri1 [88]
+                0.00    0.00       1/2           __mympi_MOD_bcasti1d [78]
+                0.00    0.00       1/161         __random_MOD_setrn [54]
+                0.00    0.00       1/1           __lattice_MOD_bestcubic [83]
+                0.00    0.00       1/1           __mympi_MOD_done [87]
+                0.00    0.00       1/1           __mympi_MOD_printmpilog [91]
+-----------------------------------------------
+                0.00    6.79      80/560         MAIN__ [1]
+                0.00   13.57     160/560         __step_MOD_calcop [9]
+                0.00   27.15     320/560         __step_MOD_step1 [3]
+[2]     99.8    0.00   47.51     560         __wavefunction_MOD_hpsi [2]
+                0.01   25.85     240/240         __wavefunction_MOD_tpsi [5]
+                0.00   21.29     240/240         __wavefunction_MOD_vnpsi2 [6]
+                0.00    0.35     560/40880       __wavefunction_MOD_vnpsi2.constprop.1 [4]
+-----------------------------------------------
+                0.00   27.16       2/2           MAIN__ [1]
+[3]     57.1    0.00   27.16       2         __step_MOD_step1 [3]
+                0.00   27.15     320/560         __wavefunction_MOD_hpsi [2]
+                0.01    0.00     160/160         __step_MOD_spinnorm [23]
+                0.00    0.00     482/486         __mympi_MOD_amaboss [48]
+                0.00    0.00     367/1167        __stack_MOD_copywalker [47]
+                0.00    0.00     320/2673        __random_MOD_randn [46]
+                0.00    0.00     320/3920        __estimator_MOD_addval [45]
+                0.00    0.00     162/484         __stack_MOD_pop [49]
+                0.00    0.00     162/162         __mympi_MOD_sharel [53]
+                0.00    0.00     160/160         __mympi_MOD_sharew [56]
+                0.00    0.00     160/161         __random_MOD_setrn [54]
+                0.00    0.00     160/9120        __random_MOD_gaussian [42]
+                0.00    0.00     160/160         __random_MOD_savern [57]
+                0.00    0.00     160/160         __step_MOD_hspropvmc [58]
+                0.00    0.00     160/480         __stack_MOD_push [50]
+-----------------------------------------------
+                0.00    0.35     560/40880       __wavefunction_MOD_hpsi [2]
+                0.35   25.51   40320/40880       __wavefunction_MOD_tpsi [5]
+[4]     55.1    0.35   25.86   40880         __wavefunction_MOD_vnpsi2.constprop.1 [4]
+               16.71    0.00   40880/41120       __v6pot_MOD_hspot [8]
+                0.48    2.52   40880/41120       __correlator_MOD_calfop [10]
+                1.44    0.72   40880/41120       __wavefunction_MOD_hscor [12]
+                1.92    0.11   40880/41120       __correlator_MOD_cordet [13]
+                1.97    0.00   40880/41120       __matrixmod_MOD_cmatinv [14]
+-----------------------------------------------
+                0.01   25.85     240/240         __wavefunction_MOD_hpsi [2]
+[5]     54.3    0.01   25.85     240         __wavefunction_MOD_tpsi [5]
+                0.35   25.51   40320/40880       __wavefunction_MOD_vnpsi2.constprop.1 [4]
+-----------------------------------------------
+                0.00   21.29     240/240         __wavefunction_MOD_hpsi [2]
+[6]     44.7    0.00   21.29     240         __wavefunction_MOD_vnpsi2 [6]
+               20.61    0.20     240/240         __correlator_MOD_v6tot [7]
+                0.33    0.00     240/240         __correlator_MOD_calvop [16]
+                0.10    0.00     240/41120       __v6pot_MOD_hspot [8]
+                0.00    0.01     240/41120       __correlator_MOD_calfop [10]
+                0.01    0.00     240/41120       __wavefunction_MOD_hscor [12]
+                0.01    0.00     240/41120       __correlator_MOD_cordet [13]
+                0.01    0.00     240/41120       __matrixmod_MOD_cmatinv [14]
+                0.00    0.00     240/240         __correlator_MOD_getop1 [52]
+-----------------------------------------------
+               20.61    0.20     240/240         __wavefunction_MOD_vnpsi2 [6]
+[7]     43.7   20.61    0.20     240         __correlator_MOD_v6tot [7]
+                0.17    0.00     240/240         __correlator_MOD_opval [17]
+                0.02    0.00    6720/48080       __correlator_MOD_opmult.constprop.8 [18]
+                0.01    0.00     240/240         __correlator_MOD_calpot [22]
+-----------------------------------------------
+                0.10    0.00     240/41120       __wavefunction_MOD_vnpsi2 [6]
+               16.71    0.00   40880/41120       __wavefunction_MOD_vnpsi2.constprop.1 [4]
+[8]     35.3   16.81    0.00   41120         __v6pot_MOD_hspot [8]
+-----------------------------------------------
+                0.00   13.57       2/2           MAIN__ [1]
+[9]     28.5    0.00   13.57       2         __step_MOD_calcop [9]
+                0.00   13.57     160/560         __wavefunction_MOD_hpsi [2]
+                0.00    0.00    2880/3920        __estimator_MOD_addval [45]
+                0.00    0.00     320/320         __estimator_MOD_addvalc [51]
+                0.00    0.00     162/484         __stack_MOD_pop [49]
+                0.00    0.00     160/160         __density_MOD_getradii [55]
+                0.00    0.00     160/1167        __stack_MOD_copywalker [47]
+                0.00    0.00     160/480         __stack_MOD_push [50]
+-----------------------------------------------
+                0.00    0.01     240/41120       __wavefunction_MOD_vnpsi2 [6]
+                0.48    2.52   40880/41120       __wavefunction_MOD_vnpsi2.constprop.1 [4]
+[10]     6.3    0.48    2.53   41120         __correlator_MOD_calfop [10]
+                2.53    0.00 7425893/7425893     __matrixmod_MOD_eigenrs [11]
+-----------------------------------------------
+                2.53    0.00 7425893/7425893     __correlator_MOD_calfop [10]
+[11]     5.3    2.53    0.00 7425893         __matrixmod_MOD_eigenrs [11]
+-----------------------------------------------
+                0.01    0.00     240/41120       __wavefunction_MOD_vnpsi2 [6]
+                1.44    0.72   40880/41120       __wavefunction_MOD_vnpsi2.constprop.1 [4]
+[12]     4.6    1.45    0.72   41120         __wavefunction_MOD_hscor [12]
+                0.72    0.00 15543360/15543360     __jastrow_MOD_jastro_nucma [15]
+-----------------------------------------------
+                0.01    0.00     240/41120       __wavefunction_MOD_vnpsi2 [6]
+                1.92    0.11   40880/41120       __wavefunction_MOD_vnpsi2.constprop.1 [4]
+[13]     4.3    1.93    0.11   41120         __correlator_MOD_cordet [13]
+                0.11    0.00   41120/48080       __correlator_MOD_opmult.constprop.8 [18]
+-----------------------------------------------
+                0.01    0.00     240/41120       __wavefunction_MOD_vnpsi2 [6]
+                1.97    0.00   40880/41120       __wavefunction_MOD_vnpsi2.constprop.1 [4]
+[14]     4.2    1.98    0.00   41120         __matrixmod_MOD_cmatinv [14]
+-----------------------------------------------
+                0.72    0.00 15543360/15543360     __wavefunction_MOD_hscor [12]
+[15]     1.5    0.72    0.00 15543360         __jastrow_MOD_jastro_nucma [15]
+-----------------------------------------------
+                0.33    0.00     240/240         __wavefunction_MOD_vnpsi2 [6]
+[16]     0.7    0.33    0.00     240         __correlator_MOD_calvop [16]
+                0.00    0.00     240/48080       __correlator_MOD_opmult.constprop.8 [18]
+-----------------------------------------------
+                0.17    0.00     240/240         __correlator_MOD_v6tot [7]
+[17]     0.4    0.17    0.00     240         __correlator_MOD_opval [17]
+-----------------------------------------------
+                0.00    0.00     240/48080       __correlator_MOD_calvop [16]
+                0.02    0.00    6720/48080       __correlator_MOD_v6tot [7]
+                0.11    0.00   41120/48080       __correlator_MOD_cordet [13]
+[18]     0.3    0.13    0.00   48080         __correlator_MOD_opmult.constprop.8 [18]
+-----------------------------------------------
+                0.00    0.07       1/1           MAIN__ [1]
+[19]     0.1    0.00    0.07       1         __jastrow_MOD_jasinit [19]
+                0.00    0.07       1/1           __jastrow_MOD_jasinit_nucma [20]
+                0.00    0.00      15/29          __mympi_MOD_bcastr1 [64]
+                0.00    0.00       2/8112        __mympi_MOD_myrank [43]
+-----------------------------------------------
+                0.00    0.07       1/1           __jastrow_MOD_jasinit [19]
+[20]     0.1    0.00    0.07       1         __jastrow_MOD_jasinit_nucma [20]
+                0.07    0.00       1/1           __nucma_MOD_nmfts [21]
+-----------------------------------------------
+                0.07    0.00       1/1           __jastrow_MOD_jasinit_nucma [20]
+[21]     0.1    0.07    0.00       1         __nucma_MOD_nmfts [21]
+                0.00    0.00    8002/8002        __nucma_MOD_vpot_op [44]
+                0.00    0.00       2/8112        __mympi_MOD_myrank [43]
+-----------------------------------------------
+                0.01    0.00     240/240         __correlator_MOD_v6tot [7]
+[22]     0.0    0.01    0.00     240         __correlator_MOD_calpot [22]
+-----------------------------------------------
+                0.01    0.00     160/160         __step_MOD_step1 [3]
+[23]     0.0    0.01    0.00     160         __step_MOD_spinnorm [23]
+-----------------------------------------------
+                0.00    0.00    8002/16029       __nucma_MOD_vpot_op [44]
+                0.00    0.00    8027/16029       __v6pot_MOD_v6potinit [95]
+[24]     0.0    0.00    0.00   16029         pot_ [24]
+-----------------------------------------------
+                0.00    0.00       1/1           __v6pot_MOD_v6potinit [95]
+[25]     0.0    0.00    0.00       1         setpot_ [25]
+-----------------------------------------------
+                0.00    0.00     160/9120        __step_MOD_step1 [3]
+                0.00    0.00    8960/9120        __step_MOD_hspropvmc [58]
+[42]     0.0    0.00    0.00    9120         __random_MOD_gaussian [42]
+-----------------------------------------------
+                0.00    0.00       1/8112        __step_MOD_setstep [94]
+                0.00    0.00       2/8112        __jastrow_MOD_jasinit [19]
+                0.00    0.00       2/8112        __wavefunction_MOD_setpsi [96]
+                0.00    0.00       2/8112        __nucma_MOD_nmfts [21]
+                0.00    0.00       3/8112        __estimator_MOD_update [75]
+                0.00    0.00     100/8112        MAIN__ [1]
+                0.00    0.00    8002/8112        __v6pot_MOD_v6potinit [95]
+[43]     0.0    0.00    0.00    8112         __mympi_MOD_myrank [43]
+-----------------------------------------------
+                0.00    0.00    8002/8002        __nucma_MOD_nmfts [21]
+[44]     0.0    0.00    0.00    8002         __nucma_MOD_vpot_op [44]
+                0.00    0.00    8002/16029       pot_ [24]
+-----------------------------------------------
+                0.00    0.00     320/3920        __step_MOD_step1 [3]
+                0.00    0.00     720/3920        MAIN__ [1]
+                0.00    0.00    2880/3920        __step_MOD_calcop [9]
+[45]     0.0    0.00    0.00    3920         __estimator_MOD_addval [45]
+-----------------------------------------------
+                0.00    0.00     320/2673        __step_MOD_step1 [3]
+                0.00    0.00    2353/2673        MAIN__ [1]
+[46]     0.0    0.00    0.00    2673         __random_MOD_randn [46]
+-----------------------------------------------
+                0.00    0.00     160/1167        MAIN__ [1]
+                0.00    0.00     160/1167        __step_MOD_calcop [9]
+                0.00    0.00     367/1167        __step_MOD_step1 [3]
+                0.00    0.00     480/1167        __stack_MOD_pop [49]
+[47]     0.0    0.00    0.00    1167         __stack_MOD_copywalker [47]
+-----------------------------------------------
+                0.00    0.00       4/486         MAIN__ [1]
+                0.00    0.00     482/486         __step_MOD_step1 [3]
+[48]     0.0    0.00    0.00     486         __mympi_MOD_amaboss [48]
+-----------------------------------------------
+                0.00    0.00     160/484         MAIN__ [1]
+                0.00    0.00     162/484         __step_MOD_calcop [9]
+                0.00    0.00     162/484         __step_MOD_step1 [3]
+[49]     0.0    0.00    0.00     484         __stack_MOD_pop [49]
+                0.00    0.00     480/1167        __stack_MOD_copywalker [47]
+-----------------------------------------------
+                0.00    0.00     160/480         MAIN__ [1]
+                0.00    0.00     160/480         __step_MOD_calcop [9]
+                0.00    0.00     160/480         __step_MOD_step1 [3]
+[50]     0.0    0.00    0.00     480         __stack_MOD_push [50]
+-----------------------------------------------
+                0.00    0.00     320/320         __step_MOD_calcop [9]
+[51]     0.0    0.00    0.00     320         __estimator_MOD_addvalc [51]
+-----------------------------------------------
+                0.00    0.00     240/240         __wavefunction_MOD_vnpsi2 [6]
+[52]     0.0    0.00    0.00     240         __correlator_MOD_getop1 [52]
+-----------------------------------------------
+                0.00    0.00     162/162         __step_MOD_step1 [3]
+[53]     0.0    0.00    0.00     162         __mympi_MOD_sharel [53]
+-----------------------------------------------
+                0.00    0.00       1/161         MAIN__ [1]
+                0.00    0.00     160/161         __step_MOD_step1 [3]
+[54]     0.0    0.00    0.00     161         __random_MOD_setrn [54]
+-----------------------------------------------
+                0.00    0.00     160/160         __step_MOD_calcop [9]
+[55]     0.0    0.00    0.00     160         __density_MOD_getradii [55]
+-----------------------------------------------
+                0.00    0.00     160/160         __step_MOD_step1 [3]
+[56]     0.0    0.00    0.00     160         __mympi_MOD_sharew [56]
+-----------------------------------------------
+                0.00    0.00     160/160         __step_MOD_step1 [3]
+[57]     0.0    0.00    0.00     160         __random_MOD_savern [57]
+-----------------------------------------------
+                0.00    0.00     160/160         __step_MOD_step1 [3]
+[58]     0.0    0.00    0.00     160         __step_MOD_hspropvmc [58]
+                0.00    0.00    8960/9120        __random_MOD_gaussian [42]
+-----------------------------------------------
+                0.00    0.00      90/90          MAIN__ [1]
+[59]     0.0    0.00    0.00      90         __mympi_MOD_barrier [59]
+-----------------------------------------------
+                0.00    0.00      82/82          MAIN__ [1]
+[60]     0.0    0.00    0.00      82         __mympi_MOD_nboss [60]
+-----------------------------------------------
+                0.00    0.00      80/80          MAIN__ [1]
+[61]     0.0    0.00    0.00      80         __mympi_MOD_movewalkers [61]
+-----------------------------------------------
+                0.00    0.00      80/80          MAIN__ [1]
+[62]     0.0    0.00    0.00      80         __random2_MOD_ran2 [62]
+-----------------------------------------------
+                0.00    0.00      35/35          MAIN__ [1]
+[63]     0.0    0.00    0.00      35         __mympi_MOD_nproc [63]
+-----------------------------------------------
+                0.00    0.00       4/29          __wavefunction_MOD_setpsi [96]
+                0.00    0.00      10/29          MAIN__ [1]
+                0.00    0.00      15/29          __jastrow_MOD_jasinit [19]
+[64]     0.0    0.00    0.00      29         __mympi_MOD_bcastr1 [64]
+-----------------------------------------------
+                0.00    0.00      20/20          MAIN__ [1]
+[65]     0.0    0.00    0.00      20         __estimator_MOD_addest [65]
+-----------------------------------------------
+                0.00    0.00      16/16          MAIN__ [1]
+[66]     0.0    0.00    0.00      16         __mympi_MOD_addallr1 [66]
+-----------------------------------------------
+                0.00    0.00       1/16          __wavefunction_MOD_setpsi [96]
+                0.00    0.00      15/16          MAIN__ [1]
+[67]     0.0    0.00    0.00      16         __mympi_MOD_bcasti1 [67]
+-----------------------------------------------
+                0.00    0.00       9/9           __estimator_MOD_update [75]
+[68]     0.0    0.00    0.00       9         __mympi_MOD_addallc1d [68]
+-----------------------------------------------
+                0.00    0.00       9/9           __estimator_MOD_update [75]
+[69]     0.0    0.00    0.00       9         __mympi_MOD_addallr1d [69]
+-----------------------------------------------
+                0.00    0.00       8/8           MAIN__ [1]
+[70]     0.0    0.00    0.00       8         __stack_MOD_numstack [70]
+-----------------------------------------------
+                0.00    0.00       7/7           MAIN__ [1]
+[71]     0.0    0.00    0.00       7         __mympi_MOD_addalli1 [71]
+-----------------------------------------------
+                0.00    0.00       5/5           MAIN__ [1]
+[72]     0.0    0.00    0.00       5         __mympi_MOD_bcastl1 [72]
+-----------------------------------------------
+                0.00    0.00       4/4           MAIN__ [1]
+[73]     0.0    0.00    0.00       4         __mympi_MOD_addallc1 [73]
+-----------------------------------------------
+                0.00    0.00       3/3           MAIN__ [1]
+[74]     0.0    0.00    0.00       3         __estimator_MOD_resstring [74]
+-----------------------------------------------
+                0.00    0.00       3/3           MAIN__ [1]
+[75]     0.0    0.00    0.00       3         __estimator_MOD_update [75]
+                0.00    0.00       9/9           __mympi_MOD_addallr1d [69]
+                0.00    0.00       9/9           __mympi_MOD_addallc1d [68]
+                0.00    0.00       3/3           __mympi_MOD_addalli1d [77]
+                0.00    0.00       3/8112        __mympi_MOD_myrank [43]
+-----------------------------------------------
+                0.00    0.00       3/3           MAIN__ [1]
+[76]     0.0    0.00    0.00       3         __estimator_MOD_zerest [76]
+-----------------------------------------------
+                0.00    0.00       3/3           __estimator_MOD_update [75]
+[77]     0.0    0.00    0.00       3         __mympi_MOD_addalli1d [77]
+-----------------------------------------------
+                0.00    0.00       1/2           MAIN__ [1]
+                0.00    0.00       1/2           __wavefunction_MOD_setpsi [96]
+[78]     0.0    0.00    0.00       2         __mympi_MOD_bcasti1d [78]
+-----------------------------------------------
+                0.00    0.00       2/2           MAIN__ [1]
+[79]     0.0    0.00    0.00       2         __mympi_MOD_checkpop [79]
+-----------------------------------------------
+                0.00    0.00       2/2           MAIN__ [1]
+[80]     0.0    0.00    0.00       2         __step_MOD_writewtisto [80]
+-----------------------------------------------
+                0.00    0.00       1/1           __wavefunction_MOD_setpsi [96]
+[81]     0.0    0.00    0.00       1         __correlator_MOD_initcormod [81]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[82]     0.0    0.00    0.00       1         __estimator_MOD_setestnum [82]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[83]     0.0    0.00    0.00       1         __lattice_MOD_bestcubic [83]
+                0.00    0.00       1/1           __lattice_MOD_facecenteredcubic [84]
+-----------------------------------------------
+                0.00    0.00       1/1           __lattice_MOD_bestcubic [83]
+[84]     0.0    0.00    0.00       1         __lattice_MOD_facecenteredcubic [84]
+-----------------------------------------------
+                0.00    0.00       1/1           __wavefunction_MOD_setpsi [96]
+[85]     0.0    0.00    0.00       1         __mympi_MOD_bcasti3d [85]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[86]     0.0    0.00    0.00       1         __mympi_MOD_bcastr1d [86]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[87]     0.0    0.00    0.00       1         __mympi_MOD_done [87]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[88]     0.0    0.00    0.00       1         __mympi_MOD_gatheri1 [88]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[89]     0.0    0.00    0.00       1         __mympi_MOD_init0 [89]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[90]     0.0    0.00    0.00       1         __mympi_MOD_init1 [90]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[91]     0.0    0.00    0.00       1         __mympi_MOD_printmpilog [91]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[92]     0.0    0.00    0.00       1         __mympi_MOD_zerotimebal [92]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[93]     0.0    0.00    0.00       1         __stack_MOD_create [93]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[94]     0.0    0.00    0.00       1         __step_MOD_setstep [94]
+                0.00    0.00       1/8112        __mympi_MOD_myrank [43]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[95]     0.0    0.00    0.00       1         __v6pot_MOD_v6potinit [95]
+                0.00    0.00    8027/16029       pot_ [24]
+                0.00    0.00    8002/8112        __mympi_MOD_myrank [43]
+                0.00    0.00       1/1           setpot_ [25]
+-----------------------------------------------
+                0.00    0.00       1/1           MAIN__ [1]
+[96]     0.0    0.00    0.00       1         __wavefunction_MOD_setpsi [96]
+                0.00    0.00       4/29          __mympi_MOD_bcastr1 [64]
+                0.00    0.00       2/8112        __mympi_MOD_myrank [43]
+                0.00    0.00       1/16          __mympi_MOD_bcasti1 [67]
+                0.00    0.00       1/2           __mympi_MOD_bcasti1d [78]
+                0.00    0.00       1/1           __mympi_MOD_bcasti3d [85]
+                0.00    0.00       1/1           __correlator_MOD_initcormod [81]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+  [10] __correlator_MOD_calfop [77] __mympi_MOD_addalli1d [42] __random_MOD_gaussian
+  [22] __correlator_MOD_calpot [66] __mympi_MOD_addallr1  [46] __random_MOD_randn
+  [16] __correlator_MOD_calvop [69] __mympi_MOD_addallr1d [57] __random_MOD_savern
+  [13] __correlator_MOD_cordet [48] __mympi_MOD_amaboss   [54] __random_MOD_setrn
+  [52] __correlator_MOD_getop1 [59] __mympi_MOD_barrier   [47] __stack_MOD_copywalker
+  [81] __correlator_MOD_initcormod [67] __mympi_MOD_bcasti1 [93] __stack_MOD_create
+  [18] __correlator_MOD_opmult.constprop.8 [78] __mympi_MOD_bcasti1d [70] __stack_MOD_numstack
+  [17] __correlator_MOD_opval [85] __mympi_MOD_bcasti3d   [49] __stack_MOD_pop
+   [7] __correlator_MOD_v6tot [72] __mympi_MOD_bcastl1    [50] __stack_MOD_push
+  [55] __density_MOD_getradii [64] __mympi_MOD_bcastr1     [9] __step_MOD_calcop
+  [65] __estimator_MOD_addest [86] __mympi_MOD_bcastr1d   [58] __step_MOD_hspropvmc
+  [45] __estimator_MOD_addval [79] __mympi_MOD_checkpop   [94] __step_MOD_setstep
+  [51] __estimator_MOD_addvalc [87] __mympi_MOD_done      [23] __step_MOD_spinnorm
+  [74] __estimator_MOD_resstring [88] __mympi_MOD_gatheri1 [3] __step_MOD_step1
+  [82] __estimator_MOD_setestnum [89] __mympi_MOD_init0   [80] __step_MOD_writewtisto
+  [75] __estimator_MOD_update [90] __mympi_MOD_init1       [8] __v6pot_MOD_hspot
+  [76] __estimator_MOD_zerest [61] __mympi_MOD_movewalkers [95] __v6pot_MOD_v6potinit
+  [19] __jastrow_MOD_jasinit  [43] __mympi_MOD_myrank      [2] __wavefunction_MOD_hpsi
+  [20] __jastrow_MOD_jasinit_nucma [60] __mympi_MOD_nboss [12] __wavefunction_MOD_hscor
+  [15] __jastrow_MOD_jastro_nucma [63] __mympi_MOD_nproc  [96] __wavefunction_MOD_setpsi
+  [83] __lattice_MOD_bestcubic [91] __mympi_MOD_printmpilog [5] __wavefunction_MOD_tpsi
+  [84] __lattice_MOD_facecenteredcubic [53] __mympi_MOD_sharel [6] __wavefunction_MOD_vnpsi2
+  [14] __matrixmod_MOD_cmatinv [56] __mympi_MOD_sharew     [4] __wavefunction_MOD_vnpsi2.constprop.1
+  [11] __matrixmod_MOD_eigenrs [92] __mympi_MOD_zerotimebal [24] pot_
+  [73] __mympi_MOD_addallc1   [21] __nucma_MOD_nmfts      [25] setpot_
+  [68] __mympi_MOD_addallc1d  [44] __nucma_MOD_vpot_op
+  [71] __mympi_MOD_addalli1   [62] __random2_MOD_ran2

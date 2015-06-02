@@ -1,0 +1,18 @@
+\section*{Introduction}
+Solving the Schr\"odinger equation for many-body nuclear systems gets difficult as the number of particles increases and as the potential term in the Hamiltonian gets more complicated. To overcome this we can use Monte Carlo methods. These methods require a good nuclear Hamiltonian and a good trial wave function. One of the things that makes it difficult to get a good nuclear Hamiltonian is the spin dependance. Another thing that makes them difficult to obtain is the little understanding that we have of the strong nuclear force, which is responsible for the binding together of quarks to form nucleons as well as binding nucleons together to form nuclei. Since we cannot come up with exact expressions for these strong force interactions we use phenomenological methods to obtain the potentials. The usual Hamiltonians come from the Argonne and Urbana potentials \cite{wiringa1984, muller1981}. The Hamiltonians that we use are of the form
+\begin{equation}
+  H=\sum\limits_{i=1}^{A} \frac{\mathbf{p}^2}{2m} + V,
+\end{equation}
+where $V$ takes the form
+\begin{equation}
+  V = \sum\limits_{i<j}^{A} \sum\limits_{p} v_{p}(r_{ij}) \mathcal{O}^{(p)}_{ij}.
+\end{equation}
+For our purposes $p$ will run from $1-6$ and the $\mathcal{O}^{(p)}$ are given by 1, $\mathbf{\sigma}_i \cdot \mathbf{\sigma}_j$, $3\mathbf{\sigma}_i \cdot \hat{r}_{ij}\mathbf{\sigma}_j \cdot \hat{r}_{ij} - \mathbf{\sigma}_i \cdot \mathbf{\sigma}_j$, and the same things multiplied by $\mathbf{\tau}_i \cdot \mathbf{\tau}_j$. More detail can be found in \cite{schmidt1999}. This Hamiltonian is then used in the Schr\"odinger equation
+\begin{equation}
+  i\frac{\partial \Psi(R,S,t)}{\partial t} = H\Psi(R,S,t)
+\end{equation}
+to solve for the ground state energy and wavefunction for particular nuclear systems. The two nuclear systems that we typically study are atomic nuclei and nuclear matter.
+
+In preparation for using and modifying the current Auxiliary Field Diffusion Monte Carlo (AFDMC) code \cite{schmidt1999,gandolfi2014} I have used Variational Monte Carlo (VMC) and Diffusion Monte Carlo (DMC) as described in \cite{foulkes2001,kosztin1996} to solve the quantum harmonic oscillator(QHO) and the similar problem with an $x^4$ potential. I will first describe these two Monte Carlo methods in a general form, and then I will apply the DMC method to the QHO.
+
+
