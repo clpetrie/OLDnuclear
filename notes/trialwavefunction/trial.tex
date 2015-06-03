@@ -7,8 +7,10 @@
 \usepackage{color}
 
 %My commands
-\newcommand{\Oopij}{\mathcal{O}^p_{ij}}
-\newcommand{\Oopkl}{\mathcal{O}^p_{kl}}
+\newcommand{\Oi}{\mathcal{O}_{i}}
+\newcommand{\Oij}{\mathcal{O}_{ij}}
+\newcommand{\Oijp}{\mathcal{O}^p_{ij}}
+\newcommand{\Oklp}{\mathcal{O}^p_{kl}}
 \newcommand{\ket}[1]{\left| #1 \right>}
 \newcommand{\bra}[1]{\left< #1 \right|}
 \newcommand{\braket}[2]{\left< #1 | #2 \right>}
@@ -19,6 +21,9 @@
 \newcommand{\sigmaj}{\bm{\sigma}_j}
 \newcommand{\tauij}{\taui \cdot \tauj}
 \newcommand{\sigmaij}{\sigmai \cdot \sigmaj}
+\newcommand{\mycolor}[1]{\textcolor{red}{#1}}
+\newcommand{\longsi}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_A}
+\newcommand{\longsij}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_{j-1}, s', s_{j+1}, \ldots ,s_A}
 
 \title{Calculating the Trial Wave Function for AFDMC}
 \author{Cody Petrie}
@@ -29,18 +34,18 @@
 \section{Trial Wave Function}
 The trial wave function for AFDMC must be simple to evaluate. In the past the simple Slater determinant with pair-wise correlations has been used as shown in \cite{gandolfi2014},
 \begin{equation}
-  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oopij \right] \ket{\Phi},
+  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oijp \right] \ket{\Phi},
   \label{equ:simpletrial}
 \end{equation}
-where the $\Oopij$'s are $\tauij$, $\sigmaij$, and $t_{ij}\tauij$, where $t_{ij} = 3\sigmai \cdot \hat{r}_{ij} \sigmaj \cdot \hat{r}_{ij}-\sigmaij$. \textit{\textcolor{blue}{Why weren't $\sigmaij$ and $t_{ij}$ used in this paper?}}
+where the $\Oijp$'s are $\tauij$, $\sigmaij$, and $t_{ij}\tauij$, where $t_{ij} = 3\sigmai \cdot \hat{r}_{ij} \sigmaj \cdot \hat{r}_{ij}-\sigmaij$. \textit{\mycolor{Why weren't $\sigmaij$ and $t_{ij}$ used in this paper?}}
 
 My goal is to add the additional independent pair correlations.
 \begin{equation}
-  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oopij + \sum_{i<j}\sum_{k<l}\sum_p f_p(r_{ij})\Oopij f_p(r_{kl})\Oopkl \right] \ket{\Phi},
+  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oijp + \sum_{i<j}\sum_{k<l}\sum_p f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp \right] \ket{\Phi},
 \end{equation}
 
 \section{Evaluation the Trial Wave Function}
-To understand how to to this I'm going to just assume that $\Oopij$ only contains the term $\sigmaij$ and I'll start by looking at the trial wave function, equation~\ref{equ:simpletrial}, with only the linear term. So now
+To understand how to to this I'm going to just assume that $\Oijp$ only contains the term $\sigmaij$ and I'll start by looking at the trial wave function, equation~\ref{equ:simpletrial}, with only the linear term. So now
 \begin{equation}
   \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j} f_1(r_{ij})\sigmaij \right] \ket{\Phi}.
 \end{equation}
@@ -86,7 +91,65 @@ For example if we were computing the determinant of $S'_{ij} = \braket{k}{r_i,s'
 \begin{equation}
   S^{-1}_{jk}S'_{ki} = \sum_{s=1}^4 \left(\sum_k S^{-1}_{jk} \braket{k}{r_i,s}\right) \left(\braket{s}{s_i}\right) = \sum_{s=1}^4 \mathrm{sxz(s,i,j)} \braket{s}{s_i}.
 \end{equation}
-\textcolor{blue}{\textit{Is this right?}}
+\mycolor{Is this right?}
+
+I have looked at how to calculate the trial wave function with a correlation operator in the middle now lets look at how to do it with 1 and 2-body spin-isospin operators in the middle. Here I am mostly filling in gaps in Kevin Schmidt's writeup.
+
+\subsection{1-body spin-isospin operators}
+Here the idea is we want to calculate expectation values like
+\begin{equation}
+ \left< \sum_i \Oi \right> = \frac{\bra{\Phi} \sum\limits_i \Oi \ket{R,S}}{\braket{\Phi}{R,S}}.
+\end{equation}
+Now let's expand this the numerator term
+\begin{align}
+  \bra{\Phi} \sum_i \Oi \ket{R,S} &= \bra{\Phi} \sum_i \Oi \ket{R,s_1,\ldots,s_A} \\
+  &= \bra{\Phi} \sum_i\sum_{s=1}^4  \ketbra{s}{s} \Oi \ket{R,s_1,\ldots,s_A} \\
+  &= \bra{\Phi} \sum_i\sum_{s=1}^4  \bra{s}\Oi\ket{s_i} \ket{R,\longsi} \\
+  &= \bra{\Phi} \sum_i\sum_{s=1}^4 \alpha_{is} \ket{R,\longsi} \\
+  &= \sum_i\sum_{s=1}^4 \alpha_{is} \braket{\Phi}{R,\longsi} \\
+  &= \sum_i\sum_{s=1}^4 \alpha_{is} \mathrm{d1b(s,i)} \braket{\Phi}{RS},
+\end{align}
+where $\alpha_{is} = \bra{s} \Oi \ket{s_i}$ and $\mathrm{d1b(s,i)} = \braket{\Phi}{R,\longsi}/\braket{\Phi}{R,s_1,\ldots,s_A}$. Rearranging this we can get the expectation value
+\begin{equation}
+  \left< \sum_i \Oi \right> = \sum_i \sum_{s=1}^4 \alpha_{is}\mathrm{d1b(s,i)}.
+\end{equation}
+Notice that we have
+\begin{equation}
+  \mathrm{d1b(s,i) = sxz(s,i,i)}.
+\end{equation}
+\mycolor{I can't figure out why. Why is this? If it is easier to answer with regards to the d2b case then that works too.}
+
+\subsection{2-body spin-isospin operators}
+Here the idea is we want to calculate expectation values like
+\begin{equation}
+ \left< \sum_{i<j} \Oij \right> = \frac{\bra{\Phi} \sum\limits_{i<j} \Oij \ket{R,S}}{\braket{\Phi}{R,S}}.
+\end{equation}
+Now let's expand this the numerator term
+\begin{align}
+  \bra{\Phi} \sum_{i<j} \Oij \ket{R,S} &= \bra{\Phi} \sum_{i<j} \Oij \ket{R,s_1,\ldots,s_A} \\
+  &= \bra{\Phi} \sum_{i<j}\sum_{s=1}^4\sum_{s'=1}^4  \ket{s}\braket{s}{s'}\bra{s'} \Oij \ket{R,s_1,\ldots,s_A} \\
+  &= \bra{\Phi} \sum_{i<j}\sum_{s=1}^4\sum_{s'=1}^4  \bra{s,s'}\Oij\ket{s_i,s_j} \ket{R,\longsij} \\
+  &= \bra{\Phi} \sum_{i<j}\sum_{s=1}^4\sum_{s'=1}^4 \alpha_{ijs} \ket{R,\longsij} \\
+  &= \sum_{i<j}\sum_{s=1}^4\sum_{s'=1}^4 \alpha_{ijs} \braket{\Phi}{R,\longsij} \\
+  &= \sum_{i<j}\sum_{s=1}^4\sum_{s'=1}^4 \alpha_{ijs} \mathrm{d2b(s,s',ij)} \braket{\Phi}{RS},
+\end{align}
+where $\alpha_{ijs} = \bra{s,s'} \Oij \ket{s_i,s_j}$ and
+\begin{equation}
+  \mathrm{d2b(s,s',ij)} = \braket{\Phi}{R,\longsij}/\braket{\Phi}{R,s_1,\ldots,s_A}.
+\end{equation}
+Rearranging this we can get the expectation value
+\begin{equation}
+  \left< \sum_{ij} \Oij \right> = \sum_{ij=1}^{((A-1)A)/2}\sum_{s=1}^4\sum_{s'=1}^4 \alpha_{ijs}\mathrm{d2b(s,s',ij)},
+\end{equation}
+and where the sum, $\sum\limits_{ij}^{((A-1)A)/2}$ is essentially doing the same thing as $\sum\limits_{i=1}^{A-1}\sum\limits_{j=i+1}^{A}$ or $\sum\limits_{i<j}$.
+Notice again that we have
+\begin{equation}
+  \mathrm{d2b(s,s',ij)} = \mathrm{det} \begin{pmatrix}
+  \mathrm{sxz(s,i,i)} & \mathrm{sxz(s,i,j)} \\
+  \mathrm{sxz(s',j,i)} & \mathrm{sxz(s',j,j)} \end{pmatrix}
+  =\mathrm{sxz(s,i,i)sxz(s',j,j) - sxz(s,i,j)sxz(s',j,i)}.
+\end{equation}
+\mycolor{I can't figure out why. Why is this? This doesn't need answered, I'll probably understand when I see the reason for the d1b case.}
 
 \bibliographystyle{unsrt}
 \bibliography{../../papers/references.bib}
