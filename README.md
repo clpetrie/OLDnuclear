@@ -1,5 +1,5 @@
 # nuclear
-Here are some notes on how to do some stuff.
+Here are some notes on how to use git.
 
 git clone https://github.com/clpetrie/nuclear
 clone the archive
@@ -55,3 +55,6 @@ view all differences between the branches master and bugfix
 
 git diff --name-status master..bugfix
 show file names that are different between the branches master and bugfix
+
+git checkout ###
+checkout specific commit based on number
