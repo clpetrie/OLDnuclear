@@ -21,12 +21,12 @@
 \newcommand{\sigmaj}{\bm{\sigma}_j}
 \newcommand{\tauij}{\taui \cdot \tauj}
 \newcommand{\sigmaij}{\sigmai \cdot \sigmaj}
-\newcommand{\mycolor}[1]{\textcolor{red}{#1}}
+\newcommand{\mycolor}[1]{\textit{\textcolor{red}{#1}}}
 \newcommand{\longsi}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_A}
 \newcommand{\longsij}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_{j-1}, s', s_{j+1}, \ldots ,s_A}
 
 \title{Calculating the Trial Wave Function for AFDMC}
-\author{Cody Petrie}
+\author{Cody L. Petrie}
 
 \begin{document}
 \maketitle
@@ -37,7 +37,7 @@ The trial wave function for AFDMC must be simple to evaluate. In the past the si
   \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oijp \right] \ket{\Phi},
   \label{equ:simpletrial}
 \end{equation}
-where the $\Oijp$'s are $\tauij$, $\sigmaij$, and $t_{ij}\tauij$, where $t_{ij} = 3\sigmai \cdot \hat{r}_{ij} \sigmaj \cdot \hat{r}_{ij}-\sigmaij$. \textit{\mycolor{Why weren't $\sigmaij$ and $t_{ij}$ used in this paper?}}
+where the $\Oijp$'s are $\tauij$, $\sigmaij$, and $t_{ij}\tauij$, where $t_{ij} = 3\sigmai \cdot \hat{r}_{ij} \sigmaj \cdot \hat{r}_{ij}-\sigmaij$. \mycolor{Question 1: Why weren't $\sigmaij$ and $t_{ij}$ used in this paper?}
 
 My goal is to add the additional independent pair correlations.
 \begin{equation}
@@ -68,13 +68,13 @@ Now lets look at equation~\ref{equ:simpex} again for an example.
 \begin{align}
   & ~ ~ ~ \bra{RS} \left[ 1+f_1(r_{ij})\sigmaij \right] \ket{\Phi} \\
   &= \mathrm{det}(S) + f_1(r_{ij}) \bra{RS}\sigmaij\ket{\Phi} \\
-  &= \mathrm{det}(S) + f_1(r_{ij})\mathrm{det}(S')
+  &= \mathrm{det}(S) + f_1(r_{ij})\mathrm{det}(S'')
 \end{align}
-Here $S'$ is the updated matrix. It only has two columns different than $S$ and so we can get it's determinant of $S'$ easily once we have the determinant of $S$ by using the fact that
+Here $S''$ is the updated matrix. It only has two columns different than $S$ and so we can get it's determinant of $S''$ easily once we have the determinant of $S$ by using the fact that
 \begin{equation}
-  \mathrm{det}(S^{-1}_{ij} S'_{jk}) = \frac{\mathrm{det}(S'_{jk})}{\mathrm{det}(S_{ij})}.
+  \mathrm{det}(S^{-1}_{ij} S''_{jk}) = \frac{\mathrm{det}(S''_{jk})}{\mathrm{det}(S_{ij})}.
 \end{equation}
-When we solve for $\mathrm{det}(S)$ we finish solving for the inverse, $S^{-1}$ and the product $S^{-1}_{ij}S'_{jk}$ is $1$ on the diagonal and $0$ everywhere else except the two columns $i$ and $j$. This makes the $\mathrm{det}(S^{-1}_{ij}S'_{jk})$ easy to solve for since it is simply the determinant of the submatrix. Thus once we have $\mathrm{det}(S)$ it is easier to solve for $\mathrm{det}(S')$. All that is left is to do this over the pair loops and over each operator.
+When we solve for $\mathrm{det}(S)$ we finish solving for the inverse, $S^{-1}$ and the product $S^{-1}_{ij}S''_{jk}$ is $1$ on the diagonal and $0$ everywhere else except the two columns $i$ and $j$. This makes the $\mathrm{det}(S^{-1}_{ij}S''_{jk})$ easy to solve for since it is simply the determinant of the submatrix. Thus once we have $\mathrm{det}(S)$ it is easier to solve for $\mathrm{det}(S'')$. All that is left is to do this over the pair loops and over each operator.
 
 \section{Implimentation in the code}
 Now how is this implimented into the code. The element of the Slater martix that corresponds to the $k^{th}$ orbital and the $i^{th}$ particle is given by
@@ -87,13 +87,13 @@ Therefore it's convenient to precompute
 \begin{equation}
   \mathrm{sxz(s,i,j) = sxmallz(j,s,i)} = \sum_k S^{-1}_{jk} \braket{k}{r_i,s}.
 \end{equation}
-For example if we were computing the determinant of $S'_{ij} = \braket{k}{r_i,s'_i}$ where the $s'_i$ was changed is different from $s_i$ on the changed columns, then the product matrix could be computed as
+For example if we were computing the determinant of $S''_{ij} = \braket{k}{r_i,s'_i}$ where the $s'_i$ was changed is different from $s_i$ on the changed columns, then the product matrix could be computed as
 \begin{equation}
-  S^{-1}_{jk}S'_{ki} = \sum_{s=1}^4 \left(\sum_k S^{-1}_{jk} \braket{k}{r_i,s}\right) \left(\braket{s}{s_i}\right) = \sum_{s=1}^4 \mathrm{sxz(s,i,j)} \braket{s}{s_i}.
+  S^{-1}_{jk}S''_{ki} = \sum_{s=1}^4 \left(\sum_k S^{-1}_{jk} \braket{k}{r_i,s}\right) \left(\braket{s}{s_i}\right) = \sum_{s=1}^4 \mathrm{sxz(s,i,j)} \braket{s}{s_i}.
 \end{equation}
-\mycolor{Is this right?}
+\mycolor{Question 2: Is this how we use sxz?}
 
-I have looked at how to calculate the trial wave function with a correlation operator in the middle now lets look at how to do it with 1 and 2-body spin-isospin operators in the middle. Here I am mostly filling in gaps in Kevin Schmidt's writeup.
+I have looked at how to calculate the trial wave function with a correlation operator in the middle now lets look at how to do it with 1 and 2-body spin-isospin operators in the middle. Here I am mostly filling in gaps in my understanding of Kevin Schmidt's writeup.
 
 \subsection{1-body spin-isospin operators}
 Here the idea is we want to calculate expectation values like
@@ -117,7 +117,7 @@ Notice that we have
 \begin{equation}
   \mathrm{d1b(s,i) = sxz(s,i,i)}.
 \end{equation}
-\mycolor{I can't figure out why. Why is this? If it is easier to answer with regards to the d2b case then that works too.}
+\mycolor{Question 3: I can't figure out why. Why are these two equal? If it is easier to answer with regards to the d2b case then that works too.}
 
 \subsection{2-body spin-isospin operators}
 Here the idea is we want to calculate expectation values like
@@ -149,7 +149,10 @@ Notice again that we have
   \mathrm{sxz(s',j,i)} & \mathrm{sxz(s',j,j)} \end{pmatrix}
   =\mathrm{sxz(s,i,i)sxz(s',j,j) - sxz(s,i,j)sxz(s',j,i)}.
 \end{equation}
-\mycolor{I can't figure out why. Why is this? This doesn't need answered, I'll probably understand when I see the reason for the d1b case.}
+\mycolor{Also Questions 3: I can't figure out why. Why is this? This doesn't need answered, I'll probably understand when I see the reason for the d1b case.}
+
+\subsection{Inverse Update}
+Now in cases where we have two set's of operators like for example when we need to calculate the expectation value of the potential, there is the correlation operator and the potential operators. One of the operators is handled in the inner loop while the other is handeled in a more outer loop. We can include the second operator (set of operators) in the same way that the operators were included above except that we will now need to the inverse of the new Slater Matrix, $S'^{-1}$. To do this we need to update $\mathrm{sxz(s,i,j)}$.
 
 \bibliographystyle{unsrt}
 \bibliography{../../papers/references.bib}
