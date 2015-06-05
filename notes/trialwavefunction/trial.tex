@@ -9,6 +9,7 @@
 %My commands
 \newcommand{\Oi}{\mathcal{O}_{i}}
 \newcommand{\Oij}{\mathcal{O}_{ij}}
+\newcommand{\Okl}{\mathcal{O}_{kl}}
 \newcommand{\Oijp}{\mathcal{O}^p_{ij}}
 \newcommand{\Oklp}{\mathcal{O}^p_{kl}}
 \newcommand{\ket}[1]{\left| #1 \right>}
@@ -72,9 +73,9 @@ Now lets look at equation~\ref{equ:simpex} again for an example.
 \end{align}
 Here $S''$ is the updated matrix. It only has two columns different than $S$ and so we can get it's determinant of $S''$ easily once we have the determinant of $S$ by using the fact that
 \begin{equation}
-  \mathrm{det}(S^{-1}_{ij} S''_{jk}) = \frac{\mathrm{det}(S''_{jk})}{\mathrm{det}(S_{ij})}.
+  \mathrm{det}(S^{-1}_{ij} S''_{jk}) = \frac{\mathrm{det}(S''_{jk})}{\mathrm{det}(S_{ij})},
 \end{equation}
-When we solve for $\mathrm{det}(S)$ we finish solving for the inverse, $S^{-1}$ and the product $S^{-1}_{ij}S''_{jk}$ is $1$ on the diagonal and $0$ everywhere else except the two columns $i$ and $j$. This makes the $\mathrm{det}(S^{-1}_{ij}S''_{jk})$ easy to solve for since it is simply the determinant of the submatrix. Thus once we have $\mathrm{det}(S)$ it is easier to solve for $\mathrm{det}(S'')$. All that is left is to do this over the pair loops and over each operator.
+where there are two primes simply because there were two columns changed. When we solve for $\mathrm{det}(S)$ we finish solving for the inverse, $S^{-1}$ and the product $S^{-1}_{ij}S''_{jk}$ is $1$ on the diagonal and $0$ everywhere else except the two columns $i$ and $j$. This makes the $\mathrm{det}(S^{-1}_{ij}S''_{jk})$ easy to solve for since it is simply the determinant of the submatrix. Thus once we have $\mathrm{det}(S)$ it is easier to solve for $\mathrm{det}(S'')$. All that is left is to do this over the pair loops and over each operator.
 
 \section{Implimentation in the code}
 Now how is this implimented into the code. The element of the Slater martix that corresponds to the $k^{th}$ orbital and the $i^{th}$ particle is given by
@@ -152,7 +153,15 @@ Notice again that we have
 \mycolor{Also Questions 3: I can't figure out why. Why is this? This doesn't need answered, I'll probably understand when I see the reason for the d1b case.}
 
 \subsection{Inverse Update}
-Now in cases where we have two set's of operators like for example when we need to calculate the expectation value of the potential, there is the correlation operator and the potential operators. One of the operators is handled in the inner loop while the other is handeled in a more outer loop. We can include the second operator (set of operators) in the same way that the operators were included above except that we will now need to the inverse of the new Slater Matrix, $S'^{-1}$. To do this we need to update $\mathrm{sxz(s,i,j)}$.
+Now in cases where we have two set's of operators like for example when we need to calculate the expectation value of the potential, there is the correlation operator and the potential operators. One of the operators is handled in the inner loop while the other is handeled in a more outer loop. We can include the second operator (set of operators) in the same way that the operators were included above except that we will now need to the inverse of the new Slater Matrix, $S'^{-1}$. To do this we need to update $\mathrm{sxz(s,i,j)}$. For example assume we needed to get something like
+\begin{equation}
+  \bra{R,S}(\sum_{i<j}v_{ij})(1+\sum_{i<j}\sum_p \Oijp) \ket{\Phi},
+\end{equation}
+where the first operator is part of the potential and the second is the correlation operator. I have left off any operators that don't depend on the spin. Now let's look at a single set of pairs for only one of the $p$ operators. This would look like
+\begin{equation}
+  \bra{R,S} v_{ij}(1+\Okl) \ket{\Phi} = \mathrm{det}(S'') + \mathrm{det}(S''''),
+\end{equation}
+where the number of primes is the number of changed columns (unless $i or j$ was equal to $k or l$).
 
 \bibliographystyle{unsrt}
 \bibliography{../../papers/references.bib}
