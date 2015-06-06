@@ -31,8 +31,8 @@ uix
 1.0             # multiply A2pi_dd by this
 1               # lattice sum for potential
 0.16            # density
-4              # particle number
-1               # number of pup
+28              # particle number
+7               # number of pup
 0 0 0
 1 0 0
 -1 0 0
@@ -40,7 +40,7 @@ uix
 0 -1 0
 0 0 1
 0 0 -1
-1               # number of pdown
+7               # number of pdown
 0 0 0
 1 0 0
 -1 0 0
@@ -48,7 +48,7 @@ uix
 0 -1 0
 0 0 1
 0 0 -1
-1               # number of nup
+7               # number of nup
 0 0 0
 1 0 0
 -1 0 0
@@ -56,7 +56,7 @@ uix
 0 -1 0
 0 0 1
 0 0 -1
-1               # number of ndown
+7               # number of ndown
 0 0 0
 1 0 0
 -1 0 0
