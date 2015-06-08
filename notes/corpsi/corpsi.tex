@@ -1,0 +1,202 @@
+\documentclass[12pt]{extarticle}
+\usepackage[margin=1in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{color}
+\usepackage{fancyvrb}
+
+%My commands
+\newcommand{\Oi}{\mathcal{O}_{i}}
+\newcommand{\Oij}{\mathcal{O}_{ij}}
+\newcommand{\Okl}{\mathcal{O}_{kl}}
+\newcommand{\Oijp}{\mathcal{O}^p_{ij}}
+\newcommand{\Oklp}{\mathcal{O}^p_{kl}}
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\braket}[2]{\left< #1 | #2 \right>}
+\newcommand{\ketbra}[2]{\left| #1 \right> \left< #2 \right|}
+\newcommand{\taui}{\bm{\tau}_i}
+\newcommand{\tauj}{\bm{\tau}_j}
+\newcommand{\sigmai}{\bm{\sigma}_i}
+\newcommand{\sigmaj}{\bm{\sigma}_j}
+\newcommand{\tauij}{\taui \cdot \tauj}
+\newcommand{\sigmaij}{\sigmai \cdot \sigmaj}
+\newcommand{\mycolor}[1]{\textit{\textcolor{red}{#1}}}
+\newcommand{\longsi}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_A}
+\newcommand{\longsij}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_{j-1}, s', s_{j+1}, \ldots ,s_A}
+\newcommand{\bverb}{\begin{Verbatim}[frame=single]}
+\newcommand{\everb}{\end{Verbatim}}
+
+\title{Dissection of subroutine corpsi}
+\author{Cody L. Petrie}
+
+\begin{document}
+\maketitle
+
+The subroutine \texttt{corpsi} I believe stands for ``correlate psi" where psi is the trial wavefunction. I will post the code and try to explain what each section above the comments means.
+
+\bverb
+   subroutine corpsi(sp,d1b,d2b,d3b)
+\end{Verbatim}
+Here the \texttt{d1b, d2b,} and \texttt{d3b} are used to get expectation values like as so
+\begin{equation}
+  \left< \mathcal{O} \right> = \sum_i\sum_s \alpha_{is}\texttt{d1b(s,i)}.
+\end{equation}
+The other two are calculated in a similar manner. See my write up on the trial wave function to see details.
+
+\bverb
+   complex(kind=r8), intent(in) :: sp(:,:)
+   complex(kind=r8), intent(inout):: d1b(:,:),d2b(:,:,:),d3b(:,:,:,:)
+   complex(kind=r8) :: fij,f1,fijk
+   complex(kind=r8) :: detrat,sxzi(4,npart,npart,15)
+   complex(kind=r8) :: sxzj(4,npart,npart),d1,d2,d15(15)
+   complex(kind=r8) :: sx15(4,15,npart,npart),sx15j(4,15,npart)
+   complex(kind=r8) :: sx15j1(4,15,npart),sx15j2(4,15,npart)
+   complex(kind=r8) :: sx15k1(4,15,npart),sx15k2(4,15,npart)
+   complex(kind=r8) :: sxzi1(4,npart,npart),di1
+   complex(kind=r8) :: sxzj1(4,npart,npart),sxzj2(4,npart,npart)
+   complex(kind=r8) :: sxzk(4,npart,npart),dj1,dj2,dk
+   integer(kind=i4) :: i,j,ij,iop,is,it,js,k,ks,ijk
+   d1b=czero
+   d2b=czero
+   d3b=czero
+   call g1bval(d1b,sxz0,cone+fctau)
+   call g2bval(d2b,sxz0,cone+fctau)
+   call g3bval(d3b,sxz0,cone+fctau)
+\end{Verbatim}
+Most of this is just setup but \texttt{g1bval, g2bval,} and \texttt{g3bval} are subroutines used to calculate \texttt{d1b} etc. This part includes the detterminant of the unchanged Slater matrix.
+
+\bverb
+   do i=1,npart
+      sx15(:,:,:,i)=conjg(opmult(conjg(sxz0(:,i,:))))
+   enddo
+\end{Verbatim}
+The subroutine \texttt{opmult} operates on the spin components of a spinor with all 15 spin operators and returns the new spinor.
+\begin{equation}
+  \ket{s_i} \rightarrow \Oi\ket{s_i}
+\end{equation}
+Here the $\Oi$'s in order are 1-3 sx, sy, sz, 4-6 tx, ty, tz, 7-9 sx*(tx, ty, tz), 10-12 sy*(tx, ty, tz), 13-15 sz*(tx, ty, tz).
+
+\bverb
+   do i=1,npart
+      if (abs(ftau1(i)).le.0.0_r8) cycle
+      call sxzupdate(sxzj,d1,sxz0,i,sx15(:,6,:,i),sp(:,i))
+      f1=d1*0.25_r8*ftau1(i)
+      call g1bval(d1b,sxzj,f1)
+      call g2bval(d2b,sxzj,f1)
+      call g3bval(d3b,sxzj,f1)
+   enddo
+\end{Verbatim}
+Here somekind of correlation is being added, it looks like a correlation related to the tau operators. \texttt{sxzupdate} is updating the inverse (\texttt{sxz}) and \texttt{g1bval} and the other two are adding on their respective determinants.
+
+\bverb
+   ij=0
+   do i=1,npart-1
+      do iop=1,15
+         call sxzupdate(sxzi(:,:,:,iop),d15(iop),sxz0,i,sx15(:,iop,:,i),sp(:,i))
+      enddo
+      do j=i+1,npart
+         ij=ij+1
+         if (doft(ij)) then
+            do it=1,2
+               fij=ft(ij)
+               sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
+               call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:) &
+                  ,sp(:,j))
+               detrat=d15(3+it)*d2
+               fij=detrat*fij
+               call g1bval(d1b,sxzj,fij)
+               call g2bval(d2b,sxzj,fij)
+               call g3bval(d3b,sxzj,fij)
+            enddo
+         endif
+         if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
+            it=3
+            fij=ft(ij)
+            if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
+            if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
+            sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
+            call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
+            detrat=d15(3+it)*d2
+            fij=detrat*fij
+            call g1bval(d1b,sxzj,fij)
+            call g2bval(d2b,sxzj,fij)
+            call g3bval(d3b,sxzj,fij)
+         endif
+         if (dofs(ij)) then
+            do is=1,3
+               sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
+               do js=1,3
+                  call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
+                  detrat=d15(is)*d2
+                  fij=detrat*fs(is,js,ij)
+                  call g1bval(d1b,sxzj,fij)
+                  call g2bval(d2b,sxzj,fij)
+                  call g3bval(d3b,sxzj,fij)
+               enddo
+            enddo
+         endif
+         if (dofst(ij)) then
+            do it=1,3
+               do is=1,3
+                  sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3*is+it+3))))
+                  do js=1,3
+                     call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
+                        ,sx15j(:,3*js+it+3,:),sp(:,j))
+                     detrat=d15(3*is+it+3)*d2
+                     fij=detrat*fst(is,js,ij)
+                     call g1bval(d1b,sxzj,fij)
+                     call g2bval(d2b,sxzj,fij)
+                     call g3bval(d3b,sxzj,fij)
+                  enddo
+               enddo
+            enddo
+         endif
+      enddo
+   enddo
+   if (.not.dof3) return !skip 3-body correlation
+   do i=1,npart-2
+      do is=1,3
+         do it=1,3
+            call sxzupdate(sxzi1,di1,sxz0,i,sx15(:,3*is+it+3,:,i),sp(:,i))
+            do j=i+1,npart-1
+               sx15j(:,:,:)=conjg(opmult(conjg(sxzi1(:,j,:))))
+               do js=1,3
+                  call sxzupdate(sxzj1,dj1,sxzi1,j &
+                     ,sx15j(:,3*js+3+levi(1,it),:),sp(:,j))
+                  call sxzupdate(sxzj2,dj2,sxzi1,j &
+                     ,sx15j(:,3*js+3+levi(2,it),:),sp(:,j))
+                  do k=j+1,npart
+!maple ijk := simplify(sum((n-l)*(n-l-1)/2,l=1..i-1)+sum(n-l,l=i+1..j-1)+k-j);
+                     ijk=(i*(i-1)*(i-3*npart+4))/6 &
+                        +((npart-2)*(npart-1)*(i-1))/2-2 &
+                        +((2*npart-4-j+1)*(j-2))/2+k
+                     sx15k1(:,:,:)=conjg(opmult(conjg(sxzj1(:,k,:))))
+                     sx15k2(:,:,:)=conjg(opmult(conjg(sxzj2(:,k,:))))
+                     do ks=1,3
+                        call sxzupdate(sxzk,dk,sxzj1,k &
+                           ,sx15k1(:,3*ks+3+levi(2,it),:),sp(:,k))
+                        fijk=f3(is,js,ks,ijk)*di1*dj1*dk
+                        call g1bval(d1b,sxzk,fijk)
+                        call g2bval(d2b,sxzk,fijk)
+                        call g3bval(d3b,sxzk,fijk)
+                        call sxzupdate(sxzk,dk,sxzj2,k, &
+                           sx15k2(:,3*ks+3+levi(1,it),:),sp(:,k))
+                        fijk=-f3(is,js,ks,ijk)*di1*dj1*dk
+                        call g1bval(d1b,sxzk,fijk)
+                        call g2bval(d2b,sxzk,fijk)
+                        call g3bval(d3b,sxzk,fijk)
+                     enddo
+                  enddo
+               enddo
+            enddo
+         enddo
+      enddo
+   enddo
+   end subroutine corpsi
+\end{Verbatim}
+
+\end{document}
+
