@@ -1,0 +1,42 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{datatool}
+\usepackage{color}
+
+\newcommand{\sortitem}[2]{%
+  \DTLnewrow{list}%
+  \DTLnewdbentry{list}{label}{#1}%
+  \DTLnewdbentry{list}{description}{#2}%
+}
+
+\newenvironment{sortedlist}%
+{%
+  \DTLifdbexists{list}{\DTLcleardb{list}}{\DTLnewdb{list}}%
+}%
+{%
+  \DTLsort{label}{list}%
+  \begin{description}%
+    \DTLforeach*{list}{\theLabel=label,\theDesc=description}{%
+      \item[\theLabel] \theDesc
+    }%
+  \end{description}% 
+}
+
+\title{Notes on AFDMC Code}
+\author{Cody L. Petrie}
+
+\begin{document}
+\maketitle
+
+\section{Variables}
+\begin{sortedlist}
+  \sortitem{czero}{Complex zero, (0,0)}
+  \sortitem{ci}{$\sqrt{-1}$}
+  \sortitem{cone}{Complex one, (1,0)}
+  \sortitem{npart}{Particle number, read in from nuclear.dat}
+  \sortitem{detrat}{Ratio of determinants}
+\end{sortedlist}
+
+\end{document}

@@ -16,6 +16,7 @@
 20.0            # weight cut off
 8000            # table points for jastrow and potential
 11              # Bob's potential number
+11              # CODY added so it would run
 1.0             # central factor
 1.0             # tau factor
 1.0             # sigma factor
@@ -24,8 +25,8 @@
 1.0             # t tau factor
 0.0             # LS factor
 0.0             # LS tau tau factor
-1               # lattice sum for potential
-0.16            # density
+1               # lattice sum for potential (CODY tni)
+0.16            # densityi (CODY a2psc)
 4              # particle number
 1               # number of pup
 0 0 0

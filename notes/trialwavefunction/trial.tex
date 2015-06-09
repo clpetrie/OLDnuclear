@@ -92,6 +92,7 @@ Therefore it's convenient to precompute
 For example if we were computing the determinant of $S''_{ij} = \braket{k}{r_i,s'_i}$ where the $s'_i$ was changed is different from $s_i$ on the changed columns, then the product matrix could be computed as
 \begin{equation}
   S^{-1}_{jk}S''_{ki} = \sum_{s=1}^4 \left(\sum_k S^{-1}_{jk} \braket{k}{r_i,s}\right) \left(\braket{s}{s_i}\right) = \sum_{s=1}^4 \mathrm{sxz(s,i,j)} \braket{s}{s_i}.
+  \label{equ:usesxz}
 \end{equation}
 \mycolor{Question 2: Is this how we use sxz?}
 
@@ -154,7 +155,11 @@ Notice again that we have
   \mathrm{sxz(s',j,i)} & \mathrm{sxz(s',j,j)} \end{pmatrix}
   =\mathrm{sxz(s,i,i)sxz(s',j,j) - sxz(s,i,j)sxz(s',j,i)}.
 \end{equation}
-\mycolor{Also Questions 3: I can't figure out why. Why is this? This doesn't need answered, I'll probably understand when I see the reason for the d1b case.}
+You can see this if you notice that
+\begin{equation}
+  \mathrm{d2b(s,s',ij)} = \frac{\mathrm{det}(S''(s))}{\mathrm{det}(S)} = \mathrm{det}\left(S''(s)S^{-1}\right).
+\end{equation}
+Now comparing this to equation~\ref{equ:usesxz} and noting that since the two matricies only differ by columns $i$ and $j$, you can see that the determinant of the product,$\mathrm{d2b(s,s',ij)}$ , is just the determinant of the submatrix.
 
 \subsection{Inverse Update}
 Now in cases where we have two set's of operators like for example when we need to calculate the expectation value of the potential, there is the correlation operator and the potential operators. One of the operators is handled in the inner loop while the other is handeled in a more outer loop. We can include the second operator (set of operators) in the same way that the operators were included above except that we will now need the inverse of the new Slater Matrix, $S'^{-1}$. To do this we need to update $\mathrm{sxz(s,i,j)}$. The new $\mathrm{sxz}$ will be called $\mathrm{sxzi}$ and is shown here
