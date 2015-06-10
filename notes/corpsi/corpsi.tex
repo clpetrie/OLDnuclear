@@ -6,6 +6,8 @@
 \usepackage{bm}
 \usepackage{color}
 \usepackage{fancyvrb}
+\usepackage{verbatim}
+
 
 %My commands
 \newcommand{\Oi}{\mathcal{O}_{i}}
@@ -29,11 +31,20 @@
 \newcommand{\bverb}{\begin{Verbatim}[frame=single]}
 \newcommand{\everb}{\end{Verbatim}}
 
+\newenvironment{blockcode}
+  {\leavevmode\small\color{blue}\verbatim}
+  {\endverbatim}
+
 \title{Dissection of subroutine corpsi}
 \author{Cody L. Petrie}
 
 \begin{document}
 \maketitle
+
+\begin{blockcode}
+ij=0
+  do i=1,npart-1
+\end{blockcode}
 
 The subroutine \texttt{corpsi} I believe stands for ``correlate psi" where psi is the trial wavefunction. I will post the code and try to explain what each section above the comments means.
 
@@ -59,14 +70,26 @@ The other two are calculated in a similar manner. See my write up on the trial w
    complex(kind=r8) :: sxzj1(4,npart,npart),sxzj2(4,npart,npart)
    complex(kind=r8) :: sxzk(4,npart,npart),dj1,dj2,dk
    integer(kind=i4) :: i,j,ij,iop,is,it,js,k,ks,ijk
+
+\end{Verbatim}
+Declaration of variables.
+
+\bverb
    d1b=czero
    d2b=czero
    d3b=czero
+\end{Verbatim}
+Initialization of \texttt{d?b}.
+
+\bverb
    call g1bval(d1b,sxz0,cone+fctau)
    call g2bval(d2b,sxz0,cone+fctau)
    call g3bval(d3b,sxz0,cone+fctau)
 \end{Verbatim}
-Most of this is just setup but \texttt{g1bval, g2bval,} and \texttt{g3bval} are subroutines used to calculate \texttt{d1b} etc. This part includes the detterminant of the unchanged Slater matrix.
+\texttt{g?bval} are subroutines used to calculate \texttt{d?b}. This part looks like it is the uncorrelated part, the $1$ in
+\begin{equation}
+  1+\sum_{i<j}\sum_{p} f_p(r_{ij}) \Oijp
+\end{equation}
 
 \bverb
    do i=1,npart
@@ -89,7 +112,7 @@ Here the $\Oi$'s in order are 1-3 sx, sy, sz, 4-6 tx, ty, tz, 7-9 sx*(tx, ty, tz
       call g3bval(d3b,sxzj,f1)
    enddo
 \end{Verbatim}
-Here somekind of correlation is being added, it looks like a correlation related to the tau operators, maybe the tauz operator based on the 6 in \texttt{sx15(:,6,:,i)}. \texttt{sxzupdate} is updating the inverse (\texttt{sxz}) and \texttt{g1bval} and the other two are adding on their respective determinants.
+Here somekind of correlation is being added, it looks like a correlation related to the tau operators, maybe the tauz operator based on the 6 in \texttt{sx15(:,6,:,i)}. This is a one-body operator which is not what I'm looking at right now though. \texttt{sxzupdate} is updating the inverse (\texttt{sxz}) and \texttt{g1bval} and the other two are adding on their respective determinants.
 
 \bverb
    ij=0
@@ -99,7 +122,15 @@ Here somekind of correlation is being added, it looks like a correlation related
       enddo
       do j=i+1,npart
          ij=ij+1
+\end{Verbatim}
+Here \texttt{ij=0} just initialized \texttt{ij}, which is used to count which numbe rof particle pair we are on. The \texttt{i} and \texttt{j} loops are equivalent to the sums $\sum_{ij=1}^{((A-1)A)/2}$ or $\sum_{i<j}$.
+
+\bverb
          if (doft(ij)) then
+\end{Verbatim}
+This is some condition on whether the correlation should be done or not for each pair.
+
+\bverb
             do it=1,2
                fij=ft(ij)
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))

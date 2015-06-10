@@ -1,6 +1,11 @@
 # nuclear
 Here are some notes on how to use git.
 
+git add -A
+git commit -m 'comment here'
+git push
+Process to push all changes to git
+
 git clone https://github.com/clpetrie/nuclear
 clone the archive
 
