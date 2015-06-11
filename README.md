@@ -4,6 +4,7 @@ Here are some notes on how to use git.
 git add -A
 git commit -m 'comment here'
 git push
+git push origin master (for macbook)
 Process to push all changes to git
 
 git clone https://github.com/clpetrie/nuclear
