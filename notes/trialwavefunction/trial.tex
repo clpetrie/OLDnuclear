@@ -38,14 +38,15 @@ The trial wave function for AFDMC must be simple to evaluate. In the past the si
   \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oijp \right] \ket{\Phi},
   \label{equ:simpletrial}
 \end{equation}
-where the $\Oijp$'s are $\tauij$, $\sigmaij$, and $t_{ij}\tauij$, where $t_{ij} = 3\sigmai \cdot \hat{r}_{ij} \sigmaj \cdot \hat{r}_{ij}-\sigmaij$. \mycolor{Question 1: Why weren't $\sigmaij$ and $t_{ij}$ used in this paper?}
+where the $\Oijp$'s are $\tauij$, $\sigmaij$, and $t_{ij}\tauij$, where $t_{ij} = 3\sigmai \cdot \hat{r}_{ij} \sigmaj \cdot \hat{r}_{ij}-\sigmaij$. The $\sigmaij$ and $t_{ij}$ terms were not included in this paper because in this original paper they looked at the terms that included the most important physics.
 
 My goal is to add the additional independent pair correlations.
 \begin{equation}
-  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oijp + \sum_{i<j}\sum_{k<l}\sum_p f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp \right] \ket{\Phi},
+  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oijp + \sum_{i<j}\sum_{k<l}\sum_p f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp \right] \ket{\Phi}
 \end{equation}
+The triple sum is called the independent pair correlation term because the sum over $k<l$ does not include any pairs that include $i$ or $j$. For example, if $i=1$ and $j=2$ then we could include the $kl$ pairs of $34, 45,$ etc., but would not include the pairs $13, 25,$ etc.
 
-\section{Evaluation the Trial Wave Function}
+\section{Evaluation of the Trial Wave Function}
 To understand how to to this I'm going to just assume that $\Oijp$ only contains the term $\sigmaij$ and I'll start by looking at the trial wave function, equation~\ref{equ:simpletrial}, with only the linear term. So now
 \begin{equation}
   \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j} f_1(r_{ij})\sigmaij \right] \ket{\Phi}.
@@ -91,6 +92,7 @@ Therefore it's convenient to precompute
 For example if we were computing the determinant of $S''_{ij} = \braket{k}{r_i,s'_i}$ where the $s'_i$ was changed is different from $s_i$ on the changed columns, then the product matrix could be computed as
 \begin{equation}
   S^{-1}_{jk}S''_{ki} = \sum_{s=1}^4 \left(\sum_k S^{-1}_{jk} \braket{k}{r_i,s}\right) \left(\braket{s}{s_i}\right) = \sum_{s=1}^4 \mathrm{sxz(s,i,j)} \braket{s}{s_i}.
+  \label{equ:usesxz}
 \end{equation}
 \mycolor{Question 2: Is this how we use sxz?}
 
@@ -114,11 +116,14 @@ where $\alpha_{is} = \bra{s} \Oi \ket{s_i}$ and $\mathrm{d1b(s,i)} = \braket{\Ph
 \begin{equation}
   \left< \sum_i \Oi \right> = \sum_i \sum_{s=1}^4 \alpha_{is}\mathrm{d1b(s,i)}.
 \end{equation}
-Notice that we have
-\begin{equation}
-  \mathrm{d1b(s,i) = sxz(s,i,i)}.
-\end{equation}
-\mycolor{Question 3: I can't figure out why. Why are these two equal? If it is easier to answer with regards to the d2b case then that works too.}
+Notice that when you match the notation we have
+\begin{align}
+  \mathrm{d1b(s,i)} &= \braket{\Phi}{R,\longsi} \braket{\Phi}{R,s_1,\ldots,s_A} \\
+  &= \sum_k \braket{k}{r_i,s} \braket{k}{r_i,s_i} \\
+  &= \sum_k S^{-1}_{ik} \braket{k}{r_i,s} \\
+  &= \mathrm{sxz(s,i,i)}.
+\end{align}
+%\mycolor{Question 3: I can't figure out why. Why are these two equal? If it is easier to answer with regards to the d2b case then that works too.}
 
 \subsection{2-body spin-isospin operators}
 Here the idea is we want to calculate expectation values like
@@ -150,10 +155,31 @@ Notice again that we have
   \mathrm{sxz(s',j,i)} & \mathrm{sxz(s',j,j)} \end{pmatrix}
   =\mathrm{sxz(s,i,i)sxz(s',j,j) - sxz(s,i,j)sxz(s',j,i)}.
 \end{equation}
-\mycolor{Also Questions 3: I can't figure out why. Why is this? This doesn't need answered, I'll probably understand when I see the reason for the d1b case.}
+You can see this if you notice that
+\begin{equation}
+  \mathrm{d2b(s,s',ij)} = \frac{\mathrm{det}(S''(s))}{\mathrm{det}(S)} = \mathrm{det}\left(S''(s)S^{-1}\right).
+\end{equation}
+Now comparing this to equation~\ref{equ:usesxz} and noting that since the two matricies only differ by columns $i$ and $j$, you can see that the determinant of the product,$\mathrm{d2b(s,s',ij)}$ , is just the determinant of the submatrix.
 
 \subsection{Inverse Update}
-Now in cases where we have two set's of operators like for example when we need to calculate the expectation value of the potential, there is the correlation operator and the potential operators. One of the operators is handled in the inner loop while the other is handeled in a more outer loop. We can include the second operator (set of operators) in the same way that the operators were included above except that we will now need to the inverse of the new Slater Matrix, $S'^{-1}$. To do this we need to update $\mathrm{sxz(s,i,j)}$. For example assume we needed to get something like
+Now in cases where we have two set's of operators like for example when we need to calculate the expectation value of the potential, there is the correlation operator and the potential operators. One of the operators is handled in the inner loop while the other is handeled in a more outer loop. We can include the second operator (set of operators) in the same way that the operators were included above except that we will now need the inverse of the new Slater Matrix, $S'^{-1}$. To do this we need to update $\mathrm{sxz(s,i,j)}$. The new $\mathrm{sxz}$ will be called $\mathrm{sxzi}$ and is shown here
+\begin{equation}
+  \mathrm{sxzi(s,n,m)} = \sum_k S'^{-1}_{mk}S'_{kn}(s),
+\end{equation}
+where
+\begin{equation}
+  S'_{kn}(s) = \begin{cases}
+    \braket{k}{r_m,s} & n \neq i \\
+    \bra{k} \Oi \ket{r_i,s} & n=i.
+  \end{cases}
+\end{equation}
+
+
+
+
+
+
+For example assume we needed to get something like
 \begin{equation}
   \bra{R,S}(\sum_{i<j}v_{ij})(1+\sum_{i<j}\sum_p \Oijp) \ket{\Phi},
 \end{equation}
@@ -161,7 +187,7 @@ where the first operator is part of the potential and the second is the correlat
 \begin{equation}
   \bra{R,S} v_{ij}(1+\Okl) \ket{\Phi} = \mathrm{det}(S'') + \mathrm{det}(S''''),
 \end{equation}
-where the number of primes is the number of changed columns (unless $i or j$ was equal to $k or l$).
+where the number of primes is the number of changed columns (unless $i$ or $j$ was equal to $k$ or $l$).
 
 \bibliographystyle{unsrt}
 \bibliography{../../papers/references.bib}

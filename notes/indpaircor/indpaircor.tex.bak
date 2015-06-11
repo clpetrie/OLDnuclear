@@ -1,0 +1,229 @@
+\documentclass[12pt]{extarticle}
+\usepackage[margin=1in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{color}
+\usepackage{fancyvrb}
+
+
+%My commands
+\newcommand{\Oi}{\mathcal{O}_{i}}
+\newcommand{\Oij}{\mathcal{O}_{ij}}
+\newcommand{\Okl}{\mathcal{O}_{kl}}
+\newcommand{\Oijp}{\mathcal{O}^p_{ij}}
+\newcommand{\Oklp}{\mathcal{O}^p_{kl}}
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\braket}[2]{\left< #1 | #2 \right>}
+\newcommand{\ketbra}[2]{\left| #1 \right> \left< #2 \right|}
+\newcommand{\taui}{\bm{\tau}_i}
+\newcommand{\tauj}{\bm{\tau}_j}
+\newcommand{\sigmai}{\bm{\sigma}_i}
+\newcommand{\sigmaj}{\bm{\sigma}_j}
+\newcommand{\tauij}{\taui \cdot \tauj}
+\newcommand{\sigmaij}{\sigmai \cdot \sigmaj}
+\newcommand{\mycolor}[1]{\textit{\textcolor{red}{#1}}}
+\newcommand{\longsi}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_A}
+\newcommand{\longsij}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_{j-1}, s', s_{j+1}, \ldots ,s_A}
+
+\newenvironment{blockcode}
+  {\leavevmode\small\color{blue}\verbatim}
+  {\endverbatim}
+
+\title{Adding independent pair correlations to code}
+\author{Cody L. Petrie}
+
+\begin{document}
+\maketitle
+
+\section{Questions}
+\begin{enumerate}
+  \item{Would you please check the red notes I have made and make sure that I am understanding those parts correctly?}
+  \item{This is the simplest way I could think of adding in the independent pair correlations. Is this too dumb of a way or is this what you were thinking?}
+\end{enumerate}
+
+\section{Independent pair correlations}
+Currently the correlated trial wave function looks like
+\begin{equation}
+  \Psi_T = \bra{R,S} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1 + \sum_{i<j}\sum_p f_p(r_{ij}) \Oijp \right] \ket{\Phi}.
+\end{equation}
+The sum term is only the linear term of the correlation. I plan to add the next term. It is called the independent pair correlation term because the it includes the pairs that are summed over in the linear term but each of those is multiplied by a sum over all of the other terms that don't involve particles $i$ or $j$. With the independent pair correlations the correlated trial wave function looks like this.
+\begin{equation}
+  \Psi_T = \bra{R,S} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1 + \sum_{i<j}\sum_p f_p(r_{ij}) \Oijp + \sum_p\sum_{i<j}\sum\limits_{\substack{k<l\\k,l \ne i,j}} f_p(r_{ij})\Oijp f_p(r_{ij})\Oklp \right] \ket{\Phi}.
+\end{equation}
+
+\subsection{Old and new code for correlation}
+From what I can tell these correlations are primarily handled in the subroutine ``corpsi" in the file ``correlatorcart.f90". I will use the cartesian component version to simplify understanding. The black text represents code that is already in the program, red text is my notes to help me understand what the code is doing, and blue text represents pieces that I have added to include the independent pair terms, except I will leave the new subroutine black. The black is exactly what the code is in the version that I have right now.
+
+%,codes={\catcode`$=3\catcode`^=7\catcode`_=8}
+\begin{Verbatim}[commandchars=\\\{\}]
+ij=0
+do i=1,npart-1
+   do iop=1,15
+      call sxzupdate(sxzi(:,:,:,iop),d15(iop),sxz0,i,sx15(:,iop,:,i),sp(:,i))
+\textcolor{red}{This piece does all 15 updates for the ith particle. This is precomputed in an}
+\textcolor{red}{outerloop since it will be used repeatedly for the 39 inverse updates for the jth}
+\textcolor{red}{particles.}
+   enddo
+   do j=i+1,npart
+      ij=ij+1
+      if (doft(ij)) then
+         do it=1,2
+            fij=ft(ij)
+            sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
+            call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:) &
+               ,sp(:,j))
+\textcolor{red}{This uses sxzi(:,:,:,4-5) as the old sxz so it's doing the terms txi*txj tyi*tyj.}
+            detrat=d15(3+it)*d2
+            fij=detrat*fij
+            call g1bval(d1b,sxzj,fij)
+            call g2bval(d2b,sxzj,fij)
+            call g3bval(d3b,sxzj,fij)
+\color{blue}            call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
+         enddo
+      endif
+      if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
+         it=3
+         fij=ft(ij)
+         if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
+         if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
+         sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
+         call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
+\textcolor{red}{This uses sxzi(:,:,:,6) as the old sxz so it's doing tzi*tzj. Why is this done}
+\textcolor{red}{seperately from tx and ty? I assume it as to do with doftpp and doftnn but I don't}
+\textcolor{red}{know what those are.}
+         detrat=d15(3+it)*d2
+         fij=detrat*fij
+         call g1bval(d1b,sxzj,fij)
+         call g2bval(d2b,sxzj,fij)
+         call g3bval(d3b,sxzj,fij)
+\color{blue}        call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
+      endif
+      if (dofs(ij)) then
+         do is=1,3
+            sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
+            do js=1,3
+               call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
+\textcolor{red}{Here since the old sxz is sxz(:,:,:,is) where is and js both go from 1 to 3 this}
+\textcolor{red}{is doing the sxi*(sxj+syj+szj), syi*(sxj+syj+szj), and szi*(sxj+syj+szj) terms.}
+\textcolor{red}{There are 9 total here.}
+               detrat=d15(is)*d2
+               fij=detrat*fs(is,js,ij)
+               call g1bval(d1b,sxzj,fij)
+               call g2bval(d2b,sxzj,fij)
+               call g3bval(d3b,sxzj,fij)
+\color{blue}               call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
+            enddo
+         enddo
+      endif
+      if (dofst(ij)) then
+         do it=1,3
+            do is=1,3
+               sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3*is+it+3))))
+               do js=1,3
+                  call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
+                     ,sx15j(:,3*js+it+3,:),sp(:,j))
+\textcolor{red}{Since the old sxz is sxzi(:,:,:,3*is+it+3) (giving 7,7,7,10,10,10,13,13,13,8,8,8,}
+\textcolor{red}{11,11,11,14,14,14,9,9,9,12,12,12,15,15,15) and since we use sx15(3*js+it+3)}
+\textcolor{red}{(giving 7,10,13,8,11,14,9,12,15) we will get the 27 pairs}
+\textcolor{red}{(sxi*txi+syi*txi+szi*txi)*(sxj*txj+syj*txj+szj*txj)),}
+\textcolor{red}{(sxi*tyi+syi*tyi+szi*tyi)*(sxj*tyj+syj*tyj+szj*tyj)),}
+\textcolor{red}{and (sxi*tzi+syi*tzi+szi*tzi)*(sxj*tzj+syj*tzj+szj*tzj)).}
+                  detrat=d15(3*is+it+3)*d2
+                  fij=detrat*fst(is,js,ij)
+                  call g1bval(d1b,sxzj,fij)
+                  call g2bval(d2b,sxzj,fij)
+                  call g3bval(d3b,sxzj,fij)
+\color{blue}                  call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
+               enddo
+            enddo
+         enddo
+      endif
+   enddo
+enddo
+
+\color{red}Where the new subroutine is
+
+subroutine corindpair(sp,sxz0,sxzk,i,j,d1b,d2b,d3b
+complex(kind=r8), intent(in) :: sp(:,:)
+complex(kind=r8), intent(inout) :: d1b(:,:),d2b(:,:,:),d3b(:,:,:,:)
+complex(kind=r8), intent(in) :: sxzk(:,:,:,:)
+complex(kind=i4), intent(in) :: i,j
+complex(kind=r8) :: fkl
+complex(kind=r8) :: detrat
+complex(kind=r8) :: sxzl(4,npart,npart),d2,d15(15)
+complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
+integer(kind=i4) :: k,l,kl,kop,ks,kt,ls
+kl=0
+do k=1,npart-1
+   if (k=i .or. k=j) cycle
+   do kop=1,15
+      call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxz0,k,sx15(:,kop,:,k),sp(:,k))
+   enddo
+   do l=k+1,npart
+      if (l=i .or. l=j) then
+      kl=kl+1
+      if (doft(kl)) then
+         do kt=1,2
+            fkl=ft(kl)
+            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
+            call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:) &
+               ,sp(:,l))
+            detrat=d15(3+kt)*d2
+            fkl=detrat*fkl
+            call g1bval(d1b,sxzl,fkl)
+            call g2bval(d2b,sxzl,fkl)
+            call g3bval(d3b,sxzl,fkl)
+         enddo
+      endif
+      if (doft(kl).or.doftpp(kl).or.doftnn(kl)) then
+         kt=3
+         fkl=ft(kl)
+         if (doftpp(kl)) fkl=fkl+0.25_r8*ftpp(kl)
+         if (doftnn(kl)) fkl=fkl+0.25_r8*ftnn(kl)
+         sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
+         call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
+         detrat=d15(3+kt)*d2
+         fkl=detrat*fkl
+         call g1bval(d1b,sxzl,fkl)
+         call g2bval(d2b,sxzl,fkl)
+         call g3bval(d3b,sxzl,fkl)
+      endif
+      if (dofs(kl)) then
+         do ks=1,3
+            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
+            do ls=1,3
+               call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
+               detrat=d15(ks)*d2
+               fkl=detrat*fs(ks,ls,kl)
+               call g1bval(d1b,sxzl,fkl)
+               call g2bval(d2b,sxzl,fkl)
+               call g3bval(d3b,sxzl,fkl)
+            enddo
+         enddo
+      endif
+      if (dofst(kl)) then
+         do kt=1,3
+            do ks=1,3
+               sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
+               do ls=1,3
+                  call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l &
+                     ,sx15l(:,3*ls+kt+3,:),sp(:,l))
+                  detrat=d15(3*ks+kt+3)*d2
+                  fkl=detrat*fst(ks,ls,kl)
+                  call g1bval(d1b,sxzl,fkl)
+                  call g2bval(d2b,sxzl,fkl)
+                  call g3bval(d3b,sxzl,fkl)
+               enddo
+            enddo
+         enddo
+      endif
+   enddo
+enddo
+endsubroutine corindpair
+\end{Verbatim}
+All I have done here is modified the code used above to put the $\sum\limits_{i<j}\sum\limits_p f_p(r_{ij}) \Oijp$ correlation such that is did the same thing but for the $k$'th and $l$'th pairs. I also made it cycle if $k=i$ or $k=j$ or $l=i$ or $l=j$. Then just before moving on to the next correlation I do each independent pair correlation but starting with the already changed martix sxzj where the $i$'th and $j$'th columns are changed.
+
+\end{document}
