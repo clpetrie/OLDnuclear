@@ -20,6 +20,13 @@
 \newcommand{\tauj}{\bm{\tau}_j}
 \newcommand{\sigmai}{\bm{\sigma}_i}
 \newcommand{\sigmaj}{\bm{\sigma}_j}
+\newcommand{\rij}{\hat{r}_{ij}}
+\newcommand{\sigmaia}{\sigma_{i\alpha}}
+\newcommand{\sigmaib}{\sigma_{i\beta}}
+\newcommand{\tauig}{\tau_{i\gamma}}
+\newcommand{\sigmaja}{\sigma_{j\alpha}}
+\newcommand{\sigmajb}{\sigma_{j\beta}}
+\newcommand{\taujg}{\tau_{j\gamma}}
 \newcommand{\tauij}{\taui \cdot \tauj}
 \newcommand{\sigmaij}{\sigmai \cdot \sigmaj}
 \newcommand{\mycolor}[1]{\textit{\textcolor{red}{#1}}}
@@ -188,6 +195,42 @@ where the first operator is part of the potential and the second is the correlat
   \bra{R,S} v_{ij}(1+\Okl) \ket{\Phi} = \mathrm{det}(S'') + \mathrm{det}(S''''),
 \end{equation}
 where the number of primes is the number of changed columns (unless $i$ or $j$ was equal to $k$ or $l$).
+
+\section{Breakup of correlation operator in Cartesian}
+Here I am going to show how we have broken up the correlation operator in Cartesian coordinates. The correlation operator is
+\begin{equation}
+  \sum_{p=1}^6 f^p(r_{ij}) \Oijp
+\end{equation}
+where here I'm going to drop the subscripts $ij$ and the argument $(r_{ij})$. Here I am going to break these up into Cartesian components. The first three are simple.
+\begin{equation}
+  \mathcal{O}^1 = f^1
+\end{equation}
+\begin{equation}
+  \mathcal{O}^2 = f^2 \taui \cdot \tauj = f^2 \tauig \taujg
+\end{equation}
+So the first piece of the breakup comes from the $\tauig \taujg$ term. The next two come from sums and terms so I will try to show those here.
+\begin{equation}
+  \mathcal{O}^3 = f^3\sigmai\cdot\sigmaj = f^3\sigmaia\sigmaja
+\end{equation}
+\begin{equation}
+  \mathcal{O}^5 = f^5 \left( 3\sigmai\cdot\rij\sigmaj\cdot\rij - \sigmai\cdot\sigmaj \right) = f^5 3\sigmaia r_\alpha\sigmajb r_\beta - f^5 \sigmaia\sigmaja
+\end{equation}
+\begin{align}
+  \mathcal{O}^3 + \mathcal{O}^5 &= f^3 \sigmaia\sigmaja + f^5 3\sigmaia r_\alpha\sigmajb r_\beta - f^5 \sigmaia\sigmaja \\
+  &= \sigmaia\sigmajb \left[ (f^3-f^5)\delta_{\alpha\beta} + f^5 3r_\alpha r_\beta \right]
+\end{align}
+This is the $\sigmaia\sigmajb$ breakup term. The last term is
+\begin{equation}
+  \mathcal{O}^4 = f^4\sigmai\cdot\sigmaj\taui\cdot\tauj = f^4\sigmaia\sigmaja\tauig\taujg
+\end{equation}
+\begin{equation}
+  \mathcal{O}^6 = f^6 \left( 3\sigmai\cdot\rij\sigmaj\cdot\rij - \sigmai\cdot\sigmaj \right)(\taui\cdot\tauj) = f^5 3\sigmaia r_\alpha\sigmajb r_\beta\tauig\taujg - f^5 \sigmaia\sigmaja\tauig\taujg
+\end{equation}
+\begin{align}
+  \mathcal{O}^4 + \mathcal{O}^6 &= f^4 \sigmaia\sigmaja\tauig\taujg + f^6 3\sigmaia r_\alpha\sigmajb r_\beta\tauig\taujg - f^6 \sigmaia\sigmaja\tauig\taujg \\
+  &= \sigmaia\sigmajb\tauig\taujg \left[ (f^4-f^6)\delta_{\alpha\beta} + f^6 3r_\alpha r_\beta \right].
+\end{align}
+The $\sigmaia\sigmajb\tauig\taujg$ term is the third term in the breakup. These three terms together require 39 operations. $\tauig\taujg$ requires 3, $\sigmaia\sigmajb$ 9, and $\sigmaia\sigmajb\tauig\taujg$ 27, where the $\alpha, \beta$ and $\gamma$ are summer over the three Cartesian coordinates and $i$ and $j$ refer to particles.
 
 \bibliographystyle{unsrt}
 \bibliography{../../papers/references.bib}
