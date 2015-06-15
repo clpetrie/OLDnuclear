@@ -7,7 +7,7 @@
 \usepackage{color}
 \usepackage{fancyvrb}
 \usepackage{verbatim}
-
+\usepackage{graphicx}
 
 %My commands
 \newcommand{\ket}[1]{\left| #1 \right>}
@@ -27,28 +27,186 @@
   \begin{enumerate}
     \item{Newton's Laws/Kinematics}
     \item{Energy}
-    \item{Momentum/Angular Momentum
+    \item{Momentum/Angular Momentum}
   \end{enumerate}
 
   \item{Lagrangian Mechanics}
   \begin{enumerate}
-    \item{Principle of Least Action}
+    \item{Calculous of Variations}
+    \item{Principle of Least Action/Lagranges Equation}
+    \item{Generalized Coordinates}
+    \item{Holonomic/Non-Holonomic Constraints}
+    \item{Noether's Theorem}
+    \item{Rigid Body Motion}
+    \begin{enumerate}
+      \item{Inertia Tensor}
+      \item{Euler's Equations}
+    \end{enumerate}
+  \end{enumerate}
+
+  \item{Hamiltonian Formalism}
+  \begin{enumerate}
+    \item{Legendre Transformation/Hamilton's Equations}
+    \item{Generalized Momenta/Cyclic Coordinates/Conserved Quantities}
+    \item{Liouville's Theorem}
+    \item{Poisson Brackets}
+    \item{Canonical Transformations}
+  \end{enumerate}
+\end{enumerate}
+
+\section{Statistical Mechanics}
+\begin{enumerate}
+  \item{Thermodynamics Review}
+  \begin{enumerate}
+    \item{Laws of Thermodynamics}
+    \item{Intensive vs Extensive Variables}
+    \item{Thermodynamic Potentials and Ensembles}
+    \item{Maxwell's Relations}
+    \item{Various Definitions}
+    \begin{enumerate}
+      \item{Compressibility}
+      \item{Heat Capacity etc.}
+    \end{enumerate}
+  \end{enumerate}
+  \item{Statistical Mechanics}
+  \begin{enumerate}
+    \item{Statistical Review}
+    \item{Partition Function/Trace}
+    \item{Thermodynamic Limit}
+    \item{Density Matrix}
+    \item{Ideal Gas}
+    \item{Ideal Bose Gas}
+    \item{Ideal Fermi Gas}
+    \item{Cluster Expansion}
+  \end{enumerate}
+\end{enumerate}
+
+\section{Quantum Mechanics}
+\begin{enumerate}
+  \item{Shankar Math Review}
+  \item{Postulates}
+  \item{Free Particle}
+  \item{Particle in a Box}
+  \item{Harmonic Oscillator}
+  \item{Angular Momentum}
+  \item{Hydrogen Atom}
+  \item{Spin}
+  \item{Angular Momentum Addition}
+  \item{Time-Independent Perturbation Theory}
+  \item{Time-Dependent Perturbation Theory}
+  \begin{enumerate}
+    \item{Einstein A and B Coefficients}
+  \end{enumerate}
+  \item{Scattering}
+  \item{WKB Formula}
+  \item{Dirac Equation}
+\end{enumerate}
+
+\section{Electricity and Magnetism}
+\begin{enumerate}
+  \item{Electrostatics}
+  \begin{enumerate}
+    \item{Coulomb's Law}
+    \item{Electrostatic Potentials}
+    \begin{enumerate}
+      \item{Poisson/Laplace's Equations}
+    \end{enumerate}
+    \item{Boundary Conditions}
+    \item{Method of Images}
+    \item{Multipole Expansion}
+    \item{Work and Energy}
+    \item{Electric Fields in Matter}
+  \end{enumerate}
+  \item{Magnetostatics}
+  \begin{enumerate}
+    \item{Lorentz Force Law}
+    \item{Biot-Savart Law}
+    \item{Vector Potential}
+    \item{Magnetic Fields in Matter}
+  \end{enumerate}
+  \item{Electrodynamics}
+  \begin{enumerate}
+    \item{Ohm's Law}
+    \item{Maxwell's Equations}
+    \item{Boundary Conditions to Maxwell's Equations}
+    \item{Continuity Equation}
+    \item{Poynting's Theorem}
+    \item{Maxwell Stress Tensor}
+    \item{Electromagnetic Waves}
+    \begin{enumerate}
+      \item{The Wave Equation from Maxwell's Eq.}
+      \item{EM Waves in Matter}
+      \item{Wave Guides}
+    \end{enumerate}
+  \end{enumerate}
+  \item{Scalar and Vector Potentials}
+  \item{Coulomb and Lorentz Gauge}
+  \item{Retarted Potentials}
+  \item{Lienard-Wiechert Potentials}
+  \item{Radiation}
+  \begin{enumerate}
+    \item{Electric/Magnetic Dipole Radiation}
+  \end{enumerate}
+  \item{Helmholtz Theorem}
+  \item{Special Relativity}
+  \begin{enumerate}
+    \item{Einstein's Postulates}
+    \item{Lorentz Transformation}
+    \item{4-Vectors}
+    \item{Field Tensor and Transformation}
+    \item{Relativistic Potentials}
   \end{enumerate}
 
 \end{enumerate}
 
-\section{Statistical Mechanics}
-
-\section{Quantum Mechanics}
-
-\section{Electricity and Magnetism}
-
 \section{Classical Mechanics Equations}
+\subsection*{Newtonian Mechanics}
+\textbf{Newton's Laws:}
+\begin{enumerate}
+  \item{An object will maintain it's current motion unless acted upon by an external force.}
+  \item{$\vec{F} = m\vec{a}$}
+  \item{All forces occur in equal but directionally opposite pairs.}
+\end{enumerate}
+\textbf{Second Law:} $\vec{F} = m\vec{a} = \dot{\vec{p}}$ \\
+\textbf{Angular Position/Velocity/Acceleration:} $\theta = s/r$, $\omega = v/r$, $\alpha = a/r$ \\
+\textbf{Angular Momentum:} $\vec{L} = \vec{r} \times \vec{p}$ \\
+\textbf{Torque:} $\vec{\tau} = \vec{r} \times \vec{F} = \dot{\vec{L}}$ \\
+\textbf{Centripital Acceleration: } $a_c = v^2/r$ \\
+\textbf{Centrifugal/Coriolis Forces: } $\vec{F}_{cent} = -m\vec{\omega} \times (\vec{\omega} \times \vec{r'})$, $\vec{F}_{cor} = -2m\vec{\omega} \times \dot{\vec{r'}}$ \\
+\textbf{Work to go from positions $\vec{a}$ to $\vec{b}$:} $W_{ab} = \int\limits_{\vec{a}}^{\vec{b}} \vec{F} \cdot d\vec{s}$
+\textbf{Conservative Force Field (2 eq):} $W_{ab}$ is the same regardless of path so $\oint \vec{F} \cdot d\vec{s} = 0$, and thus we can write the force as $\vec{F} = -\nabla V(\vec{r})$.
+
+\subsection*{Lagrangian Formalism}
+\textbf{Functional Derivative:} $\frac{\delta F}{\delta u}[x_0] = \lim\limits_{\epsilon \rightarrow 0} \frac{F[x_0+\epsilon u] - F[x_0]}{\epsilon} \rightarrow \frac{\delta F}{\delta x(t)}[x(t')] = \lim\limits_{\epsilon \rightarrow 0} \frac{F[x(t')+\epsilon \delta(t'-t)] - F[x(t')]}{\epsilon}$ \\
+\textbf{Principle of Least Action:} $\delta S = 0$, where $S=\int_{t_i}^{t_f} L(\vec{q},\dot{\vec{q}},t) dt$ \\
+\textbf{Lagranges Equation:} $\frac{d}{dt}\frac{\partial L}{\partial \dot{x}^A}-\frac{\partial L}{\partial x^A} = 0$ \\
+\textbf{Holonomic Constraints: } $f_\alpha(x^A,t) = 0$, $L' = L(x^A,\dot{x}^A) + \lambda_\alpha f_\alpha(x^A,t)$ $\rightarrow \frac{d}{dt}\frac{\partial L}{\partial \dot{x}^A}-\frac{\partial L}{\partial x^A} = \lambda_\alpha \frac{\partial f_\alpha}{\partial x^A}$ \\
+\textbf{Noether's Theorem: } A continuous symmetry in the Action (and thus Lagrangian) result in a conserved quantity. \\
+\textbf{Moment of Inertia Tensor: } $\vec{L} = \overleftrightarrow{I} \vec{\omega}$, $T = \frac{1}{2} \omega_a I_{ab} \omega_b$, $I_{ab} = \sum_i m_i((\vec{r}_i \cdot \vec{r}_i)\delta_{ab} - (\vec{r}_i)_a(\vec{r}_i)_b$ \\
+\textbf{Euler's Equations:} Only look at rotation, not translation. Conservation of Angular Momentum gives $I_i\dot{\omega}_i +\omega_j\omega_k(I_k-I_j) = 0$, for $i$,$j$,$k$ being cyclic permutations of 1,2,3. \\
+
+\subsection*{Hamiltonian Formalism}
+\textbf{Generalized Momenta: } $p_i = \frac{\partial L}{\partial \dot{q}_i}$, $\dot{p}_i = \frac{\partial L}{\partial q_i}$ \\
+\textbf{Hamiltonian: } $H(q_i,p_i,t) = \sum\limits_{i=1}^n p_i\dot{q}_i - L(q_i,\dot{q}_i,t)$ \\
+\textbf{Hamilton's Equations:}
+\begin{enumerate}
+  \item $\dot{p}_i = -\frac{\partial H}{\partial q_i}$
+  \item $\dot{q}_i = \frac{\partial H}{\partial p_i}$
+  \item $-\frac{\partial L}{\partial t} = \frac{\partial H}{\partial t}$
+\end{enumerate}
+\textbf{Cyclic/Ignorable Coordinates:} $q$ is ignorable if $\frac{\partial L}{\partial q} = 0$, i.e. if $q$ does not appear in $L$. Thus $p=\frac{\partial L}{\partial \dot{q}}$ is conserved. \\
+\textbf{Liousille's Theorem: } A volume of a region of phase space remains the same, even when the refion changes. $V=dq_1 \ldots dq_ndp_1 \ldots dp_n$. \\
+\textbf{Poisson Bracket: } ${f,g} = \frac{\partial f}{\partial q_i}\frac{\partial g}{\partial p_i} - \frac{\partial f}{\partial p_i}\frac{\partial g}{\partial q_i}$. \\
+\textbf{Constant of Motion from Poisson Bracket: } $\frac{df}{dt} = {f,H}+\frac{\partial f}{\partial t}$. If ${I,H}=0$, then $I$ is a constant of motion. \\
+\textbf{Canonical Transformation: } Transformation ($q_i \rightarrow Q_i(q,p), p-I \rightarrow P_i(q,p)$) that leaves Hamilton's equations invariant. \\
 
 \section{Statistical Mechanics Equations}
 
 \section{Quantum Mechanics Equations}
 
 \section{Electricity and Magnetism Equations}
+
+\section{Miscellaneous Physics}
+\textbf{Taylor Expansion:} $f(\vec{x}+\vec{a}) = f(\vec{x}) + a_i\partial_i f(\vec{x}) + \mathcal{O}(\vec{a}^2)$
 
 \end{document}
