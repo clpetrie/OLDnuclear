@@ -149,7 +149,7 @@ contains
    real(kind=r8) :: delta(npart,npart),dx(3),r
    real(kind=r8) :: gr3b(npart),g2s3b(3,npart,npart),exc,y2,t2,z2
    integer(kind=i4) :: i,j
-   real(kind=r8) :: a2pin,a2sin,avdin,acfacin,a2pscalin,a2pxdscalin,a2pddscalin,rscal,avein,dfacin
+   real(kind=r8) :: a2pin,a2sin,avdin,acfacin,a2pscalin,a2pxdscalin,a2pddscalin,rscal(:),avein,dfacin
    vc=0.0_r8
    gr3b=0.0_r8
    g2s3b=0.0_r8
@@ -166,10 +166,53 @@ contains
    a2pddscalin=a2pddscal
    dfacin=dfac
    if (dov3.eq.0) return
+   if (rscal(1).eq.rscal(2).and.rscal(1).eq.rscal(3)) then
+      do i=1,npart-1
+         do j=i+1,npart
+            dx=x(:,i)-x(:,j)
+            dx=rscal(1)*dx
+            dx=dx-el*nint(dx*eli)
+            r=sqrt(sum(dx**2))
+            dx=dx/r
+            exc=exp(-c3b*r**ncut)
+            cut=1.0_r8-exc
+            y2=cut*exp(-amu*r)/(amu*r)
+            t2=(1.0_r8+3.0_r8/(r*amu)+3.0_r8/(r*amu)**2)*y2*cut**(ncutt-1)
+            z2=amu*r*(y2-t2)/3.0_r8
+            delta(i,j)=dfac*dnorm*exc
+            delta(j,i)=delta(i,j)
+            xpi(:,i,1,j)=3.0_r8*t2*dx(1)*dx
+            xpi(:,i,2,j)=3.0_r8*t2*dx(2)*dx
+            xpi(:,i,3,j)=3.0_r8*t2*dx(3)*dx
+            xpi(1,i,1,j)=xpi(1,i,1,j)+(y2-t2)
+            xpi(2,i,2,j)=xpi(2,i,2,j)+(y2-t2)
+            xpi(3,i,3,j)=xpi(3,i,3,j)+(y2-t2)
+            xpi(:,j,:,i)=xpi(:,i,:,j)
+            g2s3b(:,j,i)=dx*z2
+            g2s3b(:,i,j)=-g2s3b(:,j,i)
+            gr3b(i)=gr3b(i)+t2**2
+            gr3b(j)=gr3b(j)+t2**2
+            vc=vc-ar3b*t2**4
+         enddo
+      enddo
+      vc=vc+0.5_r8*ar3b*sum(gr3b**2)
+      return
+   endif
    do i=1,npart-1
       do j=i+1,npart
          dx=x(:,i)-x(:,j)
-         dx=rscal*dx
+         dx=rscal(1)*dx
+         dx=dx-el*nint(dx*eli)
+         r=sqrt(sum(dx**2))
+         exc=exp(-c3b*r**ncut)
+         cut=1.0_r8-exc
+         y2=cut*exp(-amu*r)/(amu*r)
+         t2=(1.0_r8+3.0_r8/(r*amu)+3.0_r8/(r*amu)**2)*y2*cut**(ncutt-1)
+         gr3b(i)=gr3b(i)+t2**2
+         gr3b(j)=gr3b(j)+t2**2
+         vc=vc-ar3b*t2**4
+         dx=x(:,i)-x(:,j)
+         dx=rscal(2)*dx
          dx=dx-el*nint(dx*eli)
          r=sqrt(sum(dx**2))
          dx=dx/r
@@ -178,8 +221,6 @@ contains
          y2=cut*exp(-amu*r)/(amu*r)
          t2=(1.0_r8+3.0_r8/(r*amu)+3.0_r8/(r*amu)**2)*y2*cut**(ncutt-1)
          z2=amu*r*(y2-t2)/3.0_r8
-         delta(i,j)=dfac*dnorm*exc
-         delta(j,i)=delta(i,j)
          xpi(:,i,1,j)=3.0_r8*t2*dx(1)*dx
          xpi(:,i,2,j)=3.0_r8*t2*dx(2)*dx
          xpi(:,i,3,j)=3.0_r8*t2*dx(3)*dx
@@ -189,16 +230,20 @@ contains
          xpi(:,j,:,i)=xpi(:,i,:,j)
          g2s3b(:,j,i)=dx*z2
          g2s3b(:,i,j)=-g2s3b(:,j,i)
-         gr3b(i)=gr3b(i)+t2**2
-         gr3b(j)=gr3b(j)+t2**2
-         vc=vc-ar3b*t2**4
+         dx=x(:,i)-x(:,j)
+         dx=rscal(3)*dx
+         dx=dx-el*nint(dx*eli)
+         r=sqrt(sum(dx**2))
+         exc=exp(-c3b*r**ncut)
+         delta(i,j)=dfac*dnorm*exc
+         delta(j,i)=delta(i,j)
       enddo
    enddo
    vc=vc+0.5_r8*ar3b*sum(gr3b**2)
    end subroutine hstnipot
 
-   subroutine hstnimat(x,vc,ast,asttm,astvd1,astvd2,astvdc3,astvec3,atau,a2pscalin,a2pxdscalin,a2pddscalin,rscal)
-   real(kind=r8) :: x(3,npart),rscal
+   subroutine hstnimat(x,vc,ast,asttm,astvd1,astvd2,astvdc3,astvec3,atau,a2pscalin,a2pxdscalin,a2pddscalin,xpi,xd,rscal)
+   real(kind=r8) :: x(3,npart),rscal(:)
    real(kind=r8), dimension (3,npart,3,npart) :: ast,asttm,astvd1,astvd2,astvdc3,astvec3
    real(kind=r8) :: atau(npart,npart)
    real(kind=r8) :: vc,xpi(3,npart,3,npart),xxpi(3,npart,3,npart)
@@ -262,11 +307,11 @@ contains
                   astvdc3(kc,k,jc,j)=astvdc3(kc,k,jc,j)+4.0_r8*a2p3b*xdel(kc,k,jc,j)  ! Vd,Cc3
                   asttm(kc,k,jc,j)=asttm(kc,k,jc,j)+a2s3b*sum(g2s3b(jc,:,j)*g2s3b(kc,:,k))  ! Tucson-Melbourne
                   astvd1(kc,k,jc,j)=astvd1(kc,k,jc,j)+avd/dfac*xpi(kc,k,jc,j)*(delsum(k)+delsum(j)-2.0_r8*delta(k,j)) ! Vd,1 - Kevin
-!                 astvd1(kc,k,jc,j)=astvd1(kc,k,jc,j)+avd/dfac*xdel(kc,k,jc,j) ! Vd,1 - Ingo/Joel
+!                 astvd1(kc,k,jc,j)=astvd1(kc,k,jc,j)+avd/dfac*xdel(kc,k,jc,j) ! Vd,1 - Ingo/Joel !!!! MAYBE THERE IS A BUG!!!
                   if (kc.eq.jc) then
                      astvec3(kc,k,jc,j)=astvec3(kc,k,jc,j)+4.0_r8*a2p3b*ddelta(k,j) ! Ve,Cc3
                      astvd2(kc,k,jc,j)=astvd2(kc,k,jc,j)-avd/dfac*delta(k,j)*(delsum(k)+delsum(j)-2.0_r8*delta(k,j)) ! Vd,2 - Kevin
-!                    astvd2(kc,k,jc,j)=astvd2(kc,k,jc,j)-avd/dfac*ddelta(k,j) ! Vd,2 - Ingo
+!                    astvd2(kc,k,jc,j)=astvd2(kc,k,jc,j)-avd/dfac*ddelta(k,j) ! Vd,2 - Ingo !!!! MAYBE THERE IS A BUG!!!
                   endif
                endif
             enddo

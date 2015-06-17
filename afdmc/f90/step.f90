@@ -47,8 +47,8 @@ contains
    if (myrank().eq.0) write (6,'(''Coulomb included in the energy (and propagation) ='',t50,l10)') pcoul
    call setupgofr(npart,abs(el),nprot,nneut)
    nobs=nobsin
-eucl=.false.
-!eucl=.true.
+ eucl=.true.
+ eucl=.false.
    return
    end subroutine setstep
 
@@ -413,6 +413,7 @@ eucl=.false.
    real(kind=r8), dimension(npart,npart) :: v2,v3,v4
    real(kind=r8), dimension(3,npart,3,npart) :: v5,v6
    real(kind=r8), dimension(3,npart,3,npart) :: a3st,a3sttm,a3stvd1,a3stvd2,a3stvdc3,a3stvec3
+   real(kind=r8), dimension(3,npart,3,npart) :: xpi,xd
    real(kind=r8), allocatable, save :: acsbo(:,:),acsbn(:,:)
    real(kind=r8), dimension(npart,npart) :: atau
    integer(kind=i4) :: xidx,ic,i,j
@@ -428,6 +429,7 @@ eucl=.false.
    real(kind=r8), allocatable, save :: vvecstn(:,:,:),vvalstn(:)
    real(kind=r8), allocatable, save :: vvectn(:,:),vvaltn(:)
    real(kind=r8), allocatable, save :: vveccsbn(:,:),vvalcsbn(:)
+   real(kind=r8) :: rscal(3) ! match the dimension as in jastrowtabop
    if (.not.allocated(acsbo)) allocate(acsbo(npart,npart))
    if (.not.allocated(acsbn)) allocate(acsbn(npart,npart))
    if (.not.allocated(vvecso)) allocate(vvecso(3,npart,3*npart))
@@ -446,6 +448,7 @@ eucl=.false.
    if (.not.allocated(vvalcsbo)) allocate(vvalcsbo(npart))
    if (.not.allocated(vveccsbn)) allocate(vveccsbn(npart,npart))
    if (.not.allocated(vvalcsbn)) allocate(vvalcsbn(npart))
+   rscal=1.0_r8
    dtfac=1.0_r8
    if (vsym) dtfac=0.5_r8
    wtfacls=0.0_r8
@@ -454,7 +457,7 @@ eucl=.false.
    if (dorold) then
       call hspot(wold%x,dummy,v2,v3,v4,v5,v6,.true.,1)
       call hstnimat(wold%x,dummy,a3st,a3sttm,a3stvd1,a3stvd2,&
-           a3stvdc3,a3stvec3,atau,a2psc,a2pxdsc,a2pddsc,1.0_r8)
+           a3stvdc3,a3stvec3,atau,a2psc,a2pxdsc,a2pddsc,xpi,xd,rscal)
       v2=v2+atau
       v6=v6+a2psc*a3st+a3sttm+a3stvd1+a3stvd2+a2pxdsc*a3stvdc3+a2pddsc*a3stvec3
       if (noprot) then
@@ -529,7 +532,7 @@ eucl=.false.
       if (dornew) then
          call hspot(wnew%x,dummy,v2,v3,v4,v5,v6,.true.,1)
          call hstnimat(wnew%x,dummy,a3st,a3sttm,a3stvd1,a3stvd2,&
-              a3stvdc3,a3stvec3,atau,a2psc,a2pxdsc,a2pddsc,1.0_r8)
+              a3stvdc3,a3stvec3,atau,a2psc,a2pxdsc,a2pddsc,xpi,xd,rscal)
          v2=v2+atau
          v6=v6+a2psc*a3st+a3sttm+a3stvd1+a3stvd2+a2pxdsc*a3stvdc3+a2pddsc*a3stvec3
          if (noprot) then

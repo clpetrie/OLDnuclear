@@ -175,7 +175,7 @@
 \textbf{Torque:} $\vec{\tau} = \vec{r} \times \vec{F} = \dot{\vec{L}}$ \\
 \textbf{Centripital Acceleration: } $a_c = v^2/r$ \\
 \textbf{Centrifugal/Coriolis Forces: } $\vec{F}_{cent} = -m\vec{\omega} \times (\vec{\omega} \times \vec{r'})$, $\vec{F}_{cor} = -2m\vec{\omega} \times \dot{\vec{r'}}$ \\
-\textbf{Work to go from positions $\vec{a}$ to $\vec{b}$:} $W_{ab} = \int\limits_{\vec{a}}^{\vec{b}} \vec{F} \cdot d\vec{s}$
+\textbf{Work to go from positions $\vec{a}$ to $\vec{b}$:} $W_{ab} = \int\limits_{\vec{a}}^{\vec{b}} \vec{F} \cdot d\vec{s}$ \\
 \textbf{Conservative Force Field (2 eq):} $W_{ab}$ is the same regardless of path so $\oint \vec{F} \cdot d\vec{s} = 0$, and thus we can write the force as $\vec{F} = -\nabla V(\vec{r})$.
 
 \subsection*{Lagrangian Formalism}
@@ -203,6 +203,7 @@
 \textbf{Canonical Transformation: } Transformation ($q_i \rightarrow Q_i(q,p), p-I \rightarrow P_i(q,p)$) that leaves Hamilton's equations invariant. \\
 
 \section{Statistical Mechanics Equations}
+\subsection{Thermodynamics}
 \textbf{Laws of Thermodynamics:}
 \begin{enumerate}
   \item Energy conservation. $dE = \dbar Q - pdV$. $\dbar Q$ just means that the heat is an inexact differential and the integral depends on the path.
@@ -238,6 +239,13 @@
 \textbf{Specific Heat at Constant V:} $C_V = \left(\frac{\partial Q}{\partial T}\right)_V = \left(\frac{\partial U}{\partial T}\right)_V$, Amount of heat per unit mass to raise the temp by 1 degree. \\
 \textbf{Specific Heat at Constant p:} $C_p = \left(\frac{\partial Q}{\partial T}\right)_p = \left(\frac{\partial H}{\partial T}\right)_p$, Same as above. \\
 \textbf{Fermi Energy/Temperature: } Chemical potential at $T=0$. $\epsilon_F = \mu(T=0)$
+
+\subsection{Statistical Mechanics}
+\textbf{Number of microstates in a mactostate (ways to get n heads):} $\Omega = \frac{N!}{\prod_i n_i!}$ \\
+\textbf{Stirling's Approximation:} $\ln n! = n\ln n - n$ \\
+\textbf{How many order important ways to order n things:} $n!$ \\
+\textbf{How many order important waus to order n things r at a time:} $\frac{n!}{(n-r)!}$ \\
+\textbf{How many NOT order important ways to order n things r at a time:} $\binom{n}{r} = \frac{n!}{r!(n-r)!}$ \\
 
 \section{Quantum Mechanics Equations}
 

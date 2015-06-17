@@ -10,25 +10,17 @@ module jastrow
    real(kind=r8), private, parameter :: dp=0.0025_r8
    real(kind=r8), private, save :: q1c,q2c,q1p,q2p
    integer(kind=i4), private, save :: ijas
-!  real(kind=r8), private, save :: rscal,a3c,a3a,a3tm,a3vd1,a3vd2,a3vdc3,a3vec3,a3ve
    real(kind=r8), private, save, allocatable :: rsctni(:),ptni(:)
    logical, private, save :: fcsb
    logical, private, save :: fixdc
 contains
-   subroutine jasinit(elin,ntabin,hbin,lpotin,fcsbin)
-! elin   : rmax for orbitals
-! ntabin : number of table points for Jastrow and potential
-! bstin  : Jastrow multiplicative factor
-! dcin   : Jastrow healing distance
-! hb     : hbar^2/m
-! lpotin : Bob's potential number
-! acnin    : quencher central potential
+   subroutine jasinit(elin,ntabin,hbin,lpotin,fcsbin,f3in)
    use mympi
    use nucma
    real(kind=r8) :: elin,hbin
    integer(kind=i4) :: ntabin,lpotin
    integer(kind=i4) :: i,j
-   logical :: fcsbin
+   logical :: fcsbin,f3in,f3
    if (elin.lt.0.0_r8) then
       el=0.0_r8
       eli=0.0_r8
@@ -41,9 +33,10 @@ contains
    ntab=ntabin
    hb=hbin
    lpot=lpotin
+   f3=.true.
    fcsb=.true.
    fixdc=.true.  !readjust dc if larger than dtn
-   allocate(rsctni(1),ptni(8))
+   allocate(rsctni(3),ptni(11))
    if (myrank().eq.0) then
       read (5,*) dc      !jastrow healing distance
       read (5,*) dtn
@@ -65,24 +58,21 @@ contains
       read (5,*) q2c
       read (5,*) q1p
       read (5,*) q2p
-!     read (5,*) rscal
-!     read (5,*) a3c
-!     read (5,*) a3a
-!     read (5,*) a3tm
-!     read (5,*) a3vd1
-!     read (5,*) a3vd2
-!     read (5,*) a3vdc3
-!     read (5,*) a3vec3
-!     read (5,*) a3ve
-      read (5,*) rsctni(1)
-      read (5,*) ptni(1)
-      read (5,*) ptni(2)
-      read (5,*) ptni(3)
-      read (5,*) ptni(4)
-      read (5,*) ptni(5)
-      read (5,*) ptni(6)
-      read (5,*) ptni(7)
-      read (5,*) ptni(8)
+      read (5,*) rsctni(1) ! rscal cent
+      read (5,*) rsctni(2) ! rscal xpi
+      read (5,*) rsctni(3) ! rscal delta
+      read (5,*) ptni(1) ! eps_cent
+      read (5,*) ptni(2) ! eps_anti
+      read (5,*) ptni(3) ! eps_tm
+      read (5,*) ptni(4) ! eps vd1
+      read (5,*) ptni(5) ! eps_vd2
+      read (5,*) ptni(6) ! eps_vdc3
+      read (5,*) ptni(7) ! eps_vec3
+      read (5,*) ptni(8) ! eps_ve
+      read (5,*) ptni(9) ! eps_comm
+      read (5,*) ptni(10) ! eps_comm-xd
+      read (5,*) ptni(11) ! eps_comm-dd
+      if (ptni(9).eq.0.0_r8.and.ptni(10).eq.0.0_r8.and.ptni(11).eq.0.0_r8) f3=.false.
       read (5,*) rscpp
       read (5,*) rscnn
       read (5,*) bpp
@@ -110,16 +100,9 @@ contains
       write (6,'(''q1p parameter in f3p ='',t40,f10.5)') q1p
       write (6,'(''q2p parameter in f3p ='',t40,f10.5)') q2p
       write (6,'(''!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!'')')
-!     write (6,'(''rscal parameter in Uijk ='',t40,f10.5)') rscal
-!     write (6,'(''eps_c parameter in Uijk ='',t40,f10.5)') a3c
-!     write (6,'(''eps_anti parameter in Uijk ='',t40,f10.5)') a3a
-!     write (6,'(''eps_tm parameter in Uijk ='',t40,f10.5)') a3tm
-!     write (6,'(''eps_vd1 parameter in Uijk ='',t40,f10.5)') a3vd1
-!     write (6,'(''eps_vd2 parameter in Uijk ='',t40,f10.5)') a3vd2
-!     write (6,'(''eps_vdc3 parameter in Uijk ='',t40,f10.5)') a3vdc3
-!     write (6,'(''eps_vec3 parameter in Uijk ='',t40,f10.5)') a3vec3
-!     write (6,'(''eps_ve parameter in Uijk ='',t40,f10.5)') a3ve
-      write (6,'(''rscal parameter in Uijk ='',t40,f10.5)') rsctni(1)
+      write (6,'(''rscal parameter in Uijk cent ='',t40,f10.5)') rsctni(1)
+      write (6,'(''rscal parameter in Uijk xpi ='',t40,f10.5)') rsctni(2)
+      write (6,'(''rscal parameter in Uijk delta ='',t40,f10.5)') rsctni(3)
       write (6,'(''eps_c parameter in Uijk ='',t40,f10.5)') ptni(1)
       write (6,'(''eps_anti parameter in Uijk ='',t40,f10.5)') ptni(2)
       write (6,'(''eps_tm parameter in Uijk ='',t40,f10.5)') ptni(3)
@@ -128,6 +111,10 @@ contains
       write (6,'(''eps_vdc3 parameter in Uijk ='',t40,f10.5)') ptni(6)
       write (6,'(''eps_vec3 parameter in Uijk ='',t40,f10.5)') ptni(7)
       write (6,'(''eps_ve parameter in Uijk ='',t40,f10.5)') ptni(8)
+      write (6,'(''eps_comm parameter in Uijk ='',t40,f10.5)') ptni(9)
+      write (6,'(''eps_comm-XD parameter in Uijk ='',t40,f10.5)') ptni(10)
+      write (6,'(''eps_comm-DD parameter in Uijk ='',t40,f10.5)') ptni(11)
+      write (6,'(''TNI-comm correlation included ='',t40,l10)') f3
       write (6,'(''!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!'')')
       write (6,'(''CSB correlation rscalpp ='',t40,f10.5)') rscpp
       write (6,'(''CSB correlation rscalnn ='',t40,f10.5)') rscnn
@@ -173,21 +160,13 @@ contains
    call bcast(q2c)
    call bcast(q1p)
    call bcast(q2p)
-!  call bcast(rscal)
-!  call bcast(a3c)
-!  call bcast(a3a)
-!  call bcast(a3tm)
-!  call bcast(a3vd1)
-!  call bcast(a3vd2)
-!  call bcast(a3vdc3)
-!  call bcast(a3vec3)
-!  call bcast(a3ve)
    call bcast(rsctni)
    call bcast(ptni)
    call bcast(rscpp)
    call bcast(rscnn)
    call bcast(bpp)
    call bcast(bnn)
+   call bcast(f3)
    call bcast(fcsb)
    call bcast(rscpp)
    call bcast(rscpp)
@@ -200,6 +179,7 @@ contains
          write(78,'(11e25.10)') i*dr,(uoptab(1,i,j),j=1,10)
       enddo 
    endif
+   f3in=f3
    fcsbin=fcsb
    end subroutine jasinit
 
@@ -303,40 +283,6 @@ contains
 ! the following are subrotuines needed by the optimization
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!  subroutine setf3(q1cin,q2cin,q1pin,q2pin,rscalin,a3cin,a3ain,a3tmin,a3vd1in,a3vd2in,a3vdc3in,a3vec3in,a3vein)
-!  real(kind=r8) :: q1cin,q2cin,q1pin,q2pin,rscalin,a3cin,a3ain,a3tmin,a3vd1in,a3vd2in,a3vdc3in,a3vec3in,a3vein
-!  q1c=q1cin
-!  q2c=q2cin
-!  q1p=q1pin
-!  q2p=q2pin
-!  rscal=rscalin
-!  a3c=a3cin
-!  a3a=a3ain
-!  a3tm=a3tmin
-!  a3vd1=a3vd1in
-!  a3vd2=a3vd2in
-!  a3vdc3=a3vdc3in
-!  a3vec3=a3vec3in
-!  a3ve=a3vein
-!  end subroutine setf3
-
-!  subroutine getf3(q1cin,q2cin,q1pin,q2pin,rscalin,a3cin,a3ain,a3tmin,a3vd1in,a3vd2in,a3vdc3in,a3vec3in,a3vein)
-!  real(kind=r8) :: q1cin,q2cin,q1pin,q2pin,rscalin,a3cin,a3ain,a3tmin,a3vd1in,a3vd2in,a3vdc3in,a3vec3in,a3vein
-!  q1cin=q1c
-!  q2cin=q2c
-!  q1pin=q1p
-!  q2pin=q2p
-!  rscalin=rscal
-!  a3cin=a3c
-!  a3ain=a3a
-!  a3tmin=a3tm
-!  a3vd1in=a3vd1
-!  a3vd2in=a3vd2
-!  a3vdc3in=a3vdc3
-!  a3vec3in=a3vec3
-!  a3vein=a3ve
-!  end subroutine getf3
-
    subroutine f3p(n)
    integer(kind=i4) :: n
    select case (n)
@@ -348,10 +294,10 @@ contains
          q1p=q1p+dp
       case(4)
          q2p=q2p+dp
-      case(5)
-         rsctni(1)=rsctni(1)+dp
-      case(6:13)
-         ptni(n-5)=ptni(n-5)+dp
+      case(5:7)
+         rsctni(n-4)=rsctni(n-4)+dp
+      case(8:18)
+         ptni(n-7)=ptni(n-7)+dp
       case default 
          write(6,'(''Error in f3p!!!'')')
    end select
@@ -368,10 +314,10 @@ contains
          q1p=q1p-dp
       case(4)
          q2p=q2p-dp
-      case(5)
-         rsctni(1)=rsctni(1)-dp
-      case(6:13)
-         ptni(n-5)=ptni(n-5)-dp
+      case(5:7)
+         rsctni(n-4)=rsctni(n-4)-dp
+      case(8:18)
+         ptni(n-7)=ptni(n-7)-dp
       case default 
          write(6,'(''Error in f3m!!!'')')
    end select
@@ -594,31 +540,22 @@ contains
    q2c=params(17)
    q1p=params(18)
    q2p=params(19)
-!  rscal=params(20)
-   rsctni(1)=params(20)
-   ptni(1:8)=params(21:28)
-!  a3c=params(21)
-!  a3a=params(22)
-!  a3tm=params(23)
-!  a3vd1=params(24)
-!  a3vd2=params(25)
-!  a3vdc3=params(26)
-!  a3vec3=params(27)
-!  a3ve=params(28)
-   rscpp=params(29)
-   rscnn=params(30)
+   rsctni(1:3)=params(20:22)
+   ptni(1:11)=params(23:33)
+   rscpp=params(34)
+   rscnn=params(35)
    if (rscpp*dc.ge.el2) then
       rscpp=el2/dc
-      params(29)=rscpp
+      params(34)=rscpp
       if (myrank().eq.0) write (6,'(''rscalpp reset to '',f15.10)') rscpp
    endif
    if (rscnn*dc.ge.el2) then
       rscnn=el2/dc
-      params(30)=rscnn
+      params(35)=rscnn
       if (myrank().eq.0) write (6,'(''rscalnn reset to '',f15.10)') rscnn
    endif
-   bpp=params(31)
-   bnn=params(32)
+   bpp=params(36)
+   bnn=params(37)
    end subroutine setjasparam
 
    subroutine getjasparam(nparam,params)
@@ -650,7 +587,7 @@ contains
       rscnn=el2/dc
       if (myrank().eq.0) write (6,'(''rscalnn reset to '',f15.10)') rscnn
    endif
-   nparam=32
+   nparam=37
    allocate(params(nparam))
    params(1)=dc
    params(2)=dtn
@@ -671,21 +608,12 @@ contains
    params(17)=q2c
    params(18)=q1p
    params(19)=q2p
-!  params(20)=rscal
-   params(20)=rsctni(1)
-   params(21:28)=ptni(1:8)
-!  params(21)=a3c
-!  params(22)=a3a
-!  params(23)=a3tm
-!  params(24)=a3vd1
-!  params(25)=a3vd2
-!  params(26)=a3vdc3
-!  params(27)=a3vec3
-!  params(28)=a3ve
-   params(29)=rscpp
-   params(30)=rscnn
-   params(31)=bpp
-   params(32)=bnn
+   params(20:22)=rsctni(1:3)
+   params(23:33)=ptni(1:11)
+   params(34)=rscpp
+   params(35)=rscnn
+   params(36)=bpp
+   params(37)=bnn
    end subroutine getjasparam
 
    subroutine hscor(npart,x,uc,sigma,sigmatau,tau,fls,fpp,fnn)
@@ -805,30 +733,21 @@ contains
    uc=uc+u3c
    end subroutine hscor
 
-   subroutine tniacor(npart,x,uc,sigmatau,tau)
+   subroutine tniacor(npart,x,uc,sigmatau,tau,xpi,xd,cf3xx,cf3xd,cf3dd)
    use v3bpot
    integer(kind=i4) :: npart
    real(kind=r8) :: x(3,npart),uc
-   real(kind=r8) :: sigmatau(3,npart,3,npart),tau(npart,npart)
+   real(kind=r8) :: sigmatau(3,npart,3,npart),tau(npart,npart),xpi(3,npart,3,npart),xd(3,npart,3,npart)
    real(kind=r8), dimension(3,npart,3,npart) :: a3st,a3sttm,a3stvd1,a3stvd2,a3stvdc3,a3stvec3
-   real(kind=r8) :: dummy
+   real(kind=r8) :: dummy,cf3xx,cf3xd,cf3dd
    real(kind=r8), dimension(npart,npart) :: atau
-   call hstnimat(x,uc,a3st,a3sttm,a3stvd1,a3stvd2,a3stvdc3,a3stvec3,atau,dummy,dummy,dummy,rsctni(1))
-!     read (5,*) rscal
-!     read (5,*) a3c
-!     read (5,*) a3a
-!     read (5,*) a3tm
-!     read (5,*) a3vd1
-!     read (5,*) a3vd2
-!     read (5,*) a3vdc3
-!     read (5,*) a3vec3
-!     read (5,*) a3ve
-!  uc=a3c*uc
-!  sigmatau=a3a*a3st+a3tm*a3sttm+a3vd1*a3stvd1+a3vd2*a3stvd2+a3vdc3*a3stvdc3+a3vec3*a3stvec3
-!  tau=a3ve*atau
+   call hstnimat(x,uc,a3st,a3sttm,a3stvd1,a3stvd2,a3stvdc3,a3stvec3,atau,dummy,dummy,dummy,xpi,xd,rsctni)
    uc=ptni(1)*uc
    sigmatau=ptni(2)*a3st+ptni(3)*a3sttm+ptni(4)*a3stvd1+ptni(5)*a3stvd2+ptni(6)*a3stvdc3+ptni(7)*a3stvec3
    tau=ptni(8)*atau
+   cf3xx=ptni(9)
+   cf3xd=ptni(10)
+   cf3dd=ptni(11)
    end subroutine tniacor
 
    subroutine setijas(n) ! use a different jastrow

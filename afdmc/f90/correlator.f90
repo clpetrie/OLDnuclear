@@ -321,9 +321,9 @@ contains
    integer(kind=i4) :: i,j,k,js,ks,ijk
    if (dov3.eq.0) return
    ijk=0
-   do i=1,npart-2
-      do j=i+1,npart-1
-         do k=j+1,npart
+   do k=3,npart
+      do j=2,k-1
+         do i=1,j-1
             ijk=ijk+1
             if (dotrip(ijk)) then
                do ks=1,4
@@ -676,19 +676,19 @@ contains
                            *spx(:,ic3+it,i)*spx(js,jc3+it,j)  ! Vd,Cc3
                         v2tmp2(:,js)=v2tmp2(:,js)+vtm &
                            *spx(:,ic3+it,i)*spx(js,jc3+it,j)  ! Tucson-Melbourne
-                        v2tmp3a(:,js)=v2tmp3a(:,js)+xpi(ic,i,jc,j)*( &  ! Vd,1 Kevin's version
-                           delsum(j)+delsum(i)-2.0_r8*delta(i,j)) &
-                           *spx(:,ic3+it,i)*spx(js,jc3+it,j)
-!                       v2tmp3a(:,js)=v2tmp3a(:,js)+xdel(ic,i,jc,j) & ! Vd,1 Ingo/Joel's version
-!                                    *spx(:,ic3+it,i)*spx(js,jc3+it,j)
+!                       v2tmp3a(:,js)=v2tmp3a(:,js)+xpi(ic,i,jc,j)*( &  ! Vd,1 Kevin's version
+!                          delsum(j)+delsum(i)-2.0_r8*delta(i,j)) &
+!                          *spx(:,ic3+it,i)*spx(js,jc3+it,j)
+                        v2tmp3a(:,js)=v2tmp3a(:,js)-xdel(ic,i,jc,j) & ! Vd,1 Ingo/Joel's version
+                                     *spx(:,ic3+it,i)*spx(js,jc3+it,j)
                         if (jc.eq.ic) then
                            v2deldel(:,js)=v2deldel(:,js)+ddelta(i,j) &
                                 *spx(:,ic3+it,i)*spx(js,jc3+it,j)  ! Ve,Cc3
-                           v2tmp3b(:,js)=v2tmp3b(:,js)+xd(ic,i,ic,j) &  ! Vd,2 Kevin's version
-                                *(delsum(j)+delsum(i)-2.0_r8*delta(i,j)) & 
-                                *spx(:,ic3+it,i)*spx(js,jc3+it,j)
-!                          v2tmp3b(:,js)=v2tmp3b(:,js)+ddelta(i,j) &  ! Vd,2 Ingo/Joel's version
+!                          v2tmp3b(:,js)=v2tmp3b(:,js)+xd(ic,i,ic,j) &  ! Vd,2 Kevin's version
+!                               *(delsum(j)+delsum(i)-2.0_r8*delta(i,j)) & 
 !                               *spx(:,ic3+it,i)*spx(js,jc3+it,j)
+                           v2tmp3b(:,js)=v2tmp3b(:,js)-2.0_r8*ddelta(i,j) &  ! Vd,2 Ingo/Joel's version
+                                *spx(:,ic3+it,i)*spx(js,jc3+it,j)
                         endif
                      endif
                   enddo
@@ -736,9 +736,9 @@ contains
          enddo
       enddo
       ijk=0
-      do i=1,npart-2
-         do j=i+1,npart-1
-            do k=j+1,npart
+      do k=3,npart
+         do j=2,k-1
+            do i=1,j-1
                ijk=ijk+1
                if (dotrip(ijk)) then
                   v3tmp1=czero
@@ -813,7 +813,6 @@ contains
    real(kind=r8) :: dxij(3),dxjk(3),dxik(3),rn(1),r,rcut,acut,prob
    integer(kind=i4) :: ijk,i,j,k
    logical :: noprot
-   ijk=0
    dotrip=.false.
    if (dov3.eq.0.or.noprot) then
       probinvijk=1.0_r8
@@ -823,15 +822,16 @@ contains
 !  probinvijk=1.0_r8
 ! return
    call setrn(w%irn)
-   do i=1,npart-2
-      do j=i+1,npart-1
-         dxij=w%x(:,i)-w%x(:,j)
-         dxij=dxij-el*nint(dxij*eli)
-         do k=j+1,npart
+   ijk=0
+   do k=3,npart
+      do j=2,k-1
+         dxjk=w%x(:,j)-w%x(:,k)
+         dxjk=dxjk-el*nint(dxjk*eli)
+         do i=1,j-1
             ijk=ijk+1
-            dxjk=w%x(:,j)-w%x(:,k)
+            dxij=w%x(:,i)-w%x(:,j)
+            dxij=dxij-el*nint(dxij*eli)
             dxik=w%x(:,i)-w%x(:,k)
-            dxjk=dxjk-el*nint(dxjk*eli)
             dxik=dxik-el*nint(dxik*eli)
             r=sqrt(sum(dxij**2)+sum(dxjk**2)+sum(dxik**2))
             if (r.le.rcut) then

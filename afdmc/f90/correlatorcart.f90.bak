@@ -2,7 +2,7 @@ module correlator
    implicit none
    integer, private, parameter :: i4=selected_int_kind(9)
    integer, private, parameter :: r8=selected_real_kind(15,9)
-integer, private, parameter :: i8=selected_int_kind(15)
+   integer, private, parameter :: i8=selected_int_kind(15)
    complex(kind=r8), private, parameter :: czero=(0.0_r8,0.0_r8)
    complex(kind=r8), private, parameter :: ci=(0.0_r8,1.0_r8)
    complex(kind=r8), private, parameter :: cone=(1.0_r8,0.0_r8)
@@ -10,7 +10,8 @@ integer, private, parameter :: i8=selected_int_kind(15)
    integer(kind=i4), private, save :: npart,npair,ntrip
    complex(kind=r8), private, save, allocatable :: sxz0(:,:,:)
    real(kind=r8), private, save, allocatable :: fsvec(:,:,:),fsval(:,:) &
-      ,ft(:),fs(:,:,:),fst(:,:,:),f3(:,:,:,:),f3b(:,:,:,:)
+      ,ft(:),fs(:,:,:),fst(:,:,:),f3(:,:,:,:)
+   complex(kind=r8), private, allocatable :: f3b(:,:,:,:)
    real(kind=r8), private, save, allocatable :: fstl(:,:,:),fstr(:,:,:)
    real(kind=r8), private, save, allocatable :: fstval(:,:)
 !! PP and NN corelations
@@ -31,7 +32,8 @@ integer, private, parameter :: i8=selected_int_kind(15)
    integer(kind=i4), private, save :: dov3
    real(kind=r8), private, save, allocatable :: probinvijk(:)
    logical, private, save, allocatable :: dotrip(:)
-   logical, private, save :: dof3 = .false.
+!  logical, private, save :: dof3 = .true.
+   logical, private, save :: dof3
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -72,18 +74,20 @@ contains
    dov3=dov3in
    end subroutine setdov3
 
-   subroutine calfop(ftauin,fsigin,fsigtauin,ftauppin,ftaunnin,sp,cut,diag)
+   subroutine setf3(dof3in)
+   logical :: dof3in
+   dof3=dof3in
+   end subroutine setf3
+
+   subroutine calfop(ftauin,fsigin,fsigtauin,ftauppin,ftaunnin,ff3x,ff3d,cf3x,cf3xd,cf3dd,sp,cut,diag)
    use matrixmod
-!use random
    real(kind=r8) :: ftauin(:,:),fsigin(:,:,:,:),fsigtauin(:,:,:,:),cut
    real(kind=r8) :: ftauppin(:,:),ftaunnin(:,:)
    complex(kind=r8) :: sp(:,:),spx(4,15,npart)
    integer(kind=i4) :: i,j,k,ij,ijk,jz,is,js,ic,jc,kc,ks,it
-!integer(kind=i8) :: irnsave
+   real(kind=r8) :: ff3x(3,npart,3,npart),ff3d(3,npart,3,npart),cf3x,cf3xd,cf3dd
+   real(kind=r8) :: f3fac
    logical :: diag
-!call savern(irnsave)
-!f3=reshape(randn(3*3*3*ntrip)-0.5_r8,shape(f3))
-!call setrn(irnsave)
    spx=opmult(sp)
    ij=0
    ftau1=0.0_r8
@@ -96,7 +100,6 @@ contains
          dofst(ij)=maxval(abs(fsigtauin(:,i,:,j))).gt.cut
          dofs(ij)=maxval(abs(fsigin(:,i,:,j))).gt.cut
          doft(ij)=abs(ftauin(i,j)).gt.cut
-!! PP and NN correlations
          doftpp(ij)=abs(ftauppin(i,j)).gt.cut
          doftnn(ij)=abs(ftaunnin(i,j)).gt.cut
          if (dofst(ij)) then
@@ -147,7 +150,6 @@ contains
          else
             ft(ij)=0.0_r8
          endif
-!! PP and NN corelations
          if (doftpp(ij)) then
             ftpp(ij)=ftauppin(i,j)
             ftau1(i)=ftau1(i)+ftpp(ij)
@@ -176,6 +178,8 @@ contains
          endif
       enddo
    enddo
+   f3b=0.0_r8
+   f3=0.0_r8
    if (.not.dof3) return !skip 3-body correlation
    ijk=0
    do i=1,npart-2
@@ -186,15 +190,38 @@ contains
                do ic=1,3
                   do jc=1,3
                      do kc=1,3
+                        f3fac=ff3x(ic,i,levi(1,jc),j)*ff3x(levi(2,jc),j,kc,k) &
+                             -ff3x(ic,i,levi(2,jc),j)*ff3x(levi(1,jc),j,kc,k) &
+                             +ff3x(jc,j,levi(1,kc),k)*ff3x(levi(2,kc),k,ic,i) &
+                             -ff3x(jc,j,levi(2,kc),k)*ff3x(levi(1,kc),k,ic,i) &
+                             +ff3x(kc,k,levi(1,ic),i)*ff3x(levi(2,ic),i,jc,j) &
+                             -ff3x(kc,k,levi(2,ic),i)*ff3x(levi(1,ic),i,jc,j)
+                        f3(ic,jc,kc,ijk)=cf3x*f3fac
+                        f3fac=ff3x(ic,i,levi(1,jc),j)*ff3d(levi(2,jc),j,kc,k) &
+                             -ff3x(ic,i,levi(2,jc),j)*ff3d(levi(1,jc),j,kc,k) &
+                             +ff3x(jc,j,levi(1,kc),k)*ff3d(levi(2,kc),k,ic,i) &
+                             -ff3x(jc,j,levi(2,kc),k)*ff3d(levi(1,kc),k,ic,i) &
+                             +ff3x(kc,k,levi(1,ic),i)*ff3d(levi(2,ic),i,jc,j) &
+                             -ff3x(kc,k,levi(2,ic),i)*ff3d(levi(1,ic),i,jc,j) &
+                             +ff3d(ic,i,levi(1,jc),j)*ff3x(levi(2,jc),j,kc,k) &
+                             -ff3d(ic,i,levi(2,jc),j)*ff3x(levi(1,jc),j,kc,k) &
+                             +ff3d(jc,j,levi(1,kc),k)*ff3x(levi(2,kc),k,ic,i) &
+                             -ff3d(jc,j,levi(2,kc),k)*ff3x(levi(1,kc),k,ic,i) &
+                             +ff3d(kc,k,levi(1,ic),i)*ff3x(levi(2,ic),i,jc,j) &
+                             -ff3d(kc,k,levi(2,ic),i)*ff3x(levi(1,ic),i,jc,j)
+                        f3(ic,jc,kc,ijk)=f3(ic,jc,kc,ijk)+cf3xd*f3fac
+                        f3fac=ff3d(ic,i,levi(1,jc),j)*ff3d(levi(2,jc),j,kc,k) &
+                             -ff3d(ic,i,levi(2,jc),j)*ff3d(levi(1,jc),j,kc,k) &
+                             +ff3d(jc,j,levi(1,kc),k)*ff3d(levi(2,kc),k,ic,i) &
+                             -ff3d(jc,j,levi(2,kc),k)*ff3d(levi(1,kc),k,ic,i) &
+                             +ff3d(kc,k,levi(1,ic),i)*ff3d(levi(2,ic),i,jc,j) &
+                             -ff3d(kc,k,levi(2,ic),i)*ff3d(levi(1,ic),i,jc,j)
+                        f3(ic,jc,kc,ijk)=f3(ic,jc,kc,ijk)+cf3dd*f3fac
                         do js=1,4
                            do ks=1,4
-                              f3b(:,js,ks,ijk)=f3b(:,js,ks,ijk) &
-                                 +f3(ic,jc,kc,ijk)*(spx(:,3*ic+it+3,i) &
-                                 *spx(js,3*jc+levi(1,it)+3,j) &
-                                 *spx(ks,3*kc+levi(2,it)+3,k) &
-                                 -spx(:,3*ic+it+3,i) &
-                                 *spx(js,3*jc+levi(2,it)+3,j) &
-                                 *spx(ks,3*kc+levi(1,it)+3,k))
+                              f3b(:,js,ks,ijk)=f3b(:,js,ks,ijk)+f3(ic,jc,kc,ijk) &
+                                 *(spx(:,3*ic+it+3,i)*spx(js,3*jc+levi(1,it)+3,j)*spx(ks,3*kc+levi(2,it)+3,k) &
+                                  -spx(:,3*ic+it+3,i)*spx(js,3*jc+levi(2,it)+3,j)*spx(ks,3*kc+levi(1,it)+3,k))
                            enddo
                         enddo
                      enddo
@@ -212,15 +239,16 @@ contains
    complex(kind=r8) :: sxmall(npart,15,npart)
    complex(kind=r8) :: ctmp1,d1,d2,d3,d4
    integer(kind=i4) :: i,j,ij,is,js,it
-   complex(kind=r8) :: d1b(4,npart),d2b(4,4,npair),d3b(4,4,4,npair)
+   complex(kind=r8) :: d1b(4,npart),d2b(4,4,npair),d3b(4,4,4,ntrip)
    sxz0=sxzin
    d1b=czero
    d2b=czero
+   d3b=czero
    call g1bval(d1b,sxz0,cone)
    call g2bval(d2b,sxz0,cone)
    detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
    if (dof3) then
-      call g3bval(d3b,sxz0,cone)
+      call g3bval(d3b,sxz0,cone,.true.)
       detrat=detrat+sum(d3b*f3b)
    endif
    end subroutine cordet
@@ -243,7 +271,7 @@ contains
    d3b=czero
    call g1bval(d1b,sxz0,cone+fctau)
    call g2bval(d2b,sxz0,cone+fctau)
-   call g3bval(d3b,sxz0,cone+fctau)
+   call g3bval(d3b,sxz0,cone+fctau,.false.)
    do i=1,npart
       sx15(:,:,:,i)=conjg(opmult(conjg(sxz0(:,i,:))))
    enddo
@@ -253,7 +281,7 @@ contains
       f1=d1*0.25_r8*ftau1(i)
       call g1bval(d1b,sxzj,f1)
       call g2bval(d2b,sxzj,f1)
-      call g3bval(d3b,sxzj,f1)
+      call g3bval(d3b,sxzj,f1,.false.)
    enddo
    ij=0
    do i=1,npart-1
@@ -266,13 +294,12 @@ contains
             do it=1,2
                fij=ft(ij)
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
-               call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:) &
-                  ,sp(:,j))
+               call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
                detrat=d15(3+it)*d2
                fij=detrat*fij
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
-               call g3bval(d3b,sxzj,fij)
+               call g3bval(d3b,sxzj,fij,.false.)
             enddo
          endif
          if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
@@ -286,7 +313,7 @@ contains
             fij=detrat*fij
             call g1bval(d1b,sxzj,fij)
             call g2bval(d2b,sxzj,fij)
-            call g3bval(d3b,sxzj,fij)
+            call g3bval(d3b,sxzj,fij,.false.)
          endif
          if (dofs(ij)) then
             do is=1,3
@@ -297,7 +324,7 @@ contains
                   fij=detrat*fs(is,js,ij)
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
-                  call g3bval(d3b,sxzj,fij)
+                  call g3bval(d3b,sxzj,fij,.false.)
                enddo
             enddo
          endif         
@@ -312,7 +339,7 @@ contains
                      fij=detrat*fst(is,js,ij)
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
-                     call g3bval(d3b,sxzj,fij)
+                     call g3bval(d3b,sxzj,fij,.false.)
                   enddo
                enddo
             enddo
@@ -327,10 +354,8 @@ contains
             do j=i+1,npart-1
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi1(:,j,:))))
                do js=1,3
-                  call sxzupdate(sxzj1,dj1,sxzi1,j &
-                     ,sx15j(:,3*js+3+levi(1,it),:),sp(:,j))
-                  call sxzupdate(sxzj2,dj2,sxzi1,j &
-                     ,sx15j(:,3*js+3+levi(2,it),:),sp(:,j))
+                  call sxzupdate(sxzj1,dj1,sxzi1,j,sx15j(:,3*js+3+levi(1,it),:),sp(:,j))
+                  call sxzupdate(sxzj2,dj2,sxzi1,j,sx15j(:,3*js+3+levi(2,it),:),sp(:,j))
                   do k=j+1,npart
 !maple ijk := simplify(sum((n-l)*(n-l-1)/2,l=1..i-1)+sum(n-l,l=i+1..j-1)+k-j);
                      ijk=(i*(i-1)*(i-3*npart+4))/6 &
@@ -339,18 +364,16 @@ contains
                      sx15k1(:,:,:)=conjg(opmult(conjg(sxzj1(:,k,:))))
                      sx15k2(:,:,:)=conjg(opmult(conjg(sxzj2(:,k,:))))
                      do ks=1,3
-                        call sxzupdate(sxzk,dk,sxzj1,k &
-                           ,sx15k1(:,3*ks+3+levi(2,it),:),sp(:,k))
+                        call sxzupdate(sxzk,dk,sxzj1,k,sx15k1(:,3*ks+3+levi(2,it),:),sp(:,k))
                         fijk=f3(is,js,ks,ijk)*di1*dj1*dk
                         call g1bval(d1b,sxzk,fijk)
                         call g2bval(d2b,sxzk,fijk)
-                        call g3bval(d3b,sxzk,fijk)
-                        call sxzupdate(sxzk,dk,sxzj2,k, &
-                           sx15k2(:,3*ks+3+levi(1,it),:),sp(:,k))
-                        fijk=-f3(is,js,ks,ijk)*di1*dj1*dk
+                        call g3bval(d3b,sxzk,fijk,.false.)
+                        call sxzupdate(sxzk,dk,sxzj2,k,sx15k2(:,3*ks+3+levi(1,it),:),sp(:,k))
+                        fijk=-f3(is,js,ks,ijk)*di1*dj2*dk
                         call g1bval(d1b,sxzk,fijk)
                         call g2bval(d2b,sxzk,fijk)
-                        call g3bval(d3b,sxzk,fijk)
+                        call g3bval(d3b,sxzk,fijk,.false.)
                      enddo
                   enddo
                enddo
@@ -415,20 +438,21 @@ contains
    enddo
    end subroutine g2bval
 
-   subroutine g3bval(d3b,sxz,fij)
-   complex(kind=r8), intent(inout):: d3b(4,4,4,ntrip)
-   complex(kind=r8), intent(in):: sxz(4,npart,npart),fij
+   subroutine g3bval(d3b,sxz,fij,doall)
+   complex(kind=r8), intent(inout):: d3b(:,:,:,:)
+   complex(kind=r8), intent(in):: sxz(:,:,:),fij
    integer(kind=i4) :: i,j,k,js,ks,ijk
+   logical :: doall
    if (dov3.eq.0) return
    ijk=0
    do i=1,npart-2
       do j=i+1,npart-1
          do k=j+1,npart
             ijk=ijk+1
-            if (dotrip(ijk)) then
+            if (dotrip(ijk).or.doall) then
                do ks=1,4
                   do js=1,4
-                     d3b(:,js,ks,ijk)= d3b(:,js,ks,ijk)+fij*( &
+                     d3b(:,js,ks,ijk)=d3b(:,js,ks,ijk)+fij*( &
                          sxz(:,i,i)*(sxz(js,j,j)*sxz(ks,k,k) &
                         -sxz(js,j,k)*sxz(ks,k,j))+sxz(:,i,j) &
                         *(sxz(js,j,k)*sxz(ks,k,i)-sxz(js,j,i)*sxz(ks,k,k)) &
@@ -700,6 +724,8 @@ contains
    integer(kind=i4) :: i,j,k,ic,jc,kc,ic3,jc3,kc3,js,ks,ij,ijk,it
    real(kind=r8) :: a2p3b,a2s3b,avd,acfac,a2psc,a2pxdsc,a2pddsc,ave,dfac
    complex(kind=r8) :: spxfac(4)
+   real(kind=r8) :: rscal(3) ! match the dimension of rscal in jastrowtabop
+   rscal=1.0_r8
    vc=0.0_r8
    if (dov3.eq.0) then
       v3asc=0.0_r8
@@ -717,7 +743,7 @@ contains
       v3cdd=0.0_r8
       return
    endif
-   call hstnipot(x,vc,xpi,g2s3b,delta,a2p3b,a2s3b,avd,ave,acfac,a2psc,a2pxdsc,a2pddsc,dfac,1.0_r8)
+   call hstnipot(x,vc,xpi,g2s3b,delta,a2p3b,a2s3b,avd,ave,acfac,a2psc,a2pxdsc,a2pddsc,dfac,rscal)
    delsum=0.0_r8
    xd=0.0_r8
    xxpi=0.0_r8
@@ -776,19 +802,19 @@ contains
                            *spx(:,ic3+it,i)*spx(js,jc3+it,j)  ! Vd,Cc3
                         v2tmp2(:,js)=v2tmp2(:,js)+vtm &
                            *spx(:,ic3+it,i)*spx(js,jc3+it,j)  ! Tucson-Melbourne
-                        v2tmp3a(:,js)=v2tmp3a(:,js)+xpi(ic,i,jc,j)*( &  ! Vd,1 Kevin's version
-                           delsum(j)+delsum(i)-2.0_r8*delta(i,j)) &
-                           *spx(:,ic3+it,i)*spx(js,jc3+it,j)
-!                       v2tmp3a(:,js)=v2tmp3a(:,js)+xdel(ic,i,jc,j) & ! Vd,1 Ingo/Joel's version
-!                                    *spx(:,ic3+it,i)*spx(js,jc3+it,j)
+!                       v2tmp3a(:,js)=v2tmp3a(:,js)+xpi(ic,i,jc,j)*( &  ! Vd,1 Kevin's version
+!                          delsum(j)+delsum(i)-2.0_r8*delta(i,j)) &
+!                          *spx(:,ic3+it,i)*spx(js,jc3+it,j)
+                        v2tmp3a(:,js)=v2tmp3a(:,js)-xdel(ic,i,jc,j) & ! Vd,1 Ingo/Joel's version
+                                     *spx(:,ic3+it,i)*spx(js,jc3+it,j)
                         if (jc.eq.ic) then
                            v2deldel(:,js)=v2deldel(:,js)+ddelta(i,j) &
                                 *spx(:,ic3+it,i)*spx(js,jc3+it,j)  ! Ve,Cc3
-                           v2tmp3b(:,js)=v2tmp3b(:,js)+xd(ic,i,ic,j) &  ! Vd,2 Kevin's version
-                                *(delsum(j)+delsum(i)-2.0_r8*delta(i,j)) & 
-                                *spx(:,ic3+it,i)*spx(js,jc3+it,j)
-!                          v2tmp3b(:,js)=v2tmp3b(:,js)+ddelta(i,j) &  ! Vd,2 Ingo/Joel's version
+!                          v2tmp3b(:,js)=v2tmp3b(:,js)+xd(ic,i,ic,j) &  ! Vd,2 Kevin's version
+!                               *(delsum(j)+delsum(i)-2.0_r8*delta(i,j)) & 
 !                               *spx(:,ic3+it,i)*spx(js,jc3+it,j)
+                           v2tmp3b(:,js)=v2tmp3b(:,js)-2.0_r8*ddelta(i,j) &  ! Vd,2 Ingo/Joel's version
+                                *spx(:,ic3+it,i)*spx(js,jc3+it,j)
                         endif
                      endif
                   enddo
@@ -880,10 +906,8 @@ contains
                               do ks=1,4
                                  do js=1,4
                                     spxfac=spx(:,ic3+it,i) &
-                                        *(spx(js,jc3+levi(1,it),j) &
-                                        *spx(ks,kc3+levi(2,it),k) &
-                                        -spx(js,jc3+levi(2,it),j) &
-                                        *spx(ks,kc3+levi(1,it),k))
+                                        *(spx(js,jc3+levi(1,it),j)*spx(ks,kc3+levi(2,it),k) &
+                                         -spx(js,jc3+levi(2,it),j)*spx(ks,kc3+levi(1,it),k))
                                     v3tmp1(:,js,ks)=v3tmp1(:,js,ks)+spxfac*vfacxx
                                     if (dov3.eq.2) then
                                        v3tmp2(:,js,ks)=v3tmp2(:,js,ks)+spxfac*vfacxd

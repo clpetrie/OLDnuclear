@@ -26,6 +26,7 @@ contains
       write(6,'(''dq = '',t40,f10.5)') dq
       write(6,'(''number of spin operators ='',t40,i10)') nspop
       write(6,'(''total number of operators ='',t40,i10)') npart
+      write(6,'(''!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!-!'')')
    endif
    end subroutine initeuc
  
@@ -34,6 +35,8 @@ contains
    type (walker) :: w
    w%x0=w%x
    w%sp0=w%sp
+print*,'sp=',w%sp
+print*,'!!!!'
    call ospin(w%sp0,w%osp)
    end subroutine setupeuc
 
@@ -46,6 +49,7 @@ contains
       osp(i,:,1,:)=spin(:,:)
       call tauz(spin(:,i),osp(i,:,1,i))
    enddo
+print*,'op1=',osp(1,:,1,:)
    end subroutine ospin
 
    subroutine overlap(w)
@@ -57,17 +61,20 @@ contains
    integer(kind=i4) :: i,j
    spsave=w%sp
    call hpsi(w,.false.)
+print*,'psi=',w%psi
    psi=w%psi
    csum1=czero
    csum2=czero
    do i=1,npart
       w%sp=w%osp(i,:,1,:)
       call hpsi(w,.false.)
+print*,'i, psi1=',i,w%psi
       csum1=csum1+w%psi/psi
       w%sp=spsave
       call tauz(w%sp(:,i),tzsp)
       w%sp(:,i)=tzsp
       call hpsi(w,.false.)
+print*,'i, psi2=',i,w%psi
       csum1=csum1+w%psi/psi ! the sum of this is zero
       w%sp=spsave
       do j=1,npart
@@ -76,6 +83,7 @@ contains
          w%osp(i,:,1,j)=tzsp
          w%sp=w%osp(i,:,1,:)
          call hpsi(w,.false.)
+print*,'j, psi=',j,w%psi
          csum2=csum2+w%psi/psi
          w%osp(i,:,1,j)=spsave1
       enddo
@@ -84,7 +92,7 @@ contains
    cop=1.0_r8+(csum1+csum2)
 print*,'csum1=',csum1
 print*,'csum2=',csum2
-print*,cop
+stop
    end subroutine overlap
    
    subroutine tauz(spin,tspin)

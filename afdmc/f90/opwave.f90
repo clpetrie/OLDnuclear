@@ -299,6 +299,7 @@ contains
    real(kind=r8) :: fasig(3,npart,3,npart),fasigtau(3,npart,3,npart),fatau(npart,npart)
    real(kind=r8) :: fataupp(npart,npart),fataunn(npart,npart)
    real(kind=r8) :: fasigtautni(3,npart,3,npart),fatautni(npart,npart)
+   real(kind=r8) :: fcsigtautni(3,npart,3,npart)
    real(kind=r8), dimension(npart,npart) :: v2,v3,v4
    real(kind=r8), dimension(3,npart,3,npart) :: v5,v6
    real(kind=r8), dimension(3,npart,3,npart) :: xpi
@@ -318,7 +319,7 @@ contains
    real(kind=r8) :: tnic,vc,u3c
    complex(kind=r8) :: tni2pia,tni2pitm,tni2pic,tni2picxd,tni2picdd,tnivd1,tnivd2,tnive,tni2piaxd,tni2piadd
    complex(kind=r8) :: tni2piapr,tni2piaxdpr,tni2piaddpr
-   real(kind=r8) :: rij(3)
+   real(kind=r8) :: rij(3),cf3
    w%x=w%x-el*nint(w%x/el)
 !  call addbf(w%x,xbig)
    call hspot(w%x,w%vc,v2,v3,v4,v5,v6,dopot,1) !always need vc
@@ -342,7 +343,7 @@ contains
 !
    call hscor(npart,w%x,u,fasig,fasigtau,fatau,fls,fataupp,fataunn)
    u3c=0.0_r8
-   call tniacor(npart,w%x,u3c,fasigtautni,fatautni)
+   call tniacor(npart,w%x,u3c,fasigtautni,fatautni,fcsigtautni,cf3)
    fasigtau=fasigtau+fasigtautni
    fatau=fatau+fatautni
    utau=0.0_r8
@@ -352,7 +353,7 @@ contains
       fasig=fasig+fasigtau
       fasigtau=0.0_r8
    endif
-   call calfop(fatau,fasig,fasigtau,fataupp,fataunn,w%sp,0.0_r8,dopot)
+   call calfop(fatau,fasig,fasigtau,fataupp,fataunn,fcsigtautni,cf3,w%sp,0.0_r8,dopot)
    ph=czero
    kk=0
    do is=1,4

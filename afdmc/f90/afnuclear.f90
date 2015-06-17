@@ -14,7 +14,7 @@
    use gofr
    use v3bpot
    use correlator
-!  use euclidean
+   use euclidean
    use propv3
    use operators
    implicit none
@@ -88,11 +88,11 @@
    integer(kind=i4) :: nprot,nneut
    integer(kind=i4) :: neucop,nspop
    character(len=10) :: filext
-   logical :: fcsb,eucl
+   logical :: f3,fcsb,eucl
    pls=.true.! include LS in the propagator
    dovls=.true.! calculate LS energy
    pcoul=.false. ! include Coulomb in the propagator
-!  eucl=.true.
+   eucl=.true.
    eucl=.false.
    call init0(nworkers) ! mpi initialization that needs to be done before reading
    if (myrank().eq.0) then
@@ -272,7 +272,8 @@
    call v6potinit(npart,ibox,el,lpot,ntab,vfact,lpotpr)
    call v3bpotinit(npart,el,tni,dov3,a2psc,a2pxdsc,a2pddsc)
    call setdov3(dov3)
-   call jasinit(el,ntab,2.0_r8*hbar,abs(lpot),fcsb)
+   call jasinit(el,ntab,2.0_r8*hbar,abs(lpot),fcsb,f3)
+   call setf3(f3)
    call setoptv3(dov3.ne.0)
    call setoptcsb(fcsb)
 !call initgv3(npart,dt)
@@ -385,7 +386,7 @@
    ivmc=idmc.le.0
    call init1(npart,dobal,ivmc) ! additional mpi initialization here
    if (eucl) then
-!     call initeuc(neucop,nspop,npart)
+      call initeuc(neucop,nspop,npart)
    else
       neucop=0
       nspop=0
@@ -581,8 +582,9 @@
                j2t=j2t+j2
                jzt=jzt+jz
             endif
-!           if (eucl) call setupeuc(w1)
+            if (eucl) call setupeuc(w1)
 !call overlap(w1)
+!stop
             call push(istout,w1)
          enddo
          istout=istin

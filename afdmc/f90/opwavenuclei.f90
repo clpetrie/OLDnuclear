@@ -392,10 +392,10 @@ contains
    real(kind=r8) :: fasig(3,npart,3,npart),fasigtau(3,npart,3,npart),fatau(npart,npart)
    real(kind=r8) :: fataupp(npart,npart),fataunn(npart,npart)
    real(kind=r8) :: fasigtautni(3,npart,3,npart),fatautni(npart,npart)
+   real(kind=r8) :: xpi(3,npart,3,npart),xd(3,npart,3,npart)
    real(kind=r8) :: fls(npart,npart)
    real(kind=r8), dimension(npart,npart) :: v2,v3,v4
    real(kind=r8), dimension(3,npart,3,npart) :: v5,v6
-   real(kind=r8), dimension(3,npart,3,npart) :: xpi
    real(kind=r8), dimension(3,npart,npart) :: g2s3b
    real(kind=r8), dimension(npart,npart) :: delta
    complex(kind=r8) :: ph(npart,4,npart,ndet),dph(npart,3,4,npart,ndet)
@@ -423,7 +423,9 @@ contains
    complex(kind=r8) :: tni2pia,tni2pitm,tni2pic,tni2picxd,tni2picdd,tnivd1,tnivd2,tnive,tni2piaxd,tni2piadd
    complex(kind=r8) :: ttni2pia,ttni2pitm,ttni2pic,ttni2picxd,ttni2picdd,ttnivd1,ttnivd2,ttnive,ttni2piaxd,ttni2piadd
    complex(kind=r8) :: tni2piapr,ttni2piapr,tni2piaxdpr,ttni2piaxdpr,tni2piaddpr,ttni2piaddpr
-   real(kind=r8) :: rij(3)
+   real(kind=r8) :: rij(3),cf3xx,cf3xd,cf3dd
+   real(kind=r8) :: rscal(3) ! match the dimension as in jastrowtabop
+   rscal=1.0_r8
    eni=1.0_r8/npart
    do i=1,3
       xcm(i)=sum(w%x(i,:))*eni
@@ -446,15 +448,15 @@ contains
       call setxspx(w,3.0_r8*rcut,acut,noprot)
    endif
 ! TNI stuff
-   call hstnipot(w%x,tnic,xpi,g2s3b,delta,dummy1,dummy1,dummy1,dummy1,dummy1,dummy1,dummy1,dummy1,dummy1,1.0_r8)
+   call hstnipot(w%x,tnic,xpi,g2s3b,delta,dummy1,dummy1,dummy1,dummy1,dummy1,dummy1,dummy1,dummy1,dummy1,rscal)
    w%tnic=tnic
 !
    call hscor(npart,w%x,u,fasig,fasigtau,fatau,fls,fataupp,fataunn)
    u3c=0.0_r8
-   call tniacor(npart,w%x,u3c,fasigtautni,fatautni)
+   call tniacor(npart,w%x,u3c,fasigtautni,fatautni,xpi,xd,cf3xx,cf3xd,cf3dd)
    fasigtau=fasigtau+fasigtautni
    fatau=fatau+fatautni
-   call calfop(fatau,fasig,fasigtau,fataupp,fataunn,w%sp,0.0_r8,dopot)
+   call calfop(fatau,fasig,fasigtau,fataupp,fataunn,xpi,xd,cf3xx,cf3xd,cf3dd,w%sp,0.0_r8,dopot)
    do i=1,npart
       call getphi(w%x(:,i),ph(:,:,i,:),dph(:,:,:,i,:))
    enddo
@@ -970,34 +972,6 @@ contains
    dpsi=dpsi/w%psi
    end subroutine getderpsi
 
-!  subroutine getderpsi(w,dpsi)
-!  use stack
-!  integer(kind=i4) :: np,i
-!  real(kind=r8) :: pdet(nconf),dp
-!  real(kind=r8) :: psi1,psi2
-!  type (walker) :: w
-!  real(kind=r8) :: dpsi(:)
-!  pdet=vorb
-!  dp=0.01_r8
-!  np=1
-!  do i=1,nconf
-!     pdet(i)=pdet(i)+dp
-!     call setdetparam(pdet)
-!     call hpsi(w,.false.)
-!     psi1=w%psi
-!     pdet(i)=pdet(i)-2.0_r8*dp
-!     call setdetparam(pdet)
-!     call hpsi(w,.false.)
-!     psi2=w%psi
-!     pdet(i)=pdet(i)+dp
-!     call setdetparam(pdet)
-!     call hpsi(w,.false.)
-!     dpsi(np)=(psi1-psi2)/(2.0_r8*dp)
-!     np=np+1
-!  enddo
-!  dpsi=dpsi/w%psi
-!  end subroutine getderpsi
-
    subroutine getjasder(w,dpsi)
    use stack
    use jastrow
@@ -1012,7 +986,7 @@ contains
    call hpsi(w,.false.)
    psi0=w%psi
    ipar=1
-   do i=1,size(dpsi)-17 ! the last parameters are q1c,q2c,q1p,q2p,rscal,a3c,a3a,a3atm,a3avd1,a3avd2,a3avdc3,a3avec3,a3ve,rscpp,rscnn,bpp,bnn
+   do i=1,size(dpsi)-22 ! the last parameters are q1c,q2c,q1p,q2p,rscal,a3c,a3a,a3atm,a3avd1,a3avd2,a3avdc3,a3avec3,a3ve,a3comm,rscpp,rscnn,bpp,bnn
       call setijas(i+1)
       call hpsi(w,.false.)
       dpsi(i)=(w%psi-psi0)/dp
@@ -1028,7 +1002,7 @@ contains
       ipar=ipar+1
    enddo
    if (optv3) then
-      do i=5,13 ! rsctni(1),ptni(8)
+      do i=5,18 ! rsctni(3),ptni(11)
          call f3p(i)
          call hpsi(w,.false.)
          call f3m(i)
@@ -1036,7 +1010,7 @@ contains
          ipar=ipar+1
       enddo
    else
-      ipar=ipar+9
+      ipar=ipar+14
    endif
    if (optcsb) then
 ! now do rscpp and rscnn

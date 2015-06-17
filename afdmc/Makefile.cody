@@ -1,0 +1,107 @@
+MPI=false
+
+ifeq ($(MPI),true)
+   FC=mpif90
+   MPIFILE=mympi
+   EXEC=afnucleimpi
+else
+   FC=gfortran
+   MPIFILE=nompi
+   EXEC=afnuclei
+endif
+
+FFLAGS=-O2 -g
+F77FLAGS=$(FFLAGS) -fdefault-real-8 -fdefault-double-8 
+LDFLAGS=-g
+MATRIX=matrixstupid
+LIBS=
+.SUFFIXES:
+.SUFFIXES: .o .f .f90
+
+.f90.o:
+	$(FC) $(FFLAGS) -c $<
+
+OBJECTS=\
+   afnuclear.o\
+   confs.o\
+   estimator.o\
+   jastrowtabop.o\
+   kshellold.o\
+   lattice.o\
+   pot.o\
+   ran.o\
+   stack.o\
+   step.o\
+   v6pot.o\
+   $(MATRIX).o\
+   $(MPIFILE).o\
+   opwavenuclei.o\
+   phi.o\
+   ylm.o\
+   nucma_fts.o\
+   optimizer.o\
+   cheft.o\
+   correlatorcart.o\
+   gofr.o\
+   euclidean.o\
+   propv3.o\
+   operators.o\
+   v3bpot.o
+
+afnuclear: $(OBJECTS)
+	$(FC) $(LDFLAGS) -o ./$(EXEC) $(OBJECTS) $(LIBS)
+
+clean:
+	rm -f *\.mod *\.o *~
+
+afnuclear.o: stack.o lattice.o ran.o estimator.o $(MPIFILE).o v6pot.o\
+	jastrowtabop.o step.o opwavenuclei.o optimizer.o confs.o gofr.o\
+        euclidean.o v3bpot.o propv3.o operators.o afnuclear.f90
+	$(FC) $(FFLAGS) -c afnuclear.f90
+
+stack.o: stack.f90
+
+lattice.o: lattice.f90
+
+ran.o: ran.f90
+
+estimator.o: $(MPIFILE).o estimator.f90
+
+$(MPIFILE).o: $(MPIFILE).f90
+
+$(MATRIX).o: $(MATRIX).f90
+
+v6pot.o: cheft.o v6pot.f90
+
+jastrowtabop.o: $(MPIFILE).o nucma_fts.o v3bpot.o jastrowtabop.f90
+
+step.o: stack.o ran.o opwavenuclei.o estimator.o $(MPIFILE).o v6pot.o $(MATRIX).o gofr.o confs.o step.f90
+
+opwavenuclei.o: stack.o jastrowtabop.o v6pot.o $(MATRIX).o phi.o correlatorcart.o v3bpot.o opwavenuclei.f90
+
+pot.o: pot.f
+	$(FC) $(F77FLAGS) -c pot.f
+
+phi.o: ylm.o phi.f90
+
+ylm.o: ylm.f90
+
+nucma_fts.o: nucma_fts.f90
+
+optimizer.o: $(MPIFILE).o stack.o $(MATRIX).o optimizer.f90
+
+cheft.o: cheft.f90
+
+confs.o: confs.f90
+
+correlatorcart.o: $(MATRIX).o v3bpot.o correlatorcart.f90
+
+gofr.o: stack.o opwavenuclei.o gofr.f90
+
+v3bpot.o: v3bpot.f90
+
+euclidean.o: stack.o euclidean.f90
+
+propv3.o: stack.o propv3.f90
+
+operators.o: stack.o ran.o opwavenuclei.o estimator.o $(MPIFILE).o gofr.o operators.f90

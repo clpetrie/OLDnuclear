@@ -49,6 +49,7 @@ OBJECTS=\
    correlator.o\
    gofr.o\
    v3bpot.o\
+   euclidean.o\
    propv3.o\
    operators.o
 
@@ -59,7 +60,7 @@ clean:
 	rm -f *\.mod *\.o *~
 
 afnuclear.o: stack.o lattice.o ran.o estimator.o $(MPIFILE).o v6pot.o operators.o\
-	jastrowtabop.o step.o opwave.o optimizer.o confs.o gofr.o v3bpot.o propv3.o afnuclear.f90
+	jastrowtabop.o step.o opwave.o optimizer.o confs.o gofr.o v3bpot.o propv3.o euclidean.o afnuclear.f90
 	$(FC) $(FFLAGS) -c afnuclear.f90
 
 stack.o: stack.f90
@@ -118,6 +119,9 @@ gofr.o: stack.o opwave.o gofr.f90
 
 v3bpot.o: v3bpot.f90
 	$(FC) $(FFLAGS) -c v3bpot.f90
+
+euclidean.o: stack.o euclidean.f90
+	$(FC) $(FFLAGS) -c euclidean.f90
 
 propv3.o: $(MPIFILE).o stack.f90 propv3.f90
 	$(FC) $(FFLAGS) -c propv3.f90

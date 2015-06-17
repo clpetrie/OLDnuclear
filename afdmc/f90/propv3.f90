@@ -20,9 +20,9 @@ contains
    allocate(ijktab(3,ntrip))
    ijktab=0
    ijk=0
-   do i=1,npart-2
-      do j=i+1,npart-1
-         do k=j+1,npart
+   do k=3,npart
+      do j=2,k-1
+         do i=1,j-1
             ijk=ijk+1
             ijktab(1,ijk)=i
             ijktab(2,ijk)=j
@@ -47,10 +47,11 @@ contains
    real(kind=r8) :: xgauss(3)
    complex(kind=r8) :: sp(4,3),spnew(4,3),spn(8,4,3)
    integer(kind=i4) :: ijk,i,j,k
-   real(kind=r8) :: wttot,wt(8),wtt,wttt,rn(1),wtfacc,wtc
+   real(kind=r8) :: wttot,wt(8),wtt,wttt,rn(1),wtfacc,wtc,rsc(3)
    real(kind=r8) :: xx(3**3*6),yy(3**3*6),zz(3**3*6)
    complex(kind=r8) :: rat
-   call hstnipot(w%x,vc,xpi,g2s3b,delta,dummy,dummy,dummy,dummy,dummy,a2pscalin,a2pxdscalin,a2pddscalin,dummy,1.0_r8)
+   rsc=1.0_r8
+   call hstnipot(w%x,vc,xpi,g2s3b,delta,dummy,dummy,dummy,dummy,dummy,a2pscalin,a2pxdscalin,a2pddscalin,dummy,rsc)
    wttot=1.0_r8
    do ijk=1,ntrip
       i=ijktab(1,ijk)

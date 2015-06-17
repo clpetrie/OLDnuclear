@@ -32,6 +32,9 @@
 \newcommand{\mycolor}[1]{\textit{\textcolor{red}{#1}}}
 \newcommand{\longsi}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_A}
 \newcommand{\longsij}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_{j-1}, s', s_{j+1}, \ldots ,s_A}
+\newcommand{\Ot}{\mathcal{O}^\tau_{n\alpha}}
+\newcommand{\Os}{\mathcal{O}^\sigma_{n}}
+\newcommand{\Ost}{\mathcal{O}^{\sigma\tau}_{n\alpha}}
 
 \title{Calculating the Trial Wave Function for AFDMC}
 \author{Cody L. Petrie}
@@ -113,8 +116,8 @@ Here the idea is we want to calculate expectation values like
 Now let's expand this the numerator term
 \begin{align}
   \bra{\Phi} \sum_i \Oi \ket{R,S} &= \bra{\Phi} \sum_i \Oi \ket{R,s_1,\ldots,s_A} \\
-  &= \bra{\Phi} \sum_i\sum_{s=1}^4  \ketbra{s}{s} \Oi \ket{R,s_1,\ldots,s_A} \\
-  &= \bra{\Phi} \sum_i\sum_{s=1}^4  \bra{s}\Oi\ket{s_i} \ket{R,\longsi} \\
+  &= \bra{\Phi} \sum_i\sum_{s=1}^4	\ketbra{s}{s} \Oi \ket{R,s_1,\ldots,s_A} \\
+  &= \bra{\Phi} \sum_i\sum_{s=1}^4	\bra{s}\Oi\ket{s_i} \ket{R,\longsi} \\
   &= \bra{\Phi} \sum_i\sum_{s=1}^4 \alpha_{is} \ket{R,\longsi} \\
   &= \sum_i\sum_{s=1}^4 \alpha_{is} \braket{\Phi}{R,\longsi} \\
   &= \sum_i\sum_{s=1}^4 \alpha_{is} \mathrm{d1b(s,i)} \braket{\Phi}{RS},
@@ -176,8 +179,8 @@ Now in cases where we have two set's of operators like for example when we need 
 where
 \begin{equation}
   S'_{kn}(s) = \begin{cases}
-    \braket{k}{r_m,s} & n \neq i \\
-    \bra{k} \Oi \ket{r_i,s} & n=i.
+	 \braket{k}{r_m,s} & n \neq i \\
+	 \bra{k} \Oi \ket{r_i,s} & n=i.
   \end{cases}
 \end{equation}
 
@@ -204,9 +207,11 @@ Here I am going to show how we have broken up the correlation operator in Cartes
 where here I'm going to drop the subscripts $ij$ and the argument $(r_{ij})$. Here I am going to break these up into Cartesian components. The first three are simple.
 \begin{equation}
   \mathcal{O}^1 = f^1
+  \label{equ:central}
 \end{equation}
 \begin{equation}
   \mathcal{O}^2 = f^2 \taui \cdot \tauj = f^2 \tauig \taujg
+  \label{equ:At}
 \end{equation}
 So the first piece of the breakup comes from the $\tauig \taujg$ term. The next two come from sums and terms so I will try to show those here.
 \begin{equation}
@@ -218,6 +223,7 @@ So the first piece of the breakup comes from the $\tauig \taujg$ term. The next 
 \begin{align}
   \mathcal{O}^3 + \mathcal{O}^5 &= f^3 \sigmaia\sigmaja + f^5 3\sigmaia r_\alpha\sigmajb r_\beta - f^5 \sigmaia\sigmaja \\
   &= \sigmaia\sigmajb \left[ (f^3-f^5)\delta_{\alpha\beta} + f^5 3r_\alpha r_\beta \right]
+  \label{equ:As}
 \end{align}
 This is the $\sigmaia\sigmajb$ breakup term. The last term is
 \begin{equation}
@@ -229,8 +235,70 @@ This is the $\sigmaia\sigmajb$ breakup term. The last term is
 \begin{align}
   \mathcal{O}^4 + \mathcal{O}^6 &= f^4 \sigmaia\sigmaja\tauig\taujg + f^6 3\sigmaia r_\alpha\sigmajb r_\beta\tauig\taujg - f^6 \sigmaia\sigmaja\tauig\taujg \\
   &= \sigmaia\sigmajb\tauig\taujg \left[ (f^4-f^6)\delta_{\alpha\beta} + f^6 3r_\alpha r_\beta \right].
+  \label{equ:Ast}
 \end{align}
 The $\sigmaia\sigmajb\tauig\taujg$ term is the third term in the breakup. These three terms together require 39 operations. $\tauig\taujg$ requires 3, $\sigmaia\sigmajb$ 9, and $\sigmaia\sigmajb\tauig\taujg$ 27, where the $\alpha, \beta$ and $\gamma$ are summer over the three Cartesian coordinates and $i$ and $j$ refer to particles.
+
+\section{V6 Potential}
+Now let's look at the v6 potential, which is
+\begin{equation}
+V = \sum_{i<j}\sum_p v_p(r_{ij}) \Oijp,
+\end{equation}
+where the $\Oijp$ are given by the same six operators discussed in the trial wave function correlations above. Now let's look at equations \ref{equ:central}, \ref{equ:At}, \ref{equ:As}, and \ref{equ:Ast}. Using these but changing the $f$'s to $v$'s we can write
+\begin{equation}
+V = V_c + \frac{1}{2}\sum_{ij}\sum_{\alpha}\tau_{i \alpha}A^\tau_{ij}\tau_{j \alpha} + \frac{1}{2}\sum_{ij}\sum_{\alpha \beta}\sigma_{i \alpha}A^\sigma_{ij\alpha\beta}\sigma_{j \beta} + \frac{1}{2}\sum_{ij}\sum_{\alpha \beta} \sigma_{i \alpha} \tau_{i \alpha} A^{\sigma \tau}_{ij\alpha\beta} \tau_{j \alpha}\sigma_{j \beta},
+\end{equation}
+where
+\begin{align}
+  V_c &= \sum_{i<j} u^1_{ij} \\
+  A^\tau_{ij} &= u^2_{ij} \\
+  A^\sigma_{ij\alpha\beta} &= (u^3_{ij}-u^5_{ij})\delta_{\alpha\beta} + u^5_{ij} 3r^\alpha_{ij} r^\beta_{ij} \\
+  A^{\sigma \tau}_{ij\alpha\beta} &= (u^4_{ij}-u^6_{ij})\delta_{\alpha\beta} + u^6_{ij} 3r^\alpha_{ij} r^\beta_{ij},
+\end{align}
+and the $1/2$'s come from the fact that we are not summing over all $i$ and $j$, not just $i<j$. Now we can diagonalize these matricies (find their eigenvalues and eigenvectors). and rewrite $V$ in terms of those.
+\begin{align}
+  \sum_{j} A^\tau_{ij} \psi^{\tau n}_j &= \lambda^\tau_n \psi^{\tau n}_i \\
+  \sum_{j \beta} A^\sigma_{ij\alpha\beta} \psi^{\sigma n}_j &= \lambda^\sigma_n \psi^{\sigma n}_i \\
+  \sum_{j \beta} A^{\sigma\tau}_{ij\alpha\beta} \psi^{\sigma\tau n}_j &= \lambda^{\sigma\tau}_n \psi^{\sigma\tau n}_i.
+\end{align}
+And since we know that the eigenvectors are orthogonal we know that
+\begin{equation}
+  \sum_j \psi ^n_j \psi^m_j = \delta_{nm},
+\end{equation}
+we can rewrite the $A$ matricies as
+\begin{align}
+  \sum_{j} A^\tau_{ij} \psi^{\tau n}_j \psi^{\tau m}_j &= \lambda^\tau_n \psi^{\tau n}_i \psi^{\tau m}_j \\
+  A^\tau_{ij} \delta_{nm} &= \lambda^\tau_n \psi^{\tau n}_i \psi^{\tau m}_j \\
+  A^\tau_{ij} &= \sum_n \psi^{\tau n}_i \lambda^\tau_n \psi^{\tau n}_j,
+\end{align}
+and similarely
+\begin{align}
+  A^\sigma_{ij} &= \sum_{n \alpha} \psi^{\sigma n}_{i \alpha} \lambda^\sigma_n \psi^{\sigma n}_{j \alpha} \\
+  A^{\sigma\tau}_{ij} &= \sum_{n \alpha} \psi^{\sigma\tau n}_{i \alpha} \lambda^{\sigma\tau}_n \psi^{\sigma\tau n}_{j \alpha}.
+\end{align}
+This allowes us to rewrite the potential as 
+\begin{equation}
+\begin{split}
+  V &= V_c \\
+  &+ \frac{1}{2}\sum_{ij}\sum_{\alpha}\sum_{n}\tau_{i\alpha}\psi^{\tau n}_{i}\lambda^\tau_n\psi^{\tau n}_{j}\tau_{j\alpha} \\
+  &+ \frac{1}{2}\sum_{ij}\sum_{\alpha\beta}\sum_{n}\sigma_{i\alpha}\psi^{\sigma n}_{i\alpha}\lambda^\sigma_n\psi^{\sigma n}_{j\beta}\sigma_{j\beta} \\
+  &+ \frac{1}{2}\sum_{ij}\sum_{\alpha\beta}\sum_{n}\sigma_{i\alpha}\tau_{i\alpha}\psi^{\sigma\tau n}_{i\alpha}\lambda^{\sigma\tau}_n\psi^{\sigma\tau n}_{j\beta}\tau_{j\alpha}\sigma_{j\beta}.
+\end{split}
+\end{equation}
+Now if you write 
+\begin{align}
+  \Ot &= \sum_i \psi_i^{\tau n} \tau_{i\alpha} \\
+  \Os &= \sum_{i\alpha} \psi_{i\alpha}^{\sigma n} \sigma_{i\alpha} \\
+  \Ost &= \sum_{i\alpha} \psi_{i\alpha}^{\sigma\tau n} \sigma_{i\alpha}\tau_{i\alpha},
+\end{align}
+we can then write the potential as
+\begin{equation}
+  V = V_c + \frac{1}{2}\sum_{\alpha=1}^3\sum_{n=1}^A \lambda^\tau_n (\Ot)^2 + \frac{1}{2}\sum_{n=1}^{3A} \lambda^\sigma_n (\Os)^2 + \frac{1}{2}\sum_{\alpha=1}^3\sum_{n=1}^{3A} \lambda^{\sigma\tau}_n (\Ost)^2.
+\end{equation}
+Now once we are here with the v6 potential we can then use the Hubbard-Stratanovich transformation to linearise these quadratic operators once they are in the exponential for the propogators. The Hubbard-Stratanovich transformation is
+\begin{equation}
+  e^{\frac{\mathcal{O}^2}{2}} = \frac{1}{\sqrt{2\pi}} \int_{-\infty}^{\infty} dx e^{-\frac{x^2}{2} + x\mathcal{O}}
+\end{equation}
 
 \bibliographystyle{unsrt}
 \bibliography{../../papers/references.bib}
