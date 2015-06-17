@@ -8,6 +8,8 @@
 \usepackage{fancyvrb}
 \usepackage{verbatim}
 \usepackage{graphicx}
+\def\dbar{{\mathchar'26\mkern-12mu d}}
+
 
 %My commands
 \newcommand{\ket}[1]{\left| #1 \right>}
@@ -201,6 +203,41 @@
 \textbf{Canonical Transformation: } Transformation ($q_i \rightarrow Q_i(q,p), p-I \rightarrow P_i(q,p)$) that leaves Hamilton's equations invariant. \\
 
 \section{Statistical Mechanics Equations}
+\textbf{Laws of Thermodynamics:}
+\begin{enumerate}
+  \item Energy conservation. $dE = \dbar Q - pdV$. $\dbar Q$ just means that the heat is an inexact differential and the integral depends on the path.
+  \item $\Delta S \geq \int \frac{\dbar Q}{T}$, where equality is for a process that is reversible (never leaves equilibrium).
+  \item{Entropy at zero temperature is zero. In stat mech this means that the ground state is nondegenerate and $S \propto \ln (\mathrm{W})$, where $W$ is the number of available states.}
+\end{enumerate}
+\textbf{Intensive vs Extensive Variables:} Intensive variables do NOT scale with system size ($T, p, \mu$), while extensive do scale ($E, S, V, N$). \\
+\textbf{Thermodynamic Potentials:}
+\begin{itemize}
+  \item Internal Energy: $U(S,V,N)$
+  \item Helmholtz Free Energy: $F(T,V,N) = U-TS$
+  \item Enthalpy: $H(S,p,N) = U+pV$
+  \item Gibbs Free Energy: $G(T,p,N) = U-TS+pV$
+  \item Landau(Grand) Potential: $\Omega(T,V,\mu) = U-TS-\mu_iN_i$
+\end{itemize}
+\textbf{Thermodynamic Ensembles:}
+\begin{enumerate}
+  \item Microcanonical: Does not exchange energy or particles with environment. Fixed $E,N$
+  \item Canonical: Does not exchange particles, but can exchange energy (heat bath). Fixed $N,T$
+  \item Grand canonical: Can exchange energy and particles with environment. Fixed $T, \mu$.
+\end{enumerate}
+\textbf{Maxwell's Relations (4 main):}
+\begin{itemize}
+  \item $\frac{\partial^2 U}{\partial S \partial V} = -\left(\frac{\partial p}{\partial S}\right)_V = \left(\frac{\partial T}{\partial V}\right)_S$
+  \item $\frac{\partial^2 F}{\partial T \partial V} = \left(\frac{\partial p}{\partial T}\right)_V = \left(\frac{\partial S}{\partial V}\right)_T$
+  \item $\frac{\partial^2 H}{\partial S \partial p} = \left(\frac{\partial V}{\partial S}\right)_p = \left(\frac{\partial T}{\partial p}\right)_S$
+  \item $\frac{\partial^2 G}{\partial T \partial p} = \left(\frac{\partial V}{\partial T}\right)_p = -\left(\frac{\partial S}{\partial p}\right)_T$
+\end{itemize}
+\textbf{Engine Efficience:} $\eta = \frac{Q_{in}-Q_{out}}{Q_{in}} = 1-\frac{T_{out}}{T_{in}}$ \\
+\textbf{Isobaric Thermal Expansion Coeffieicnt: } $\alpha = \frac{1}{V} \left(\frac{\partial V}{\partial T}\right)_P$, How much the volume changes with a change in termperature. \\
+\textbf{Isothermal Compressibility:} $\kappa_T = -\frac{1}{V} \left(\frac{\partial V}{\partial P}\right)_T$, How much the volume changes when the pressure changes. \\
+\textbf{Isentropic(Adiabatic) Compressibility:} $\kappa_S = -\frac{1}{V} \left(\frac{\partial V}{\partial P}\right)_S$, Same as above. \\
+\textbf{Specific Heat at Constant V:} $C_V = \left(\frac{\partial Q}{\partial T}\right)_V = \left(\frac{\partial U}{\partial T}\right)_V$, Amount of heat per unit mass to raise the temp by 1 degree. \\
+\textbf{Specific Heat at Constant p:} $C_p = \left(\frac{\partial Q}{\partial T}\right)_p = \left(\frac{\partial H}{\partial T}\right)_p$, Same as above. \\
+\textbf{Fermi Energy/Temperature: } Chemical potential at $T=0$. $\epsilon_F = \mu(T=0)$
 
 \section{Quantum Mechanics Equations}
 

@@ -236,6 +236,9 @@ contains
    complex(kind=r8) :: sxzl(4,npart,npart),d2,d15(15)
    complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
    integer(kind=i4) :: k,l,kl,kop,ks,kt,ls
+   do k=1,npart
+      sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
+   enddo
    kl=0
    do k=1,npart-1
       if (k.eq.i .or. k.eq.j) cycle

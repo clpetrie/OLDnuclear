@@ -1,0 +1,1 @@
+I fixed correlatorcartCODY.f90 to update the sx15 with the new sxz0. Now the output doesn't give NaN values for the potential energy. I also added thermodynamic equations to quald.tex.
