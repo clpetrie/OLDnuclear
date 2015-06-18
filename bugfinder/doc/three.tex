@@ -1,0 +1,101 @@
+\documentclass{article}
+\usepackage{amsmath, amsthm}
+\usepackage{graphicx} 
+
+\topmargin=-0.55in
+\oddsidemargin =0.0in
+\evensidemargin=0.0in
+\textwidth=6.65in
+\textheight=9.5in
+
+
+\title{general notes}
+
+\begin{document}
+
+
+
+\section{Propagation of the three-body commutator}
+The 2-$\pi$ exchange part of the three-body potential is given by
+\begin{equation}
+V_{ijk} = A_{2\pi}\sum_{cyc} \left(\{\hat{X}_{ij},\hat{X}_{jk}\}
+\{\tau_{i}\cdot\tau_{j},\tau_{j}\cdot\tau_{k}\}
++[\hat{X}_{ij},\hat{X}_{jk}]
+     [\tau_{i}\cdot\tau_{j},\tau_{j}\cdot\tau_{k}] \right) \,,
+\end{equation}
+where 
+\begin{equation}
+\hat{X}_{ij}=X_{ij}^{\alpha\beta}\sigma_i^\alpha\sigma_j^\beta \,.
+\end{equation}
+The anticommutator term is a two-body operator in the spin-isospin,
+and thus can be easily included in the propagator:
+\begin{equation}
+A_{2\pi}\sum_{i<j<k}\sum_{cyc} \{X_{ij}^{\alpha\beta}\sigma_i^\alpha\sigma_j^\beta,
+X_{jk}^{\delta\gamma}\sigma_j^\delta\sigma_k^\gamma\}
+\{\tau_{i}\cdot\tau_{j},\tau_{j}\cdot\tau_{k}\} =
+4A_{2\pi}\sum_{i<j}\sigma_i^\alpha\sigma_j^\beta\tau_i\cdot\tau_j
+\sum_{k\ne i,j}X_{ij}^{\alpha\beta}X_{ij}^{\gamma\delta} \,.
+\end{equation}
+The commutator term is more difficult.
+We first note that 
+\begin{equation}
+[\tau_i^\eta\tau_j^\eta,\tau_j^\mu\tau_k^\mu]=
+\tau_i^\eta[\tau_j^\eta,\tau_j^\mu]\tau_k^\mu=
+2i\epsilon^{\eta\mu\nu}\tau_i^\eta\tau_j^\nu\tau_k^\mu \,,
+\end{equation}
+and similarly
+\begin{equation}
+[\sigma_i^\alpha X_{ij}^{\alpha\beta}\sigma_j^\beta,\sigma_j^\gamma X_{jk}^{\gamma\delta}\sigma_k^\delta] =
+X_{ij}^{\alpha\beta}X_{jk}^{\gamma\delta}[\sigma_i^\alpha\sigma_j^\beta,\sigma_j^\gamma\sigma_k^\delta] =
+2iX_{ij}^{\alpha\beta}X_{jk}^{\gamma\delta}\epsilon^{\beta\gamma\kappa}\sigma_i^\alpha\sigma_j^\kappa\sigma_k^\delta \,.
+\end{equation}
+We can write the total contribution of the commutator as
+\begin{equation}
+V_{[]}=
+A_{2\pi}\sum_{i<j<k}\sum_{cyc} [X_{ij}^{\alpha\beta}\sigma_i^\alpha\sigma_j^\beta,
+X_{jk}^{\gamma\delta}\sigma_j^\gamma\sigma_k^\delta]
+[\tau_i^\eta\tau_j^\eta,\tau_j^\mu\tau_k^\mu] =
+-4A_{2\pi}\sum_{i<j<k}\sum_{cyc}
+\sigma_i^\alpha\sigma_j^\kappa\sigma_k^\delta\tau_i^\eta\tau_j^\nu\tau_k^\mu
+X_{ij}^{\alpha\beta}X_{jk}^{\gamma\delta}\epsilon^{\beta\gamma\kappa}\epsilon^{\eta\mu\nu} \,.
+\end{equation}
+The propagator of the three-body commutator can be written using a Hubbard-Stratonovich-like 
+transformation, with the combination of more auxiliary fields:
+\begin{align}
+\exp\left[-V_{[]}\Delta t\right]\approx
+\prod_{i<j<k,cyc}&\int dx\,dy\,dz\,\exp\frac{x^2+y^2+z^2}{2} \\
+&\times\left[1-xy\Delta t^{1/3}X_{ij}^{\alpha\beta}\sigma_i^\alpha\tau_i^\eta\right] 
+\left[1-xz\Delta t^{1/3}\epsilon^{\beta\gamma\kappa}\epsilon^{\eta\mu\nu}\sigma_j^\kappa\tau_j^\nu\right] 
+\left[1-yz\Delta t^{1/3}X_{jk}^{\gamma\delta}\sigma_k^\delta\tau_k^\mu\right]= \\
+\prod_{i<j<k,cyc}&\int dx\,dy\,dz\,\exp\frac{x^2+y^2+z^2}{2} \\
+&\times\exp\left[-xy\Delta t^{1/3}X_{ij}^{\alpha\beta}\sigma_i^\alpha\tau_i^\eta\right] 
+\exp\left[-xz\Delta t^{1/3}\epsilon^{\beta\gamma\kappa}\epsilon^{\eta\mu\nu}\sigma_j^\kappa\tau_j^\nu\right] 
+\exp\left[-yz\Delta t^{1/3}X_{jk}^{\gamma\delta}\sigma_k^\delta\tau_k^\mu\right] \,,
+\end{align}
+where the factor $-4A_{2\pi}$ should also be included. 
+I think that in the worse case, for each triple $ijk$ we need to sample $9^3$=729 auxiliary fields.
+Perhaps a factor of 9 can be dropped because of the antisymmetric tensors $\epsilon$ in the above
+equations.
+
+We also need to cancel terms proportional to $\Delta t^{2/3}$. Such terms come from either
+propagating one triple, and from the propagation of different triples. For example,
+from the same triple:
+\begin{equation}
+xy^2z\Delta t^{2/3} X_{ij}^{\alpha\beta}\sigma_i^\alpha\tau_i^\eta
+X_{jk}^{\gamma\delta}\sigma_k^\delta\tau_k^\mu \,.
+\end{equation}
+These terms can be canceled using the plus-minus sampling. For each triple, we need
+to sample the $X$, $Y$ and $Z$ auxiliary fields (capital letters mean all the ones
+that we need). Then we can cancel all the terms proportional to $\Delta t^{2/3}$
+by considering the 8 combinations by taking $(\pm X,\pm Y, \pm Z)$.
+
+There are other terms coming from different triples:
+\begin{equation}
+xyzx'y'z' \Delta t^{2/3}X_{ij}^{\alpha\beta}\sigma_i^\alpha\tau_i^\eta
+X_{lm}^{\theta\phi}\sigma_l^\theta\tau_m^\phi
+\end{equation}
+I have no idea how to cancel all those terms (it is certainly possible, but the question is
+how many times do we need to evaluate the wave function?).
+One way would be to sample independent
+triples at each time-step, but I need more thinking.
+\end{document}

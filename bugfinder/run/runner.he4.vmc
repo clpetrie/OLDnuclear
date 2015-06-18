@@ -1,0 +1,3 @@
+#!/bin/sh
+time mpirun -bind-to-core -bycore -np 20 ../f90/afnucmatmpi\
+    < temp.alpha.dat > temp.he4.vmc.out

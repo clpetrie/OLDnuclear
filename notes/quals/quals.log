@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.2.21)  17 JUN 2015 15:55
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian) (format=pdflatex 2014.2.21)  18 JUN 2015 12:18
 entering extended mode
  %&-line parsing enabled.
 **quals.tex
@@ -282,7 +282,14 @@ File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 216.
 
-Underfull \hbox (badness 10000) in paragraph at lines 244--249
+Overfull \hbox (20.94421pt too wide) in paragraph at lines 244--253
+\OT1/cmr/bx/n/12 Classical limit of the trace of an op-er-a-tor: $[]\OT1/cmr/m/
+n/12 (\OMS/cmsy/m/n/12 O\OT1/cmr/m/n/12 ) = [] [] \OML/cmm/m/it/12 d[]r[] [] d[
+]r[] [] d[]p[] [] d[]p[]\OMS/cmsy/m/n/12 O$ 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 244--253
 
  []
 
@@ -290,7 +297,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 244--249
 Here is how much of TeX's memory you used:
  2846 strings out of 495041
  38174 string characters out of 1181897
- 99551 words of memory out of 3000000
+ 100551 words of memory out of 3000000
  5992 multiletter control sequences out of 15000+50000
  17319 words of font info for 64 fonts, out of 3000000 for 9000
  30 hyphenation exceptions out of 8191
@@ -306,10 +313,11 @@ lic/amsfonts/cm/cmr12.pfb></usr/share/texmf-texlive/fonts/type1/public/amsfonts
 ></usr/share/texmf-texlive/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/
 texmf-texlive/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texmf-texli
 ve/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texmf-texlive/fonts/typ
-e1/public/amsfonts/cm/cmsy8.pfb>
-Output written on quals.pdf (7 pages, 172815 bytes).
+e1/public/amsfonts/cm/cmsy8.pfb></usr/share/texmf-texlive/fonts/type1/public/am
+sfonts/symbols/msbm10.pfb>
+Output written on quals.pdf (7 pages, 178964 bytes).
 PDF statistics:
- 78 PDF objects out of 1000 (max. 8388607)
+ 82 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

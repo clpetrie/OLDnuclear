@@ -1,0 +1,8 @@
+#!/bin/sh
+valgrind \
+   --tool=callgrind \
+   --dump-instr=yes \
+   --collect-jumps=yes \
+   ../f90/afnucmat < nuclear.dat
+#   --simulate-cache=yes \
+#   --LL=,20,64 \

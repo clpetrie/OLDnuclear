@@ -1,0 +1,80 @@
+17              # A random number
+20.73554        # hbar^2/2m
+0               # 0 = vmc, 1=psitrial wt, 2 = elocal weight, 3 spazzatura
+.true.          # use lattice sites if true
+10              # default number of walkers
+1               # equilibrium blocks
+1               # averaging blocks
+1               # steps/block
+0.0003          # time step
+0.05            # time step spin (vmc)
+-14.0           # trial energy
+0.0             # drift cut off
+1.1             # drastic walker upperbound
+0.9             # drastic walker lowerbound
+1.0             # rebalance if walker number fluctuate more than this (per cpu)
+20.0            # weight cut off
+8000            # table points for jastrow and potential
+11              # Bob's potential number
+1.0             # central factor
+1.0             # tau factor
+1.0             # sigma factor
+1.0             # sigma tau factor
+1.0             # t factor
+1.0             # t tau factor
+0.0             # LS factor
+0.0             # LS tau tau factor
+1               # lattice sum for potential
+0.16            # density
+28              # particle number
+7               # number of pup
+0 0 0
+1 0 0
+-1 0 0
+0 1 0
+0 -1 0
+0 0 1
+0 0 -1
+7               # number of pdown
+0 0 0
+1 0 0
+-1 0 0
+0 1 0
+0 -1 0
+0 0 1
+0 0 -1
+7               # number of nup
+0 0 0
+1 0 0
+-1 0 0
+0 1 0
+0 -1 0
+0 0 1
+0 0 -1
+7               # number of ndown
+0 0 0
+1 0 0
+-1 0 0
+0 1 0
+0 -1 0
+0 0 1
+0 0 -1
+0.0             # a constant in psig
+1.0             # rcut in LS pair sampling
+5.0             # acut in LS pair sampling
+1.84            # jastrow central healing distance
+2.79            # jastrow tensor healing distance
+0.16            # jastrow rho_snm
+1.23            # jastrow quencher central potential
+-0.31           # jastrow quencher tau potential
+-4.47           # jastrow quencher sigma potential
+1.20            # jastrow quencher sigma-tau potential
+0.21            # jastrow quencher tensor potential
+0.28            # jastrow quencher tensor-tau potential
+1.0             # jastrow quencher LS potential
+-0.48           # jastrow quencher tau correlation
+1.39            # jastrow quencher tensor correlation
+2.21            # jastrow quencher tensor-tau correlation
+50              # number of iterations for optimization
+0.0025          # delta step in the optimization
+0.00001         # epsilon parameter to regularize the optimization

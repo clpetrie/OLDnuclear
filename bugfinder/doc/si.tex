@@ -1,0 +1,399 @@
+\documentclass[12pt]{article}
+\usepackage[margin=2.7cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\begin{document}
+\title{Notes on the calculation of the correlated mixed expectation
+values}
+\author{
+Kevin E. Schmidt\\
+Department of Physics\\
+Arizona State University\\
+Tempe, AZ 85287 USA\\
+}
+\maketitle
+\section{Notation}
+\begin{itemize}
+\item
+Label the orbital states as $|k\rangle$ with a $k$ index.
+\item
+The position and spin state
+of particle $i$ is written $|\vec r_i$ $s_i\rangle$.
+\item
+We store a particle
+spin state as the 4 numbers
+$\langle p\uparrow|s_i\rangle$,
+$\langle p\downarrow|s_i\rangle$,
+$\langle n\uparrow|s_i\rangle$,
+$\langle n\downarrow|s_i\rangle$, which is written as
+$\langle s|s_i\rangle$ with $s$ running from 1 to 4 respectively.
+\item
+We use the matrix identity 
+${\rm det} S^{-1}S' = \frac{{\rm det} S'}{{\rm det}S}$ to calculate
+the determinant of the matrix $S'$ when it has only a small number
+of columns diffrent from $A$. The unchanged columns give $1$ on the
+diagonal and $0$ on the off diagonals so that the determinant of $C$
+with $C=S^{-1}S'$ is given by the determinant of the determinant
+of the matrix $C_{mn}$ where $m$ and $n$ only take values of the changed
+columns of $S'$.
+\end{itemize}
+
+\section{Calculations}
+Here we deal with the case where the operators only change the spin state
+of the particles. The Slater matrix is
+\begin{equation}
+S_{ki} = \langle k|\vec r_i s_i\rangle =
+\sum_{s=1}^4\langle k|\vec r_i s\rangle \langle s|s_i\rangle
+\end{equation}
+so a general matrix element of $S'$ will be a linear combination of
+the orbital matrix elements
+$\langle k|\vec r_i s\rangle$. We therefore precompute
+\begin{eqnarray}
+{\rm sxmallz(j,s,i)} &=& \sum_k S^{-1}_{jk} \langle k|\vec r_i, s\rangle
+\end{eqnarray}
+where $s$ runs from 1 to 4. $j$ and $i$ run from 1 to the number of
+particles $A$. This quantity is then used for all subsequent determinant
+calculations. The original reason for having the spin as the middle index
+was to exploit the matrix multiply form.
+However, we can get a useful speed up by having the spin
+variable leftmost so that it has unit stride in inner loops, so
+we transpose this and write
+\begin{eqnarray}
+{\rm sxz(s,i,j)} &=&
+{\rm sxmallz(j,s,i)} = \sum_k S^{-1}_{jk} \langle k|\vec r_i, s\rangle
+\end{eqnarray}
+
+\section{Matrix elements of 1-, 2-, and 3-body spin-isospin operators}
+We need mixed expectations of various 1-, 2-, and 3-body spin-isospin
+operators to calculate the various terms in the local energy. Since
+the correlated trial wave function will be a linear combination of
+many terms, it is most efficient to organize the calculations so that
+the fewest operations are done in the inner loops.
+
+\subsection{1-body spin-isospin operators}
+We often would like to have the mixed expectation values of
+the 15 operators given by the components of $\sum_i \vec \sigma_i$,
+$\sum_i \vec \tau_i $,
+$\sum_i \vec \sigma_i \vec \tau_i $. Rather than calculate their
+matrix elements in the inner loops, it is more efficient to write
+a general 1-body spin/isospin operator operating on a walker
+$|s_1,s_2,...,s_A\rangle$,
+as the linear combination of the $4A$ terms
+\begin{equation}
+\sum_i O_i |s_1,...,s_A\rangle =
+\sum_{s=1}^4 \alpha_{1s}|s,s_2,...,s_A\rangle
++\sum_{s=1}^4 \alpha_{2s}|s_1,s,...,s_A\rangle+...
+\end{equation}
+where $\alpha_{is} = \langle s|O_i|s_i\rangle$. The code then
+calculates the intermediate quantity given by the matrix elements
+\begin{equation}
+{\rm d1b(s,i)} =
+\frac{\langle \Phi|R,s_1,...,s_{i-1},s,s_{i+1},...,s_A\rangle}
+{\langle \Phi|R,s_1,...,s_A\rangle}
+\,,
+\end{equation}
+where d1b standards for ``distribution 1-body'' since this looks like
+a one-body spin projector distribution.
+
+Given the sxz(s,i,j) corresponding to $|\Phi\rangle$, we have
+\begin{equation}
+{\rm d1b(s,i)} = {\rm sxz(s,i,i)} \,.
+\end{equation}
+
+The full trial function will be expanded below in the equivalent of
+a linear combination of many different $\langle \Phi|$ pieces. These
+then give a full d1b(s,i) from the same linear combination of
+the separate ones.
+
+Once the full d1b is calculated, the desired one-body operator mixed
+expectations are calculated from
+\begin{equation}
+\sum_{i=1}^A\sum_{s=1}^4 \alpha_{is}{\rm d1b(s,i)} \,.
+\end{equation}
+
+\subsection{2-body spin-isospin operators}
+We now repeat the above analysis for 2-body operators. Since the pair
+1-2 is equivalent to 2-1, we write the 2-body distributions we need
+given a particular $\langle \Phi|$
+as
+\begin{equation}
+{\rm d2b(s,s',ij)} =
+\frac{\langle \Phi|R,s_1,...,s_{i-1},s,s_{i+1}
+,...,s_{j-1},s',s_{j+1},...s_A\rangle}
+{\langle \Phi|R,s_1,...,s_A\rangle}
+\,,
+\end{equation}
+where $i<j$, and $ij$ runs from 1 to $A(A-1)/2$. The d2b contribution
+is calculated from the sxz as the corresponding
+$2\times 2$ subdeterminant
+\begin{equation}
+\rm {d2b(s,s',ij)} = \rm {det}
+\left (
+\begin{array}{cc}
+\rm {sxz(s,i,i)} & \rm {sxz(s,i,j)}\\
+\rm {sxz(s',j,i)} & \rm {sxz(s',j,j)}\\
+\end{array}
+\right ) \,.
+\end{equation}
+
+Just as for the 1-body case, there will a linear combination of
+such terms to give the full d2b result. Once this is calculated, the
+mixed expectation contribution of any
+two-body spin-isospin operator will be given by
+\begin{equation}
+\sum_{s=1}^4 \sum_{s'=1}^4 \sum_{ij=1}^{((A-1)A)/2} {\rm d2b(s,s',ij)}
+\langle s s'|O_{ij}|s_i s_j\rangle
+\end{equation}
+
+\subsection{3- or higher-body contributions}
+The generalization to higher-body operators should now be obvious.
+For example, for 3-body operators, we define a d3b(s,s',s'',ijk)
+where $s$, $s'$, and $s''$ are substitued for $s_i$, $s_j$, and $s_k$,
+$i<j<k$,
+and all $4^3$ spin-isospin terms are calculated.
+The result will be the corresponding subdeterminants
+\begin{equation}
+{\rm d3b(s,s',s'',ijk)} = \rm {det}
+\left (
+\begin{array}{ccc}
+\rm {sxz(s,i,i)} & \rm {sxz(s,i,j)} & \rm {sxz(s,i,k)} \\
+\rm {sxz(s',j,i)} & \rm {sxz(s',j,j)} & \rm {sxz(s',j,k)} \\
+\rm {sxz(s'',k,i)} & \rm {sxz(s'',k,j)} & \rm {sxz(s'',k,k)} \\
+\end{array}
+\right )\,,
+\end{equation}
+and the contributions to the three-body mixed expectations are
+\begin{equation}
+\sum_{s=1}^4 \sum_{s'=1}^4 \sum_{s''=1}^4
+\sum_{ijk=1}^{((A-2)(A-1)A)/6} {\rm d3b(s,s',s'',ijk)}
+\langle s s' s''|O_{ijk}|s_i s_j s_k\rangle \,.
+\end{equation}
+
+I have seen some references to other calculations where physical quantities
+require the calculations of all the $m\times m$ subdeterminants
+of an $N \times N$ matrix. I have not found any mention of an
+optimal algorithm. Keep your eyes open for this since these are currently
+some of the most expensive parts of the code.
+
+\section{The correlated wave function}
+Initially a sum of pair operator correlations was used, and we used
+pair updates to the inverse matrix in sxz since we worried that
+using a sequence of single operator updates might cause a division
+by zero or loss of precision from division by a small number,
+if the determinant of the matrix was zero for an unphysical
+intermediate state. This can easily happen if, for example, all the spinors
+have components of a single charge. An intermediate state with an $s$ value
+having a flipped charge
+would be orthogonal to the model state and would give
+a zero determinant, even though flipping a second charge in the second
+operator of a pair would give a well defined result.
+
+However, for realistic walkers, we have found that this division by
+zero does not occur. Therefore, we now use a sequence of single operator
+updates to obtain 1-, 2-, or more-particle additive correlations.
+This greatly simplifies the code, and makes it easy to add additional
+operators.
+
+In order to use the same single determinant 
+code described above to calculate the mixed expectations,
+we need the equivalent of
+${\rm sxz(s,m,n)}$ for the ``Slater matrix'' (note this is no longer
+antisymmetric under interchange of particles since we only operate
+on particle i)
+\begin{equation}
+S'_{km} = \left \{
+\begin{array}{cc}
+S_{km} & m \neq i\\
+\langle k|O_i|\vec r_i s_i\rangle & m = i
+\end{array}
+\right . \,.
+\end{equation}
+We require the inverse of this matrix $S'^{-1}$ multiplied by the
+possible ``new orbitals'' which will be
+\begin{equation}
+\label{eq6}
+S'_{km}(s)= \left \{
+\begin{array}{cc}
+\langle k|\vec r_m s\rangle & m\neq i\\
+\langle k|O_i|\vec r_i s\rangle &  m=i\\
+\end{array}
+\right . \,.
+\end{equation}
+\begin{equation}
+{\rm sxzi(s,n,m)}=\sum_k S'^{-1}_{mk} S'_{kn}(s) \,.
+\end{equation}
+
+We can calculate the updated inverse in the usual way by calculating the
+ratio of determinants when two columns are changed to the original
+determinant in two ways where we first change column $i$ to give $S'$,
+and then column $j$ to give $S''$,
+\begin{equation}
+\frac{{\rm det} S''}{{\rm det} S} = \frac{{\rm \det}S'}{{\rm det}S}
+\sum_n S'^{-1}_{jn}S''_{nj} =
+\left \{
+\begin{array}{cc}
+\sum_{nm} S^{-1}_{im} S''_{mi} S^{-1}_{jn} S''_{nj}
+-\sum_{nm} S^{-1}_{in} S''_{ni} S^{-1}_{jn} S''_{ni} & j \ne i\\
+\sum_n S^{-1}_{in} S''_{nj} & j = i\\
+\end{array}
+\right . \,.
+\end{equation}
+Realizing that $S''_{mi} = S'_{mi}$ when $j \ne i$, we equate
+the terms multiplying $S''_{nj}$ to find usual result
+\begin{equation}
+S'^{-1}_{jn} = \left \{
+\begin{array}{cc}
+S^{-1}_{jn} -\frac{\sum_m S^{-1}_{jm}S'_{mi}}{\sum_\ell S^{-1}_{i\ell}
+S'_{\ell i}} S^{-1}_{in}  & j \ne i\\
+\frac{S^{-1}_{in}}{\sum_m S^{-1}_{im}S'_{mi}} & j = i\\
+\end{array}
+\right . \,.
+\end{equation}
+
+Multiplying we find
+\begin{equation}
+{\rm sxzi(s,n,m)} =  \left \{
+\begin{array}{cc}
+{\rm sxz(s,n,m)} -
+\frac{\sum_k S^{-1}_{mk}\langle k |O_i|\vec r_i s_i\rangle}
+{\sum_k S^{-1}_{ik}\langle k |O_i|\vec r_i s_i\rangle} {\rm sxz(s,n,i)} & n,m \ne i\\
+\frac{\rm sxz(s,n,i)}
+{\sum_k S^{-1}_{ik}\langle k |O_i|\vec r_i s_i\rangle} & m=i; n \ne i\\
+\sum_k S^{-1}_{mk}\langle k |O_i|\vec r_i s\rangle
+-
+\frac{\sum_k S^{-1}_{mk}\langle k |O_i|\vec r_i s_i\rangle}
+{\sum_k S^{-1}_{ik}\langle k |O_i|\vec r_i s_i\rangle}
+\sum_k S^{-1}_{ik}\langle k |O_i|\vec r_i s\rangle
+& n=i; m \ne i\\
+\frac{\sum_k S^{-1}_{ik} \langle k|O_i|\vec r_i s\rangle}
+{\sum_k S^{-1}_{ik} \langle k|O_i|\vec r_i s_i\rangle} & n=m=i\\
+\end{array}
+\right . \,.
+\end{equation}
+Writing the sums in terms of sxz(s,n,m), we define
+\begin{eqnarray}
+{\rm opi(s,m)} =
+\sum_k S^{-1}_{mk}\langle k |O_i|\vec r_i s\rangle
+= 
+\sum_{k,s'} S^{-1}_{mk}\langle k | \vec r_i s'\rangle \langle s'|O_i|s\rangle
+=  \sum_{s'} {\rm sxz(s',i,m)} \langle s'|O_i|s\rangle \,.
+\end{eqnarray}
+The name opi is for ``operator i.''
+In the code, we have the function opmult that operates with the
+15 possible cartesian 
+1-body spin-isospin operators (3 components of $\vec \sigma$, 3
+components of $\vec \tau$, and 9 components fo $\vec \sigma \vec \tau$)
+to the right onto $|s\rangle$.
+We use this to operate to the left by taking the adjoint, operating
+and then taking the adjoint again. This amounts to taking the
+complex conjugate of sxz, applying the operator, and taking its complex
+conjugate again. Alternatively, the code could be changed to use the
+complex conjugate of the operator. Either one of these 15 operators if we
+are using cartesian components, or a linear combination of them defines
+opi(s,m). The other sum we need is where the right hand spinor is $|s_i\rangle$.
+We define
+\begin{equation}
+{\rm di(m)} = 
+\sum_k S^{-1}_{mk}\langle k |O_i|\vec r_i s_i\rangle
+= \sum_s {\rm opi(s,m)} \langle s|s_i\rangle
+\end{equation}
+where $\langle s|s_i\rangle$ are the walker spinor components sp(s,i).
+Since this is in some sense a ratio of determinants, the name di
+stands for ``determinant i.''
+Rewriting sxzi in terms of sxz, opi, and di, we have
+\begin{equation}
+{\rm sxzi(s,n,m)} =  \left \{
+\begin{array}{cc}
+{\rm sxz(s,n,m)} -
+\frac{{\rm di(m)}}
+{{\rm di(i)}} {\rm sxz(s,n,i)} & n,m \ne i\\
+\frac{\rm sxz(s,n,i)}
+{{\rm di(i)}} & m=i; n \ne i\\
+{\rm opi(s,m)} - \frac{{\rm di(m)}}{\rm di(i)} {\rm opi(s,i)} & n=i; m \ne i\\
+\frac{\rm opi(s,i)}{\rm di(i)} & n=m=i\\
+\end{array}
+\right . \,.
+\end{equation}
+
+Handing this new sxzi to the mixed expectation value routines will
+give the expectations with the modified $\langle \Phi|$ in the denominator.
+Therefore these results are multiplied by the ratio of the new to old
+determinants in order to be added to the d1b, d2b, and d3b sums.
+
+At this point, 2-body, 3-body, etc. operators can be done by repeating
+the calculation above starting with sxzi and repeating the above update.
+
+\section{Calculation of just the wave function}
+If only the wave function for a new walker is needed, the code uses
+the machinery developed above to calculate d1b, d2b, d3b for just
+the single Slater determinant. The operator correlations are
+converted into the $p\uparrow$, $p\downarrow$, $n\uparrow$, $n\downarrow$
+basis by operating on the walker spinors with the opmult(sp) routine,
+and then combining these with the operator correlations. For example
+a correlation containig $f_{\alpha \beta}(r_{ij})
+\sigma_{i\alpha}\sigma_{j\beta}$
+is included by f2b(iz,jz,ij)=f2b(iz,jz,ij)+$f_{\alpha\beta}(r_{ij})$*
+spx(iz,$\alpha$,i)*spx(jz,$\beta$,j). The determinant ratio is
+then given by sum(d2b*f2b) and similarly for 1- and 3-body correlations.
+
+\section{Breaking up the correlations}
+When operator mixed expectation values are needed, we will require
+the calculation of the d1b, d2b, d3b, etc. for every new sxz. Since
+these calculations will appear in the inner loop, we would like to
+break up the operator correlations in such a way to minimize their
+calls. On the other hand, updates of sxz require order $A^2$ operations.
+So we also want to minimize these updates.
+
+The most straightforward
+break up of the $v_6$ correlations uses the cartesian components of
+the pauli spin-isospin operators. There are then 39 operator pairs
+for each particle, (3 from $\tau_\alpha \tau'_\alpha$, 9 from
+$\sigma_\alpha \sigma_\beta'$, and 27 from $\sigma_\alpha\sigma_\beta'
+\tau_\gamma\tau_\gamma'$). However, for any particle $j$, particle
+$i$ can be operated on by just 15 operators $3 \sigma_\alpha$,
+3 $\tau_\alpha$, and 9 $\sigma_\alpha\tau_\beta$. Therefore, we can loop
+over the pair correlation with $i$ the outer loop. For a given $i$
+value, we can calculate the 15 possible updates that give sxzi.
+In the inner $j$ loop we then have 39 updates which each start from
+a precomputed sxzi. After the $j$ updates, the d1b, d2b, d3b etc. can
+be calculated. The inner loop will therefore have roughly $39A^2/2$
+updates, each costing $A^2$ operations itself, along with order
+$A$ operations for d1b, $A^2$ operations for d2b, and $A^3$ operations for d3b.
+
+An alternative method reduces the number of operator pairs by
+diagonalizing (or using singular value decomposition when the matrices
+are not symmetric) the coupling terms in the $v_6$ operators. For example
+the $\vec \sigma_i \cdot \vec \sigma_j$ and tensor components of the interaction
+can be written as
+\begin{equation}
+\sum_{\alpha \beta} \sigma_{i\alpha} A^{(ij)}_{\alpha \beta} \sigma_{j\beta}
+\,.
+\end{equation}
+Finding the eigenvectors $\psi^{(n)}_\alpha$ and eigenvalues $\lambda_n$
+of the real symmetric matrix $A$, we can write this as
+\begin{equation}
+\sum_{\alpha \beta} \sigma_{i\alpha} A^{(ij)}_{\alpha \beta} \sigma_{j\beta}
+= \sum_n \left [\sum_\alpha \sigma_{i\alpha} \psi^{(n)}_\alpha \right]
+\left [\sum_\beta\sigma_{j\beta} \psi^{(n)}_\beta \right]
+\,.
+\end{equation}
+and therefore define $O_i = \sum_\alpha \sigma_{i\alpha}\psi^{(n)}_\alpha$
+$O_j = \sum_\beta \sigma_{j\beta}\psi^{(n)}_\beta$.
+In this way we can reduce the number of operator pairs from 39 to 15.
+There is a trade off however. Unlike the cartesian case, the $O_i$ are
+different for each pair. Therefore both updates (unless
+someone can find a clever way to combine cartesian updates to get these
+updates) must be done in the j loop. We therefore reduce the
+number of updates from 39 to 30. We reduce the number of calls to
+d1b, d2b and d3b from 39 to 15.
+
+For the case of 3-body anticommutator additive correlations, the
+$A$ matrix above is no longer symmetric. However, this can be
+handled using singular value decomposition where we write
+\begin{equation}
+A_{\alpha\beta} = \sum_\gamma U_{\alpha\gamma} \Lambda_\gamma V_{\gamma \beta}
+\end{equation}
+and everything above still goes through.
+
+\end{document}
+
