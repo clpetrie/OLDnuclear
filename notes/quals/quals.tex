@@ -79,6 +79,9 @@
     \item{Ideal Gas}
     \item{Ideal Bose Gas}
     \item{Ideal Fermi Gas}
+    \item{Photons (BB)}
+    \item{Phonons}
+    \item{Bose-Einstein Condensates}
     \item{Cluster Expansion}
   \end{enumerate}
 \end{enumerate}
@@ -249,7 +252,19 @@
 \textbf{Microcanonical(Classical) Partition Function:} $Z_m = \sum_s g_s e^{-\beta E_s}$ \\
 \textbf{Canonical Partition Function:} $Z_c = \mathrm{tr}\left( e^{-\beta \hat{H}} \right)$ \\
 \textbf{Grand Canonical Partition Function:} $Z_{gc} = \mathrm{tr}\left( e^{-\beta (\hat{H}-\mu\hat{N})} \right)$ \\
-\textbf{Classical limit of the trace of an operator:} $\mathrm{tr}(\mathcal{O}) = \frac{1}{N!(2\pi\hbar)^{3N}} \int d^3r_1 \ldots d^3r_N \int d^3p_1 \ldots d^3p_N \mathcal{O}$ \\
+\textbf{Geometric Series:} $\sum\limits_{n=0}^\infty x^n = \frac{1}{1-x}$ \\
+\textbf{Classical limit of the trace of an operator:} $\mathrm{tr}(\mathcal{O}) = \frac{1}{N!(2\pi\hbar)^{3N}} \int d^3r_1 \ldots d^3r_N \int d^3p_1 \ldots d^3p_N \mathcal{O}$, $N!$ is for identical particles. \\
+\textbf{Thermodynamic Limit:} $T \rightarrow \infty, V \rightarrow \infty, N/V = const$ \\
+\textbf{Expectation value for pure/mixed:} $\left<\mathcal{O}\right>_p = \bra{\psi}\mathcal{O}\ket{\psi}, \left<\mathcal{O}\right>_m = \sum_i P_i \bra{\psi_i}\mathcal{O}\ket{\psi_i}$ \\
+\textbf{Density Matrix (ex. Canonical Ensemble):} $\rho = \sum_n P_n \ket{\psi_n}\bra{\psi_n}, \rho_{c} = \frac{e^{-\beta \hat{H}}}{\mathrm{tr}e^{-\beta\hat{H}}}$ \\
+\textbf{Expectation value with Density Matrix:} $\left<\mathcal{O}\right> = \mathrm{tr}(\mathcal{O} \rho)$ \\
+\textbf{Trace of Density matrix:} $\mathrm{tr}(\rho) = 1$ \\
+\textbf{Time evolution of density matrix:} $\frac{\partial}{\partial t} \rho = \frac{1}{i\hbar}\left[\hat{H},\hat{\rho}\right]$ \\
+\textbf{$Z_{gc}$ for an ideal gas:} $Z_{gc} = \frac{V^N(2mT\pi)^{3N/2}}{N!(2\pi\hbar)^{3N}} e^{\beta\mu}$ \\
+\textbf{$Z_{gc}$ for ideal fermi gas:} $Z_{gc} = \prod\limits_k \left(1+e^{-\beta(\epsilon_k-\mu)}\right)$ \\
+\textbf{$Z_{gc}$ for ideal bose gas:} $Z_{gc} = \prod\limits_k \frac{1}{\left(1-e^{-\beta(\epsilon_k-\mu)}\right)}$ \\
+\textbf{Stuff here for black-body and phonons and bose condensates.} \\
+\textbf{What is cluster expansion used for?:} Systems of interacting particles. \\
 
 \section{Quantum Mechanics Equations}
 
