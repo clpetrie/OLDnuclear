@@ -1,13 +1,13 @@
 program test
-  integer, parameter :: num = 4
+  integer, parameter :: num = 10
   real, dimension(num,num) :: A
   integer :: i, j, ij
 
-  ij=0
-  do i=1,num
-    do j=1,num
-      ij=ij+1
-      write(*,*) 'i=', i, ' j=',j, ' ij=',ij
-    end do
-  end do
+do i=1,num
+  if (i .eq. 4) cycle
+  do j=1,num
+    write(*,*) i,'.',j
+  enddo
+enddo
+
 end program test

@@ -253,10 +253,10 @@ contains
    endif
    end subroutine cordet
 
-   subroutine corindpair(sp,sxz0,i,j,d1b,d2b,d3b)
+   subroutine corindpair(sp,sxzin,i,j,d1b,d2b,d3b)
    complex(kind=r8), intent(in) :: sp(:,:)
    complex(kind=r8), intent(inout) :: d1b(:,:),d2b(:,:,:),d3b(:,:,:,:)
-   complex(kind=r8), intent(in) :: sxz0(:,:,:)
+   complex(kind=r8), intent(in) :: sxzin(:,:,:)
    integer(kind=i4), intent(in) :: i,j
    complex(kind=r8) :: sxzk(4,npart,npart,15)
    complex(kind=r8) :: fkl
@@ -265,13 +265,13 @@ contains
    complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
    integer(kind=i4) :: k,l,kl,kop,ks,kt,ls
    do k=1,npart
-      sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
+      sx15(:,:,:,k)=conjg(opmult(conjg(sxzin(:,k,:))))
    enddo
    kl=0
    do k=1,npart-1
       if (k.eq.i .or. k.eq.j) cycle
       do kop=1,15
-         call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxz0,k,sx15(:,kop,:,k),sp(:,k))
+         call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxzin,k,sx15(:,kop,:,k),sp(:,k))
       enddo
       do l=k+1,npart
          if (l.eq.i .or. l.eq.j) cycle
@@ -382,7 +382,6 @@ contains
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
-               call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
             enddo
          endif
          if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
@@ -397,7 +396,6 @@ contains
             call g1bval(d1b,sxzj,fij)
             call g2bval(d2b,sxzj,fij)
             call g3bval(d3b,sxzj,fij,.false.)
-            call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
          endif
          if (dofs(ij)) then
             do is=1,3
@@ -409,7 +407,6 @@ contains
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
-                  call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
                enddo
             enddo
          endif         
@@ -425,7 +422,6 @@ contains
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
-                     call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
                   enddo
                enddo
             enddo
@@ -465,6 +461,62 @@ contains
                enddo
             enddo
          enddo
+      enddo
+   enddo
+! do independent pair correlations
+   ij=0
+   do i=1,npart-1
+      do iop=1,15
+         call sxzupdate(sxzi(:,:,:,iop),d15(iop),sxz0,i,sx15(:,iop,:,i),sp(:,i))
+      enddo
+      do j=i+1,npart
+         ij=ij+1
+         if (doft(ij)) then
+            do it=1,2
+               fij=ft(ij)
+               sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
+               call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
+               detrat=d15(3+it)*d2
+               fij=detrat*fij
+               call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
+            enddo
+         endif
+         if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
+            it=3
+            fij=ft(ij)
+            if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
+            if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
+            sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
+            call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
+            detrat=d15(3+it)*d2
+            fij=detrat*fij
+            call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
+         endif
+         if (dofs(ij)) then
+            do is=1,3
+               sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
+               do js=1,3
+                  call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
+                  detrat=d15(is)*d2
+                  fij=detrat*fs(is,js,ij)
+                  call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
+               enddo
+            enddo
+         endif         
+         if (dofst(ij)) then 
+            do it=1,3
+               do is=1,3
+                  sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3*is+it+3))))
+                  do js=1,3
+                     call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
+                        ,sx15j(:,3*js+it+3,:),sp(:,j))
+                     detrat=d15(3*is+it+3)*d2
+                     fij=detrat*fst(is,js,ij)
+                     call corindpair(sp,sxzj,i,j,d1b,d2b,d3b)
+                  enddo
+               enddo
+            enddo
+         endif
       enddo
    enddo
    end subroutine corpsi
