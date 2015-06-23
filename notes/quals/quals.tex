@@ -8,6 +8,7 @@
 \usepackage{fancyvrb}
 \usepackage{verbatim}
 \usepackage{graphicx}
+\usepackage{bbm}
 \def\dbar{{\mathchar'26\mkern-12mu d}}
 
 
@@ -202,9 +203,9 @@
 \end{enumerate}
 \textbf{Cyclic/Ignorable Coordinates:} $q$ is ignorable if $\frac{\partial L}{\partial q} = 0$, i.e. if $q$ does not appear in $L$. Thus $p=\frac{\partial L}{\partial \dot{q}}$ is conserved. \\
 \textbf{Liousille's Theorem: } A volume of a region of phase space remains the same, even when the refion changes. $V=dq_1 \ldots dq_ndp_1 \ldots dp_n$. \\
-\textbf{Poisson Bracket: } ${f,g} = \frac{\partial f}{\partial q_i}\frac{\partial g}{\partial p_i} - \frac{\partial f}{\partial p_i}\frac{\partial g}{\partial q_i}$. \\
-\textbf{Constant of Motion from Poisson Bracket: } $\frac{df}{dt} = {f,H}+\frac{\partial f}{\partial t}$. If ${I,H}=0$, then $I$ is a constant of motion. \\
-\textbf{Canonical Transformation: } Transformation ($q_i \rightarrow Q_i(q,p), p-I \rightarrow P_i(q,p)$) that leaves Hamilton's equations invariant. \\
+\textbf{Poisson Bracket: } $\{f,g\} = \frac{\partial f}{\partial q_i}\frac{\partial g}{\partial p_i} - \frac{\partial f}{\partial p_i}\frac{\partial g}{\partial q_i}$. \\
+\textbf{Constant of Motion from Poisson Bracket: } $\frac{df}{dt} = \{f,H\}+\frac{\partial f}{\partial t}$. If ${I,H}=0$, then $I$ is a constant of motion. \\
+\textbf{Canonical Transformation: } Transformation ($q_i \rightarrow Q_i(q,p), p_i \rightarrow P_i(q,p)$) that leaves Hamilton's equations invariant. \\
 
 \section{Statistical Mechanics Equations}
 \subsection{Thermodynamics}
@@ -268,14 +269,37 @@
 \textbf{What is cluster expansion used for?:} Systems of interacting particles. \\
 
 \section{Quantum Mechanics Equations}
+\textbf{Properties of a vector space:}
+\begin{itemize}
+  \item Sum $\ket{V} + \ket{W}$
+  \item Scalar product with properties
+  \begin{enumerate}
+    \item closure: results in another vector in the space.
+    \item distributive: $a(\ket{V}+\ket{W} = a\ket{V}+a\ket{W})$, $(a+b)\ket{V}=a\ket{V}+b\ket{V}$
+    \item associative: $a(b\ket{V}) = ab\ket{V}$, $\ket{V}+(\ket{W}+\ket{Z})=(\ket{V}+\ket{W})+\ket{Z}$
+    \item commutative: $\ket{V} + \ket{W} = \ket{W} + \ket{V}$
+    \item addative inverse: $\ket{V} + \ket{-V} = \ket{0}$
+    \item null vector: $\ket{V} + \ket{)} = \ket{V}$
+  \end{enumerate}
+\end{itemize}
+\textbf{Hilbert space:} Vector space with defined inner product. \\
+\textbf{Expand in orthonormal basis:}  $\ket{V} = \sum\limits_i vi \ket{i}$ \\
+\textbf{Hermitian operator:} $\mathcal{O}^\dagger = \mathcal{O}$ \\
+\textbf{Anti-Hermitian operator:} $\mathcal{O}^\dagger = \mathcal{O}$ \\
+\textbf{Unitary operator:} $UU^\dagger = \mathbbm{1}$ \\
+\textbf{Orthogonality:} $\braket{i}{j} = \delta_{ij}$ \\
+\textbf{Completeness:} $\sum\limits_ii = \mathbbm{1}$ \\
 \textbf{Postulates of QM: }
 \begin{enumerate}
-\item  The state of a physical system, at some fixed time, is given by a normalized ray in a Hilbert space over the complex numbers. (ray is vector whose norm doesn't matter)
-\item The ray evolves deterministically in time according to Schr\"odinger’s equation.
-\item Observables correspond to self-adjoint (hermitian) operators.
-\item If a particle is in the state $\ket{\psi}$ then a measurement of $\mathcal{O}$ will yield one of the eigenvalues of $\mathcal{O}$, $\omega$. The state of the system changes to an eigenstate of $\mathcal{O}$, $\ket{\omega}$.
+  \item  The state of a physical system, at some fixed time, is given by a normalized ray in a Hilbert space over the complex numbers. (ray is vector whose norm doesn't matter)
+  \item The ray evolves deterministically in time according to Schr\"odinger’s equation.
+  \item Observables correspond to self-adjoint (hermitian) operators.
+  \item If a particle is in the state $\ket{\psi}$ then a measurement of $\mathcal{O}$ will yield one of the eigenvalues of $\mathcal{O}$, $\omega$. The state of the system changes to an eigenstate of $\mathcal{O}$, $\ket{\omega}$.
 \end{enumerate}
 \textbf{Schr\"odinger equation:} $i\hbar\frac{\partial}{\partial t} \Psi = \hat{H} \Psi$ \\
+\textbf{Free particle $\psi_p$ and $E_p$:} $\psi_p = Ae^{ikx}+Be^{-ikx}$, $k^2=\frac{2mE_n}{\hbar^2}$, $E_p = \frac{p^2}{2m}$ \\
+\textbf{Particle in a box $\psi_n$ and $E_n$:} $\psi_n = \sqrt{\frac{2}{L}}\sin{(k_nx)}$, $k_n = \frac{n\pi}{L}$, $E_n = \frac{\hbar^2\pi^2n^2}{2mL^2}$ \\
+\textbf{Harmonic Oscillator $\hat{H}$, $\psi_n$ and $E_n$:} $\hat{H} = \frac{\hat{p}^2}{2m} + \frac{1}{2}m\omega^2x^2$, $\psi_n = \left(\frac{m\omega}{\pi\hbar}\right)^{1/4}\frac{1}{2^nn!}H_n(x)e^{-x^2/2}$, $E_n = (n+\frac{1}{2})\hbar\omega$ \\
 
 \section{Electricity and Magnetism Equations}
 
