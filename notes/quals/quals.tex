@@ -299,7 +299,34 @@
 \textbf{Schr\"odinger equation:} $i\hbar\frac{\partial}{\partial t} \Psi = \hat{H} \Psi$ \\
 \textbf{Free particle $\psi_p$ and $E_p$:} $\psi_p = Ae^{ikx}+Be^{-ikx}$, $k^2=\frac{2mE_n}{\hbar^2}$, $E_p = \frac{p^2}{2m}$ \\
 \textbf{Particle in a box $\psi_n$ and $E_n$:} $\psi_n = \sqrt{\frac{2}{L}}\sin{(k_nx)}$, $k_n = \frac{n\pi}{L}$, $E_n = \frac{\hbar^2\pi^2n^2}{2mL^2}$ \\
-\textbf{Harmonic Oscillator $\hat{H}$, $\psi_n$ and $E_n$:} $\hat{H} = \frac{\hat{p}^2}{2m} + \frac{1}{2}m\omega^2x^2$, $\psi_n = \left(\frac{m\omega}{\pi\hbar}\right)^{1/4}\frac{1}{2^nn!}H_n(x)e^{-x^2/2}$, $E_n = (n+\frac{1}{2})\hbar\omega$ \\
+\textbf{Harmonic Oscillator $\hat{H}$, $\psi_n$ and $E_n$:} $\hat{H} = \frac{\hat{p}^2}{2m} + \frac{1}{2}m\omega^2\hat{x}^2$, $\psi_n = \left(\frac{m\omega}{\pi\hbar}\right)^{1/4}\frac{1}{2^nn!}H_n(x)e^{-x^2/2}$, $E_n = (n+\frac{1}{2})\hbar\omega$ \\
+\textbf{Raising and lowering operators and how to affect $\ket{n}$ (3-2):}
+\begin{itemize}
+  \item $a = \left(\frac{m\omega}{2\hbar}\right)^{1/2}\left(\hat{x}+\frac{i}{m\omega}\hat{p}\right)$, $a\ket{n} = \sqrt{n}\ket{n-1}$, $a\ket{0} = 0$
+  \item $a^\dagger = \left(\frac{m\omega}{2\hbar}\right)^{1/2}\left(\hat{x}-\frac{i}{m\omega}\hat{p}\right)$, $a^\dagger\ket{n} = \sqrt{n+1}\ket{n+1}$
+\end{itemize}
+\textbf{$\hat{H}$ in terms of $a$ and $a^\dagger$:} $\hat{H} = \hbar\omega (a^\dagger a + 1/2)$ \\
+\textbf{Commutation relations for $\hat{H}$, $a$, $a^\dagger$:}
+\begin{itemize}
+  \item $[ \hat{H}, a ] = -a$
+  \item $[ \hat{H}, a^\dagger ] = a^\dagger$
+  \item $[ a, a^\dagger ] = 1$
+\end{itemize}
+\textbf{$\mathbf{J}^2$ and $J_z$ on the angular momentum state $\ket{jm_j}$:}
+\begin{itemize}
+  \item $\mathbf{J}^2\ket = j(j+1)\hbar^2\ket{jm_j}$
+  \item $J_z\ket{jm_j} = m_j\hbar\ket{jm_j}$
+\end{itemize}
+\textbf{Commutation relations for $J_i$ and $J_j$ and for $\mathbf{J}^2$ and $J_i$:}
+\begin{itemize}
+  \item $[J_i, J_j] = i\hbar J_k$
+  \item $[\mathbf{J}^2, J_i] = 0$
+\end{itemize}
+\textbf{$J_z$ and $\mathbf{J}^2$ in position basis:}
+\begin{itemize}
+  \item $J_z = -i\hbar \frac{\partial}{\partial t}$
+  \item $\mathbf{J}^2 = -\hbar^2\left[ \frac{1}{\sin\theta}\frac{\partial}{\partial\theta}\left(\sin\theta\frac{\partial}{\partial\theta}\right) + \frac{1}{\sin^2\theta}\frac{\partial^2}{\partial\phi^2} \right]$
+\end{itemize}
 
 \section{Electricity and Magnetism Equations}
 
