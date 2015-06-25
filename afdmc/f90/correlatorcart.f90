@@ -253,7 +253,7 @@ contains
    endif
    end subroutine cordet
 
-   subroutine corindpair(sp,sxzin,i,j,d1b,d2b,d3b)
+   subroutine corindpair(sp,sxzin,i,j,d1b,d2b,d3b) !CODY
    complex(kind=r8), intent(in) :: sp(:,:)
    complex(kind=r8), intent(inout) :: d1b(:,:),d2b(:,:,:),d3b(:,:,:,:)
    complex(kind=r8), intent(in) :: sxzin(:,:,:)
@@ -264,16 +264,25 @@ contains
    complex(kind=r8) :: sxzl(4,npart,npart),d2ind,d15ind(15) !d15ind is the same as d15 but for corindpair
    complex(kind=r8) :: sx15ind(4,15,npart,npart),sx15l(4,15,npart)
    integer(kind=i4) :: k,l,kl,kop,ks,kt,ls
+   call g1bval(d1b,sxz0,cone+fctau)
+   call g2bval(d2b,sxz0,cone+fctau)
+   call g3bval(d3b,sxz0,cone+fctau,.false.)
    do k=1,npart
       sx15ind(:,:,:,k)=conjg(opmult(conjg(sxzin(:,k,:))))
    enddo
    kl=0
    do k=1,npart-1
+      if (k.eq.i .or. k.eq.j) then !This makes sure we don't have bad kl references because it skips kl's otherwise
+        do l=k+1,npart
+          kl=kl+1
+        enddo
+      endif
       if (k.eq.i .or. k.eq.j) cycle
       do kop=1,15
          call sxzupdate(sxzk(:,:,:,kop),d15ind(kop),sxzin,k,sx15ind(:,kop,:,k),sp(:,k))
       enddo
       do l=k+1,npart
+         if (l.eq.i .or. l.eq.j) kl=kl+1 !This also makes sure kl stayes on track
          if (l.eq.i .or. l.eq.j) cycle
          kl=kl+1
          if (doft(kl)) then
