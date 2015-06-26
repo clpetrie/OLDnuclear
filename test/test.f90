@@ -4,12 +4,12 @@ program test
 
 ij=0
 do i=1,npart-1
-  if (i.eq.4 .or. i.eq.30) then
+  if (i.ge.4 .or. i.eq.30) then
     do j=i+1,npart
       ij=ij+1
     enddo
   endif
-  if (i.eq.4 .or. i.eq.30) cycle
+  if (i.ge.4 .or. i.eq.30) cycle
   do j=i+1,npart
     if (j.eq.2 .or. j.eq.13) ij=ij+1
     if (j.eq.2 .or. j.eq.13) cycle

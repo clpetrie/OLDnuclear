@@ -272,12 +272,12 @@ contains
    enddo
    kl=0
    do k=1,npart-1
-      if (k.eq.i .or. k.eq.j) then !This makes sure we don't have bad kl references because it skips kl's otherwise
+      if (k.le.i .or. k.eq.j) then !This makes sure we don't have bad kl references because it skips kl's otherwise
         do l=k+1,npart
           kl=kl+1
         enddo
       endif
-      if (k.eq.i .or. k.eq.j) cycle
+      if (k.le.i .or. k.eq.j) cycle
       do kop=1,15
          call sxzupdate(sxzk(:,:,:,kop),d15ind(kop),sxzin,k,sx15ind(:,kop,:,k),sp(:,k))
       enddo
