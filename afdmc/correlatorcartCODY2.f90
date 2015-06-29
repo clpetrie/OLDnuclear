@@ -22,6 +22,7 @@ module correlator
    integer(kind=i4), private, parameter :: levi(2,3) = &
       reshape((/2,3, 3,1, 1,2/),(/2,3/))
    private :: opmult
+   private :: calij !CODY
    complex(kind=r8), private, save, allocatable :: tau(:,:,:),sigma(:,:,:)
    complex(kind=r8), private, save, allocatable :: sigtau(:,:,:,:,:)
    complex(kind=r8), private, save, allocatable :: sigma1(:,:),tau1(:,:)
@@ -34,6 +35,7 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
+   logical, private, save :: doindpair = .true. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -379,6 +381,7 @@ contains
       enddo
       do j=i+1,npart
          ij=ij+1
+         write(*,*) ij, calij(i,j)
          if (doft(ij)) then
             do it=1,2
                fij=ft(ij)
@@ -389,7 +392,6 @@ contains
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
-               call corindpair(sp,sxzj,i,j,d1b,d2b,d3b) !CODY
             enddo
          endif
          if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
@@ -404,7 +406,6 @@ contains
             call g1bval(d1b,sxzj,fij)
             call g2bval(d2b,sxzj,fij)
             call g3bval(d3b,sxzj,fij,.false.)
-            call corindpair(sp,sxzj,i,j,d1b,d2b,d3b) !CODY
          endif
          if (dofs(ij)) then
             do is=1,3
@@ -416,7 +417,6 @@ contains
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
-                  call corindpair(sp,sxzj,i,j,d1b,d2b,d3b) !CODY
                enddo
             enddo
          endif         
@@ -432,7 +432,6 @@ contains
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
-                     call corindpair(sp,sxzj,i,j,d1b,d2b,d3b) !CODY
                   enddo
                enddo
             enddo
@@ -580,6 +579,16 @@ contains
    sxznew(:,:,i)=sxzold(:,:,i)*detinv
    sxznew(:,i,i)=opi(:,i)*detinv
    end subroutine sxzupdate
+
+   function calij(i,j) !CODY
+   integer(kind=i4) :: i,j,calij,n,mysum
+
+   mysum=0
+   do n=1,i-1
+      mysum=mysum-n
+   enddo
+   calij=(j-i)+(i-1)*npart+mysum
+   end function
 
    function opmult(sp)
    complex(kind=r8) :: sp(:,:),opmult(4,15,npart)

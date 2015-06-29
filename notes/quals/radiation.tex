@@ -1,0 +1,27 @@
+\documentclass[12pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{graphicx}
+
+%my commands
+\newcommand{\wavr}{\left|\mathbf{r}-\mathbf{r}'\right|}
+\newcommand{\br}{\mathbf{r}}
+\newcommand{\tret}{t-\frac{\wavr}{c}}
+
+\title{Notes on Radiation}
+\author{Cody L. Petrie}
+
+\begin{document}
+\maketitle
+
+\section*{Radiation from arbitrary source}
+Let's start with the retarted sources which give us the scalar and vector potentials
+\begin{align}
+   \mathbf{\Phi}(\br,t) &= \frac{1}{4\pi\epsilon_0} \int d^3r' \frac{\rho(\br,\tret)}{\wavr} \\
+   \mathbf{A}(\br,t) &= \frac{\mu_0}{4\pi} \int d^3r' \frac{\mathbf{J}(\br,\tret)}{\wavr}.
+\end{align}
+The first approximation for radiation is that the source is localized (also meaning that the radiation zone is far from the source $r \gg r'$. When calculating
+
+\end{document}

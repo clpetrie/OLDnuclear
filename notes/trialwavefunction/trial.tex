@@ -52,7 +52,7 @@ where the $\Oijp$'s are $\tauij$, $\sigmaij$, and $t_{ij}\tauij$, where $t_{ij} 
 
 My goal is to add the additional independent pair correlations.
 \begin{equation}
-  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oijp + \sum_{i<j}\sum_{k<l}\sum_p f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp \right] \ket{\Phi}
+  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oijp + \sum_{p,i<j}\sum_{p,k<l} f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp \right] \ket{\Phi}
 \end{equation}
 The triple sum is called the independent pair correlation term because the sum over $k<l$ does not include any pairs that include $i$ or $j$. For example, if $i=1$ and $j=2$ then we could include the $kl$ pairs of $34, 45,$ etc., but would not include the pairs $13, 25,$ etc.
 
@@ -200,6 +200,7 @@ where the first operator is part of the potential and the second is the correlat
 where the number of primes is the number of changed columns (unless $i$ or $j$ was equal to $k$ or $l$).
 
 \section{Breakup of correlation operator in Cartesian}
+\subsection{Linear Term Only}
 Here I am going to show how we have broken up the correlation operator in Cartesian coordinates. The correlation operator is
 \begin{equation}
   \sum_{p=1}^6 f^p(r_{ij}) \Oijp
@@ -238,6 +239,11 @@ This is the $\sigmaia\sigmajb$ breakup term. The last term is
   \label{equ:Ast}
 \end{align}
 The $\sigmaia\sigmajb\tauig\taujg$ term is the third term in the breakup. These three terms together require 39 operations. $\tauig\taujg$ requires 3, $\sigmaia\sigmajb$ 9, and $\sigmaia\sigmajb\tauig\taujg$ 27, where the $\alpha, \beta$ and $\gamma$ are summer over the three Cartesian coordinates and $i$ and $j$ refer to particles.
+\subsection{Independent Pair Term Addition}
+The trial wave function with the independent pair terms is
+\begin{equation}
+  \braket{RS}{\Psi_T} = \bra{RS} \left[ \prod_{i<j}f_c(r_{ij}) \right] \left[ 1+\sum_{i<j}\sum_p f_p(r_{ij})\Oijp + \sum_{p,i<j}\sum_{p,k<l} f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp \right] \ket{\Phi}.
+\end{equation}
 
 \section{V6 Potential}
 Now let's look at the v6 potential, which is
