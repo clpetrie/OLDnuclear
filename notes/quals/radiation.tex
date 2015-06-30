@@ -19,9 +19,68 @@
 \section*{Radiation from arbitrary source}
 Let's start with the retarted sources which give us the scalar and vector potentials
 \begin{align}
-   \mathbf{\Phi}(\br,t) &= \frac{1}{4\pi\epsilon_0} \int d^3r' \frac{\rho(\br,\tret)}{\wavr} \\
-   \mathbf{A}(\br,t) &= \frac{\mu_0}{4\pi} \int d^3r' \frac{\mathbf{J}(\br,\tret)}{\wavr}.
+   \mathbf{\Phi}(\br,t) &= \frac{1}{4\pi\epsilon_0} \int d^3r' \frac{\rho(\br',\tret)}{\wavr} \label{equ:genphi} \\
+   \mathbf{A}(\br,t) &= \frac{\mu_0}{4\pi} \int d^3r' \frac{\mathbf{J}(\br',\tret)}{\wavr}. \label{equ:genj}
 \end{align}
-The first approximation for radiation is that the source is localized (also meaning that the radiation zone is far from the source $r \gg r'$. When calculating
+The first approximation for radiation is that the source is localized (also meaning that the radiation zone is far from the source $r \gg r'$). Under this assumption we get,
+\begin{align}
+   \wavr &\approx r - \frac{\br \cdot \br'}{r} \label{equ:approxwr} \\
+   \frac{1}{\wavr} &\approx \frac{1}{r} + \frac{\br \cdot \br'}{r^3}, \label{equ:approxwrm1}
+\end{align}
+using the Fourier Transform
+\begin{equation}
+   f(\br+\mathbf{a}) \approx f(\br) + \mathbf{a} \cdot \nabla f(\br) = f(\br) + a_i \partial_i f(\br).
+\end{equation}
+Now lets use the fact that the sources have harmonic time dependence.
+\begin{equation}
+   \mathbf{J}(\br',t) = \mathbf{J}(\br')e^{-i\omega t}
+\end{equation}
+With this we can now approximate the vector potential by
+\begin{equation}
+   \mathbf{J}(\br',\tret) \approx \mathbf{J}(\br')e^{-i\omega t + i\omega r/c - i\omega \frac{\hat{r} \cdot \br'}{c}}.
+\end{equation}
+Now we can plug this into equation \ref{equ:genj}, and dropping terms with higher order terms that $1/r$ to get,
+\begin{equation}
+   \mathbf{A}(\br,t) = \frac{\mu_0e^{-i\omega(t-r/c)}}{4\pi r} \int d^3r' \mathbf{J}(\br')e^{-i\omega \frac{\hat{r} \cdot \br}{c}}.
+   \label{equ:localizeda}
+\end{equation}
+Now is we assume that the region of sources is small compared to the wavelength, $c/\omega \gg r'$,  then we can make the \textbf{dipole approximation}, $e^{-i\omega \hat{r}\cdot\br'/c} \approx 1$, which when pluggen into equation~\ref{equ:localizeda} gives
+\begin{equation}
+   \mathbf{A}(\br,t) = \frac{\mu_0e^{-i\omega(t-r/c)}}{4\pi r} \int d^3r' \mathbf{J}(\br').
+   \label{equ:dipapproxa}
+\end{equation}
+Now let's go on an aside to explore the $\mathbf{J}(\br')$. \\
+\textbf{Claim:} $\int d^3r' \mathbf{J}(\br') = \frac{d\mathbf{p}}{dt}$ where
+\begin{equation}
+   \mathbf{p}(\br',t) = \int d^3r' \br'\rho(\br',t)
+\end{equation}
+is the electric dipole moment. Now let's find the integral of $\mathbf{J}(\br')$ in terms of this dipole moment. Let's start with the time derivative of the dipole.
+\begin{align}
+   \frac{d\mathbf{p}}{dt} &= \frac{d}{dt}\int d^3r' \br'\rho(\br',t) \\
+   &= \int d^3r' \br' \frac{\partial}{\partial t}\rho(\br',t) \\
+   &= -\int d^3r' \br' \nabla \cdot \mathbf{J}(\br',t),
+\end{align}
+where we have used the continuity equation
+\begin{equation}
+   \nabla \cdot \mathbf{J(\br',t)} = -\frac{\partial}{\partial t} \rho(\br',t).
+\end{equation}
+Now expand the $\br' \nabla \cdot \mathbf{J}(\br',t)$ term.
+\begin{align}
+   \nabla \cdot r_i\mathbf{J} &= (\nabla r_i) \cdot \mathbf{J} + r_i\nabla\cdot\mathbf{J} \\
+   &= \hat{r_i} \cdot \mathbf{J} + r_i\nabla\cdot\mathbf{J}
+\end{align}
+If you sum over all possible $r_i$'s you get
+\begin{equation}
+   \br'\nabla\cdot\mathbf{J} = \nabla\cdot (r_x\mathbf{J}+r_y\mathbf{J}+r_z\mathbf{J}) - \mathbf{J}
+\end{equation}
+However when the second term is integrated over the volume it can be turned into a surface integral with the divergence theorem, but $\mathbf{J}$ is zero on the surface to we get that
+\begin{equation}
+   \frac{d\mathbf{p}}{dt} = \int d^3r' \mathbf{J}.
+\end{equation}
+Now applying this to equation~\ref{equ:dipapproxa} we get
+\begin{equation}
+   \mathbf{A}(\br,t) = \frac{\mu_0}{4\pi r} \frac{d}{dt}\mathbf{p}e^{-i\omega(t-r/c)}.
+\end{equation}
+\color{red}{Is this right?}
 
 \end{document}
