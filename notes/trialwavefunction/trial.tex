@@ -35,6 +35,7 @@
 \newcommand{\Ot}{\mathcal{O}^\tau_{n\alpha}}
 \newcommand{\Os}{\mathcal{O}^\sigma_{n}}
 \newcommand{\Ost}{\mathcal{O}^{\sigma\tau}_{n\alpha}}
+\newcommand{\detr}{\mathrm{det}}
 
 \title{Calculating the Trial Wave Function for AFDMC}
 \author{Cody L. Petrie}
@@ -178,18 +179,20 @@ Now in cases where we have two set's of operators like for example when we need 
 \end{equation}
 where
 \begin{equation}
-  S'_{kn}(s) = \begin{cases}
-	 \braket{k}{r_m,s} & n \neq i \\
-	 \bra{k} \Oi \ket{r_i,s} & n=i.
+  S'_{km} = \begin{cases}
+	 S_{km} & m \neq i \\
+	 \bra{k} \Oi \ket{r_i,s_i} & m=i,
+  \end{cases}
+\end{equation}
+and
+\begin{equation}
+  S'_{km}(s) = \begin{cases}
+	 \braket{k}{r_m,s} & m \neq i \\
+	 \bra{k} \Oi \ket{r_i,s} & m=i.
   \end{cases}
 \end{equation}
 
-
-
-
-
-
-For example assume we needed to get something like
+For example, assume we needed to get something like
 \begin{equation}
   \bra{R,S}(\sum_{i<j}v_{ij})(1+\sum_{i<j}\sum_p \Oijp) \ket{\Phi},
 \end{equation}
@@ -197,7 +200,19 @@ where the first operator is part of the potential and the second is the correlat
 \begin{equation}
   \bra{R,S} v_{ij}(1+\Okl) \ket{\Phi} = \mathrm{det}(S'') + \mathrm{det}(S''''),
 \end{equation}
-where the number of primes is the number of changed columns (unless $i$ or $j$ was equal to $k$ or $l$).
+where the number of primes is the number of changed columns (unless $i$ or $j$ was equal to $k$ or $l$). Let's look at how to get these ratio's of determinants one (single particle) operator at a time.
+\begin{align}
+  \frac{\mathrm{det}S''}{\mathrm{det}S} &= \frac{\detr S'}{\detr S}\frac{\detr S''}{\detr S'} \\
+  &= \frac{\detr S'}{\detr S}\sum_n S'^{-1}_{jn}S''_{nj}
+\end{align}
+Here I have used the face that if the only difference between $S''$ and $S'$ is the column $j$, then the radio of determinants can be written as $\sum_n S'^{-1}_{jn}S''_{nj}$. If you can't see this try simple 2x2 matricies that only differ by one column and work it out. If this fact is again used on the first radio of determinants we can write
+\begin{equation}
+  \frac{\mathrm{det}S''}{\mathrm{det}S} = \begin{cases}
+  \sum_{nm} S^{-1}_{im}S''_{mi}S^{-1}_{jn}S''_{nj} - S^{-1}_{in}S''_{ni}S^{-1}_{jm}S''_{mj} & j \neq i \\
+  \sum_n S^{-1}_{in}S''_{ni} & j = i.
+  \end{cases}
+\end{equation}
+This $j=1$ case is easy to see, $S''$ and $S$ only differ by one column in this case, or you can work it out and recognize that the martix multiplication $C=A.B$ can be written $c_{ij} = a_{in}*b_{nj}$. The case where $j \neq i$ is a little harder to see. Just imagine taking the ratio of a 2x2 matrix where the components are come from the columns that were not inverted to be the unit martix.
 
 \section{Breakup of correlation operator in Cartesian}
 \subsection{Linear Term Only}

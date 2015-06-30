@@ -78,9 +78,39 @@ However when the second term is integrated over the volume it can be turned into
    \frac{d\mathbf{p}}{dt} = \int d^3r' \mathbf{J}.
 \end{equation}
 Now applying this to equation~\ref{equ:dipapproxa} we get
+\begin{align}
+   \mathbf{A}(\br,t) &= \frac{\mu_0}{4\pi r} \frac{d}{dt}\mathbf{p}e^{-i\omega(t-r/c)} \\
+   &= \frac{\mu_0}{4\pi r} \dot{\mathbf{p}}(t-r/c),
+\end{align}
+which is the standard result. I'm not going to worry about finding $\Phi(\br,t)$ because if
+\begin{align}
+   \mathbf{E} &= \mathbf{E}_0e^{-i(\mathbf{k}\cdot\br - \omega t)} \\
+   \mathbf{B} &= \mathbf{B}_0e^{-i(\mathbf{k}\cdot\br - \omega t)},
+\end{align}
+it can be shown with Maxwell's equations that $\mathbf{E}_0 = -c \hat{k}\times\mathbf{B}_0$, so we only need to solve for $\mathbf{B}$ using $\mathbf{B} = \nabla\times\mathbf{A}$.
+\begin{align}
+   \mathbf{B} &= \nabla\times\mathbf{A} \\
+   &= \frac{\mu_0}{4\pi} \nabla\times\frac{\dot{\mathbf{p}}(t-r/c)}{r} \\
+   &= \frac{\mu_0}{4\pi r} \nabla\times\dot{\mathbf{p}}(t-r/c)
+\end{align}
+Where the chain rule was applied here but the derivative of $1/r$ gave a term that went as $1/r^2$ so we ignored it. Now this cross product can be done if we remember the product rule $\nabla\times(f\mathbf{A}) = f(\nabla\times\mathbf{A}) - \mathbf{A}\times(\nabla f)$. Thus $\mathbf{B}$ becomes
+\begin{align}
+   \mathbf{B}(\br,t) &= -\frac{\mu_0}{4\pi r}\left[e^{-i\omega(t-r/c)}(\nabla\times\dot{\mathbf{p}}) - \dot{\mathbf{p}}\times(\nabla e^{-i\omega(t-r/c)}) \right] \\
+   &= \frac{\mu_0}{4\pi r} \dot{\mathbf{p}}\times(\nabla e^{-i\omega(t-r/c)}) \\
+   &= \frac{\mu_0}{4\pi r} \frac{i\omega}{c}\hat{r}\times\dot{\mathbf{p}}e^{-i\omega(t-r/c)}.
+\end{align}
+but since we said that $\dot{\mathbf{p}}(t-r/c) = \dot{\mathbf{p}}e^{-i\omega(t-r/c)}$ we can say that
 \begin{equation}
-   \mathbf{A}(\br,t) = \frac{\mu_0}{4\pi r} \frac{d}{dt}\mathbf{p}e^{-i\omega(t-r/c)}.
+   \frac{d}{dt_{ret}}\dot{\mathbf{p}} = \ddot{\mathbf{p}} = -i\omega\dot{\mathbf{p}},
 \end{equation}
-\color{red}{Is this right?}
+which we can use to give us
+\begin{equation}
+   \mathbf{B}(\br,t) = -\frac{\mu_0}{4\pi rc}\hat{r}\times\ddot{\mathbf{p}}(t-rc).
+\end{equation}
+Now we can find $\mathbf{E}$ to be
+\begin{equation}
+   \mathbf{E}(\br,t) = \frac{\mu_0}{4\pi r} \hat{r}\times\hat{r}\times\ddot{\mathbf{p}}(\br,t-r/c),
+\end{equation}
+using the fact that $\mathbf{E}_0 = -c \hat{k}\times\mathbf{B}_0$, and noting that $\hat{k}=\hat{r}$.
 
 \end{document}
