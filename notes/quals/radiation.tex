@@ -9,6 +9,8 @@
 \newcommand{\wavr}{\left|\mathbf{r}-\mathbf{r}'\right|}
 \newcommand{\br}{\mathbf{r}}
 \newcommand{\tret}{t-\frac{\wavr}{c}}
+\newcommand{\pd}{\dot{\mathbf{p}}}
+\newcommand{\pdd}{\ddot{\mathbf{p}}}
 
 \title{Notes on Radiation}
 \author{Cody L. Petrie}
@@ -80,7 +82,7 @@ However when the second term is integrated over the volume it can be turned into
 Now applying this to equation~\ref{equ:dipapproxa} we get
 \begin{align}
    \mathbf{A}(\br,t) &= \frac{\mu_0}{4\pi r} \frac{d}{dt}\mathbf{p}e^{-i\omega(t-r/c)} \\
-   &= \frac{\mu_0}{4\pi r} \dot{\mathbf{p}}(t-r/c),
+   &= \frac{\mu_0}{4\pi r} \pd(t-r/c),
 \end{align}
 which is the standard result. I'm not going to worry about finding $\Phi(\br,t)$ because if
 \begin{align}
@@ -90,27 +92,75 @@ which is the standard result. I'm not going to worry about finding $\Phi(\br,t)$
 it can be shown with Maxwell's equations that $\mathbf{E}_0 = -c \hat{k}\times\mathbf{B}_0$, so we only need to solve for $\mathbf{B}$ using $\mathbf{B} = \nabla\times\mathbf{A}$.
 \begin{align}
    \mathbf{B} &= \nabla\times\mathbf{A} \\
-   &= \frac{\mu_0}{4\pi} \nabla\times\frac{\dot{\mathbf{p}}(t-r/c)}{r} \\
-   &= \frac{\mu_0}{4\pi r} \nabla\times\dot{\mathbf{p}}(t-r/c)
+   &= \frac{\mu_0}{4\pi} \nabla\times\frac{\pd(t-r/c)}{r} \\
+   &= \frac{\mu_0}{4\pi r} \nabla\times\pd(t-r/c)
 \end{align}
 Where the chain rule was applied here but the derivative of $1/r$ gave a term that went as $1/r^2$ so we ignored it. Now this cross product can be done if we remember the product rule $\nabla\times(f\mathbf{A}) = f(\nabla\times\mathbf{A}) - \mathbf{A}\times(\nabla f)$. Thus $\mathbf{B}$ becomes
 \begin{align}
-   \mathbf{B}(\br,t) &= -\frac{\mu_0}{4\pi r}\left[e^{-i\omega(t-r/c)}(\nabla\times\dot{\mathbf{p}}) - \dot{\mathbf{p}}\times(\nabla e^{-i\omega(t-r/c)}) \right] \\
-   &= \frac{\mu_0}{4\pi r} \dot{\mathbf{p}}\times(\nabla e^{-i\omega(t-r/c)}) \\
-   &= \frac{\mu_0}{4\pi r} \frac{i\omega}{c}\hat{r}\times\dot{\mathbf{p}}e^{-i\omega(t-r/c)}.
+   \mathbf{B}(\br,t) &= -\frac{\mu_0}{4\pi r}\left[e^{-i\omega(t-r/c)}(\nabla\times\pd) - \pd\times(\nabla e^{-i\omega(t-r/c)}) \right] \\
+   &= \frac{\mu_0}{4\pi r} \pd\times(\nabla e^{-i\omega(t-r/c)}) \\
+   &= \frac{\mu_0}{4\pi r} \frac{i\omega}{c}\hat{r}\times\pd e^{-i\omega(t-r/c)}.
 \end{align}
-but since we said that $\dot{\mathbf{p}}(t-r/c) = \dot{\mathbf{p}}e^{-i\omega(t-r/c)}$ we can say that
+but since we said that $\pd(t-r/c) = \pd e^{-i\omega(t-r/c)}$ we can say that
 \begin{equation}
-   \frac{d}{dt_{ret}}\dot{\mathbf{p}} = \ddot{\mathbf{p}} = -i\omega\dot{\mathbf{p}},
+   \frac{d}{dt_{ret}}\pd = \pdd = -i\omega\pd,
 \end{equation}
 which we can use to give us
 \begin{equation}
-   \mathbf{B}(\br,t) = -\frac{\mu_0}{4\pi rc}\hat{r}\times\ddot{\mathbf{p}}(t-rc).
+   \mathbf{B}(\br,t) = -\frac{\mu_0}{4\pi rc}\hat{r}\times\pdd(t-rc).
 \end{equation}
 Now we can find $\mathbf{E}$ to be
 \begin{equation}
-   \mathbf{E}(\br,t) = \frac{\mu_0}{4\pi r} \hat{r}\times\hat{r}\times\ddot{\mathbf{p}}(\br,t-r/c),
+   \mathbf{E}(\br,t) = \frac{\mu_0}{4\pi r} \hat{r}\times\hat{r}\times\pdd(\br,t-r/c),
 \end{equation}
 using the fact that $\mathbf{E}_0 = -c \hat{k}\times\mathbf{B}_0$, and noting that $\hat{k}=\hat{r}$.
+
+\section*{Power Radiated}
+The Poynting vector gives us the the energy that is radiated per time per unit area.
+\begin{equation}
+   \mathbf{S}=\frac{1}{\mu_0} \mathbf{E} \times \mathbf{B}
+\end{equation}
+This points in the $\hat{k}$ of $\hat{r}$ direction but if you use the relation used above you can get the magnitude in terms of only $\mathbf{E}$ or $\mathbf{B}$.
+\begin{align}
+   \mathbf{S} &= \frac{c}{\mu_0} |\mathbf{B}|^2\hat{r} \\
+   &= \frac{\mu_0}{16\pi^2 c r^2} |\hat{r}\times\pdd|^2 \hat{r}
+\end{align}
+We can now get the total radiated power by integrating this over an entire sphere since the Poynting vector has units of power per area. Let's let $\pdd = \ddot{p}\hat{z}$ so that $|\hat{r}\times\pdd|^2 = |\pdd|^2\sin^2 \theta$, so we get
+\begin{equation}
+   \mathbf{S} = \frac{\mu_0}{16\pi^2 c r^2} |\pdd|^2\sin^2 \theta \hat{r},
+\end{equation}
+where $\theta$ is the typical spherical angle. Now let's integrate this over the full sphere to get the total power radiated.
+\begin{align}
+   P &= \int r^2 \mathbf{\Omega}\cdot\mathbf{S} \\
+   &= \int r^2 \Omega S \hat{r}\cdot\hat{r} \\
+   &= \int r^2\sin\theta d\theta d\phi \frac{\mu_0}{16\pi^2cr^2}|\pdd|^2\sin^2\theta \\
+   &= \int_0^{2\pi} \int_0^\pi d\phi d\theta \frac{\mu_0}{16\pi^2c} |\pdd|^2 \sin^3\theta \\
+   &= \int_0^{2\pi} d\theta \frac{\mu_0}{8\pi c} |\pdd|^2 \sin^3\theta
+\end{align}
+Now we just need to do the $\theta$ integral. To do this use a u-sum with $u=\cos\theta$ so that $du=-\sin\theta d\theta$.
+\begin{align}
+   \int_0^\pi d\theta \sin^3\theta &= \int_0^\pi d\theta \sin\theta(1-\cos^2\theta) \\
+   &= -\int_1^{-1} du (1-u^2) \\
+   &= \left. 1-\frac{1}{3}u^3\right|_{-1}^1 \\
+   &= \frac{4}{3}
+\end{align}
+This then gives us for the total power radiated
+\begin{equation}
+   P = \frac{\mu_0}{6\pi c} |\pdd|^2
+\end{equation}
+
+\section*{Time Averaged Power Radiated/Larmor Formula}
+Now to get the time averaged power let's assume the form $\mathbf{p}(t)) = p\hat{\mathbf{z}}e^{i\omega t}$ for the dipole moment so that we get $\pdd = -\omega^2p\hat{\mathbf{z}}e^{i\omega t}$, where the period is $T=2\pi/\omega$. To time agerage we integrate over a period and divide by the period.
+\begin{align}
+   \bar{P} &= \frac{1}{T} \int_0^T dt P \\
+   &= \frac{\omega}{2\pi} \int_0^{2\pi/\omega} dt \frac{\mu_0\omega^4p^2}{6\pi c} \\
+   &= \frac{\omega}{2\pi} \frac{\mu_0\omega^4p^2}{12\pi c} t \bigg|_0^{2\pi/\omega} \\
+   &= \frac{\mu_0\omega^4p^2}{12\pi c}
+\end{align}
+Now if we say that $p=Qd$ we can write this as
+\begin{equation}
+   \bar{P} = \frac{\mu_0\omega^4p^2}{12\pi c} = \frac{\mu_0\omega^4Q^2d^2}{12\pi c}.
+\end{equation}
+This is the Larmor formula. Notice the strong dependence on the frequency $\omega$.
 
 \end{document}
