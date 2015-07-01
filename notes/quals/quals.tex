@@ -327,12 +327,37 @@
   \item $J_z = -i\hbar \frac{\partial}{\partial t}$
   \item $\mathbf{J}^2 = -\hbar^2\left[ \frac{1}{\sin\theta}\frac{\partial}{\partial\theta}\left(\sin\theta\frac{\partial}{\partial\theta}\right) + \frac{1}{\sin^2\theta}\frac{\partial^2}{\partial\phi^2} \right]$
 \end{itemize}
+\textbf{Raising and Lowering Angular Momentum Operators on $\ket{j,m}$:} \\
+$J_{\pm}\ket{j,m} = \hbar[j(j+1)-m(m\pm1)]^1/2\ket{j,m\pm1}$ \\
+\textbf{$J_x$ and $J_y$ in terms of $J_+$ and $J_-$:} $J_x = \frac{1}{2}(J_++J_-)$, $J_y = \frac{1}{2i}(J_+-J_i)$\\
 \textbf{Momentum eigenstate, $\braket{x}{p}$:} $\braket{x}{p} = \frac{1}{\sqrt{2\pi\hbar}}e^{ipx/\hbar}$ \\
 \textbf{Hydrogen Atom $V(r)$, $\psi_n$, $E_n$(x4):} $V(r) = -\frac{Ze^2}{4\pi\epsilon_0r}$, $\psi_n = stuff*L^{2l+1}_{n-l-1}(\rho)Y_l^m(\theta,\phi)$(Laguerre) \\
 $E_n = -\frac{1}{2n^2}\left(\frac{Ze^2}{4\pi\epsilon_0\hbar}\right)^2m_e = -\frac{1}{2n^2}\alpha^2m_e c^2 = -\frac{1}{n^2}13.6eV = -\frac{1}{2n^2}\left(\frac{1}{4\pi\epsilon_0}\frac{e^2}{a_0}\right)$, \\
 $\alpha = \frac{e^2}{4\pi\epsilon_0\hbar c}$, $a_0 = \frac{4\pi\epsilon_0\hbar^2}{m_ee^2}$ \\
 \textbf{Pauli matricies and commutation relations:} \\
-$\sigma_x = $
+$\sigma_x = \begin{pmatrix} 0&1 \\ 1&0 \end{pmatrix}$ \\
+$\sigma_y = \begin{pmatrix} 0&-i \\ i&0 \end{pmatrix}$ \\
+$\sigma_z = \begin{pmatrix} 1&0 \\ 0&-1 \end{pmatrix}$ \\
+$\left[\sigma_a\sigma_b\right] = 2i\epsilon_{abc}\sigma_c$ \\
+\textbf{Non-Deg Time-Ind Perturbation, $E_n^{(1)}$, $\ket{n^{(1)}}$, $E_n^{(2)}$:} \\
+$E_n^{(1)} = H'_{nn} = \bra{n^{(0)}}H'\ket{n^{(0)}}$ \\
+$\ket{n^{(1)}} = \sum\limits_{m\neq n} \frac{\bra{n^{(0)}}H'\ket{n^{(0)}}}{(E_n^{(0)}-E_m^{(0))}} \ket{m^{(0)}}$ \\
+$E_n^{(2)} = \sum\limits_{m\neq n} \frac{\left|\bra{n^{(0)}}H'\ket{n^{(0)}}\right|^2}{(E_n^{(0)}-E_m^{(0))}}$ \\
+\textbf{Deg Time-Ind Perturbation, $E_n^{(1)}$:} Diagonalize the perturbation hamiltonian in the degenerate subspace. \\
+\textbf{Time-Dep Perturbation, $P_{i\rightarrow f}(t)$:} $P_{i\rightarrow f}(t) = \frac{1}{\hbar^2}\left| \int_0^t dt' \bra{f}H'(t')\ket{i} e^{i(E_f-E_i)t'/\hbar}\right|^2$ \\
+\textbf{Fermi's golder rule, and $g(E_f) as \delta$:} $R_{i\rightarrow f} = \frac{2\pi}{\hbar}\left|\bra{f}H'\ket{i}\right|^2 g(E_f)$, $g(E_f) \approx \delta(E_f^{(0)}-E_f^{(0)} - \hbar\omega)$ \\
+\textbf{Einstein's Stimulated/Spontaneous emission coeffients:} \\
+Stimulated: $B_{if} = \frac{\pi e^2}{3\epsilon_0\hbar^2}\left|\bra{f}\mathbf{r}\ket{i}\right|^2$ \\
+Spontaneous: $A_{if} = \frac{e^2\omega_{21}^3}{3\pi\epsilon_0\hbar c^3}\left|\bra{f}\mathbf{r}\ket{i}\right|^2$\\
+\textbf{Total $\psi(\mathbf{r})$ in scattering problem:} \\
+$\psi(\mathbf{r}) = \psi_{inc}(\mathbf{r})+\psi_s(\mathbf{r}) = \psi_{inc}(\mathbf{r}) + f(\theta,\phi)\frac{e^{i\mathbf{k}\cdot\mathbf{r}}}{r}$ \\
+$f(\theta,\phi) = -\frac{m}{2\pi\hbar^2} \int d^3r' e^{-i\mathbf{k}'\cdot\mathbf{r}'}V(\mathbf{r}')\psi(\mathbf{r}')$ \\
+\textbf{Differential Cross Section:} $\frac{d\sigma}{d\Omega} = \left|f(\theta,\phi)\right|^2$ \\
+\textbf{Born Approximation:} In the above integral for $f(\theta,\phi)$ let $\psi \rightarrow \psi_{inc}$. \\
+\textbf{Dirac Equation:} \\
+$(i\hbar\gamma^\mu\partial_\mu-mc)\psi = 0$ \\
+$\gamma^0 = \beta$, $\gamma^i = \beta\alpha_i$ \\
+$\beta = \begin{pmatrix} \mathbb{I}&0 \\ 0&-\mathbb{I} \end{pmatrix}$, $\alpha_i = \begin{pmatrix} 0&\sigma_i \\ -\sigma_i&0 \end{pmatrix}$\\
 
 \section{Electricity and Magnetism Equations}
 

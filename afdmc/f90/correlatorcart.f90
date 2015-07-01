@@ -370,6 +370,7 @@ contains
       enddo
       do j=i+1,npart
          ij=ij+1
+         if (.not.doft(ij)) write(*,*) 'CODY: ',doft(ij),i,' ,',j !DELETE
          if (doft(ij)) then
             do it=1,2
                fij=ft(ij)
