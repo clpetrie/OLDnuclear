@@ -17,6 +17,13 @@
 \newcommand{\bra}[1]{\left< #1 \right|}
 \newcommand{\braket}[2]{\left< #1 | #2 \right>}
 \newcommand{\ketbra}[2]{\left| #1 \right> \left< #2 \right|}
+\newcommand{\E}{\mathbf{E}}
+\newcommand{\B}{\mathbf{B}}
+\newcommand{\D}{\mathbf{D}}
+\renewcommand{\H}{\mathbf{H}}
+\newcommand{\A}{\mathbf{A}}
+\newcommand{\J}{\mathbf{J}}
+\newcommand{\F}{\mathbf{F}}
 
 \title{Study guide for qualifying exams}
 \author{Cody L. Petrie}
@@ -132,6 +139,8 @@
   \end{enumerate}
   \item{Electrodynamics}
   \begin{enumerate}
+    \item{Faraday's Law}
+    \item{Ampere's Law}
     \item{Ohm's Law}
     \item{Maxwell's Equations}
     \item{Boundary Conditions to Maxwell's Equations}
@@ -266,6 +275,7 @@
 \textbf{$Z_{gc}$ for ideal fermi gas:} $Z_{gc} = \prod\limits_k \left(1+e^{-\beta(\epsilon_k-\mu)}\right)$ \\
 \textbf{$Z_{gc}$ for ideal bose gas:} $Z_{gc} = \prod\limits_k \frac{1}{\left(1-e^{-\beta(\epsilon_k-\mu)}\right)}$ \\
 \textbf{Stuff here for black-body and phonons and bose condensates.} \\
+\textbf{Explain Bose-Condensates with Bose statistics:} $\lim\limits_{T->0}n(p) = \lim\limits_{\beta->\infty} \frac{1}{1-e^{\beta(\epsilon-\mu)}} \rightarrow 0$ unless $\epsilon \rightarrow \mu$, which happens at the ground state. \textcolor{red}{Is this true?} \\
 \textbf{What is cluster expansion used for?:} Systems of interacting particles. \\
 
 \section{Quantum Mechanics Equations}
@@ -360,6 +370,17 @@ $\gamma^0 = \beta$, $\gamma^i = \beta\alpha_i$ \\
 $\beta = \begin{pmatrix} \mathbb{I}&0 \\ 0&-\mathbb{I} \end{pmatrix}$, $\alpha_i = \begin{pmatrix} 0&\sigma_i \\ -\sigma_i&0 \end{pmatrix}$\\
 
 \section{Electricity and Magnetism Equations}
+\textbf{Maxwell's Equations in Vacuum (SI):} \\
+$\nabla \cdot \E = \rho/\epsilon_0$, $\nabla \cdot \B = 0$ \\
+$\nabla \times \E = -\frac{\partial \B}{\partial t}$, $\nabla \times \B = \mu_0\J + \mu_0\epsilon_0\frac{\partial \E}{\partial t}$ \\
+\textbf{Maxwell's Equations in Matter (SI), and $\D$ and $\H$:} \\
+$\nabla \cdot \D = \rho$, $\nabla \cdot \B = 0$ \\
+$\nabla \times \E = -\frac{\partial \B}{\partial t}$, $\nabla \times \H = \J + \frac{\partial D}{\partial t}$ \\
+$\D = \epsilon_0\E$, $\B = \mu_0\H$ \\
+\textbf{Continuity Equation:} $\frac{\partial \rho}{\partial t}+\nabla\cdot\J = 0$ \\ 
+\textbf{Lorentz Force:} $\F = q(\E+\mathbf{v}\times\B)$ \\
+\textbf{Coulomb's Law (x2):} $\F = \frac{1}{4\pi\epsilon_0}\frac{q_1q_2}{r^2}$, $\F=Q\E$ \\
+\textbf{Gauss' Law:} $\oint \E\cdot d\A = q/\epsilon_0$ \\
 
 \section{Miscellaneous Physics}
 \textbf{Taylor Expansion:} $f(\vec{x}+\vec{a}) = f(\vec{x}) + a_i\partial_i f(\vec{x}) + \mathcal{O}(\vec{a}^2)$ \\
