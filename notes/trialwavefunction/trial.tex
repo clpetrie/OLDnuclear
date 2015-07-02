@@ -5,6 +5,7 @@
 \usepackage{url}
 \usepackage{bm}
 \usepackage{color}
+\usepackage{cancel}
 
 %My commands
 \newcommand{\Oi}{\mathcal{O}_{i}}
@@ -117,8 +118,8 @@ Here the idea is we want to calculate expectation values like
 Now let's expand this the numerator term
 \begin{align}
   \bra{\Phi} \sum_i \Oi \ket{R,S} &= \bra{\Phi} \sum_i \Oi \ket{R,s_1,\ldots,s_A} \\
-  &= \bra{\Phi} \sum_i\sum_{s=1}^4	\ketbra{s}{s} \Oi \ket{R,s_1,\ldots,s_A} \\
-  &= \bra{\Phi} \sum_i\sum_{s=1}^4	\bra{s}\Oi\ket{s_i} \ket{R,\longsi} \\
+  &= \bra{\Phi} \sum_i\sum_{s=1}^4  \ketbra{s}{s} \Oi \ket{R,s_1,\ldots,s_A} \\
+  &= \bra{\Phi} \sum_i\sum_{s=1}^4  \bra{s}\Oi\ket{s_i} \ket{R,\longsi} \\
   &= \bra{\Phi} \sum_i\sum_{s=1}^4 \alpha_{is} \ket{R,\longsi} \\
   &= \sum_i\sum_{s=1}^4 \alpha_{is} \braket{\Phi}{R,\longsi} \\
   &= \sum_i\sum_{s=1}^4 \alpha_{is} \mathrm{d1b(s,i)} \braket{\Phi}{RS},
@@ -180,15 +181,15 @@ Now in cases where we have two set's of operators like for example when we need 
 where
 \begin{equation}
   S'_{km} = \begin{cases}
-	 S_{km} & m \neq i \\
-	 \bra{k} \Oi \ket{r_i,s_i} & m=i,
+    S_{km} & m \neq i \\
+    \bra{k} \Oi \ket{r_i,s_i} & m=i,
   \end{cases}
 \end{equation}
 and
 \begin{equation}
   S'_{km}(s) = \begin{cases}
-	 \braket{k}{r_m,s} & m \neq i \\
-	 \bra{k} \Oi \ket{r_i,s} & m=i.
+    \braket{k}{r_m,s} & m \neq i \\
+    \bra{k} \Oi \ket{r_i,s} & m=i.
   \end{cases}
 \end{equation}
 
@@ -203,16 +204,89 @@ where the first operator is part of the potential and the second is the correlat
 where the number of primes is the number of changed columns (unless $i$ or $j$ was equal to $k$ or $l$). Let's look at how to get these ratio's of determinants one (single particle) operator at a time.
 \begin{align}
   \frac{\mathrm{det}S''}{\mathrm{det}S} &= \frac{\detr S'}{\detr S}\frac{\detr S''}{\detr S'} \\
-  &= \frac{\detr S'}{\detr S}\sum_n S'^{-1}_{jn}S''_{nj}
+  &= \frac{\detr S'}{\detr S}\sum_n S'^{-1}_{jn}S''_{nj} \label{equ:detrat1}
 \end{align}
-Here I have used the face that if the only difference between $S''$ and $S'$ is the column $j$, then the radio of determinants can be written as $\sum_n S'^{-1}_{jn}S''_{nj}$. If you can't see this try simple 2x2 matricies that only differ by one column and work it out. If this fact is again used on the first radio of determinants we can write
+Here I have used the face that if the only difference between $S''$ and $S'$ is the column $j$, then the radio of determinants can be written as $\sum_n S'^{-1}_{jn}S''_{nj}$. If you can't see this try simple 2x2 matricies that only differ by one column and work it out (I had to use Mathematica to verify this). If this fact is again used on the first radio of determinants we can write
 \begin{equation}
   \frac{\mathrm{det}S''}{\mathrm{det}S} = \begin{cases}
-  \sum_{nm} S^{-1}_{im}S''_{mi}S^{-1}_{jn}S''_{nj} - S^{-1}_{in}S''_{ni}S^{-1}_{jm}S''_{mj} & j \neq i \\
+  \sum_{nm} S^{-1}_{im}S''_{mi}S^{-1}_{jn}S''_{nj} - \sum_{nm}S^{-1}_{in}S''_{nj}S^{-1}_{jm}S''_{mi} & j \neq i \\
   \sum_n S^{-1}_{in}S''_{ni} & j = i.
   \end{cases}
+  \label{equ:detrat2}
 \end{equation}
-This $j=1$ case is easy to see, $S''$ and $S$ only differ by one column in this case, or you can work it out and recognize that the martix multiplication $C=A.B$ can be written $c_{ij} = a_{in}*b_{nj}$. The case where $j \neq i$ is a little harder to see. Just imagine taking the ratio of a 2x2 matrix where the components are come from the columns that were not inverted to be the unit martix.
+This $j=1$ case is easy to see, $S''$ and $S$ only differ by one column in this case, or you can work it out and recognize that the martix multiplication $C=A.B$ can be written $c_{ij} = a_{in}*b_{nj}$. The case where $j \neq i$ is a little harder to see. Just imagine taking the ratio of a 2x2 matrix where the components are come from the columns that were not inverted to be the unit matrix. Now let's compare the rhs of equation~\ref{equ:detrat2} to equation~\ref{equ:detrat1} for both cases, starting with the case where $j=i$.
+\begin{align}
+  &\frac{\detr S'}{\detr S}\cancel{\sum_n} S'^{-1}_{jn}\cancel{S''_{nj}} = \cancel{\sum_n} S^{-1}_{in}\cancel{S''_{ni}} \\
+  &\rightarrow S'^{-1}_{jn} = \frac{S^{-1}_{in}}{\sum\limits_l S^{-1}_{il}S'_{li}}
+\end{align}
+Now for the case $j\neq i$ we know that $S''_{mi} = S'_{mi}$.
+\begin{align}
+  &\frac{\detr S'}{\detr S}\cancel{\sum_n} S'^{-1}_{jn}\cancel{S''_{nj}} = \cancel{\sum_n}\sum_m S^{-1}_{im}S''_{mi}S^{-1}_{jn}\cancel{S''_{nj}} - \cancel{\sum_n}\sum_m S^{-1}_{in}\cancel{S''_{nj}}S^{-1}_{jm}S''_{mi} \\
+  &\rightarrow S'^{-1}_{jn} = \frac{\cancel{\sum_m S^{-1}_{im}S'_{mi}}S^{-1}_{jn}}{\cancel{\sum_l S^{-1}_{il}S'_{li}}} - \frac{\sum_m S^{-1}_{jm}S'_{mi}}{\sum_l S^{-1}_{il}S'_{li}}S^{-1}_{in} \\
+  &= S^{-1}_{jn} - \frac{\sum_m S^{-1}_{jm}S'_{mi}}{\sum_l S^{-1}_{il}S'_{li}}S^{-1}_{in}
+\end{align}
+Thus overall we get for the new inverse
+\begin{equation}
+  S'^{-1}_{jn} = \begin{cases}
+  S^{-1}_{jn} - \frac{\sum_m S^{-1}_{jm}S'_{mi}}{\sum_l S^{-1}_{il}S'_{li}}S^{-1}_{in} & j \neq i \\
+  \frac{S^{-1}_{in}}{\sum\limits_l S^{-1}_{il}S'_{li}} & j = i.
+  \end{cases}
+  \label{equ:updatedinverse}
+\end{equation}
+Now we can use these to find the new $\mathrm{sxzi(s,n,m)}$ from the old $\mathrm{sxz(s,n,m)}$. Here we have for cases. I'll start with the case $n,m\neq i$.
+For all of these remember that
+\begin{equation}
+  \mathrm{sxz(s,n,m)} = \sum_k S^{-1}_{mk} \braket{k}{\mathbf{r}_n,s}.
+\end{equation}
+Let's start with the expression for $\mathrm{sxzi(s,n,m)}$ and use equation~\ref{equ:updatedinverse} to proceed.
+\begin{align}
+  \mathrm{sxzi(s,n,m)} &= \sum_k S'^{-1}_{mk}\braket{k}{\mathbf{r}_n,s} \\
+  &= \sum_kS^{-1}_{mk}\braket{k}{\mathbf{r}_n,s} - \sum_k \frac{\sum_l S^{-1}_{ml} S'_{li}}{\sum_l S^{-1}_{il} S'_{li}} S^{-1}_{ik}\braket{k}{\mathbf{r}_n,s} \\
+  &= \mathrm{sxz(s,n,m)} - \frac{\sum_k S^{-1}_{mk}\bra{k}\Oi\ket{\mathbf{r}_i,s_i}}{\sum_k S^{-1}_{ik}\bra{k}\Oi\ket{\mathbf{r}_i,s_i}} \mathrm{sxz(s,n,i)}
+\end{align}
+Here I have used the fact that $S'_{li} = \bra{k}\Oi\ket{\mathbf{r}_i,s_i}$. Now let's look at the case $n\neq i, m=i$.
+\begin{align}
+  \mathrm{sxzi(s,n,m)} &= \sum_k S'^{-1}_{mk}\braket{k}{\mathbf{r}_n,s} \\
+  &= \sum_k \frac{S^{-1}_{ik}}{\sum_l S^{-1}_{il}S'_{li}} \braket{k}{\mathbf{r}_n,s} \\
+  &= \frac{\mathrm{sxz(s,n,i)}}{\sum_k S^{-1}_{ik} \bra{k}\Oi\ket{\mathbf{r}_i,s_i}}
+\end{align}
+Now let's do the case where $n=i,m\neq i$.
+\begin{align}
+  \mathrm{sxzi(s,n,m)} &= \sum_k S'^{-1}_{mk}\bra{k}\Oi\ket{\mathbf{r}_i,s} \\
+  &= \sum_kS^{-1}_{mk}\bra{k}\Oi\ket{\mathbf{r}_i,s} - \sum_k \frac{\sum_l S^{-1}_{ml} S'_{li}}{\sum_l S^{-1}_{il} S'_{li}} S^{-1}_{ik}\bra{k}\Oi\ket{\mathbf{r}_i,s} \\
+  &= \sum_kS^{-1}_{mk}\bra{k}\Oi\ket{\mathbf{r}_i,s} - \frac{\sum_k S^{-1}_{mk} \bra{k}\Oi\ket{\mathbf{r}_i,s_i}}{\sum_k S^{-1}_{ik} \bra{k}\Oi\ket{\mathbf{r}_i,s_i}} \sum_k S^{-1}_{ik}\bra{k}\Oi\ket{\mathbf{r}_i,s}
+\end{align}
+Now let's do the case where $n=m=i$.
+\begin{align}
+  \mathrm{sxzi(s,n,m)} &= \sum_k S'^{-1}_{mk}\bra{k}\Oi\ket{\mathbf{r}_i,s} \\
+  &= \sum_k \frac{S^{-1}_{ik}}{\sum_l S^{-1}_{il}S'_{li}} \bra{k}\Oi\ket{\mathbf{r}_i,s} \\
+  &= \frac{\sum_k S^{-1}_{ik}\bra{k}\Oi\ket{\mathbf{r}_i,s}}{\sum_k S^{-1}_{ik} \bra{k}\Oi\ket{\mathbf{r}_i,s_i}}
+\end{align}
+Now puting all of these together we can write it for all 4 cases.
+\begin{equation}
+  \mathrm{sxzi(s,n,m)} = \begin{cases}
+  \mathrm{sxz(s,n,m)} - \frac{\sum_k S^{-1}_{mk}\bra{k}\Oi\ket{\mathbf{r}_i,s_i}}{\sum_k S^{-1}_{ik}\bra{k}\Oi\ket{\mathbf{r}_i,s_i}} \mathrm{sxz(s,n,i)} & n,m \neq i \\
+  \frac{\mathrm{sxz(s,n,i)}}{\sum_k S^{-1}_{ik} \bra{k}\Oi\ket{\mathbf{r}_i,s_i}} & n \neq i,m = i \\
+  \sum_kS^{-1}_{mk}\bra{k}\Oi\ket{\mathbf{r}_i,s} - \frac{\sum_k S^{-1}_{mk} \bra{k}\Oi\ket{\mathbf{r}_i,s_i}}{\sum_k S^{-1}_{ik} \bra{k}\Oi\ket{\mathbf{r}_i,s_i}} \sum_k S^{-1}_{ik}\bra{k}\Oi\ket{\mathbf{r}_i,s} & n=1, m \neq i \\
+  \frac{\sum_k S^{-1}_{ik}\bra{k}\Oi\ket{\mathbf{r}_i,s}}{\sum_k S^{-1}_{ik} \bra{k}\Oi\ket{\mathbf{r}_i,s_i}} & n=m=i \\
+  \end{cases}
+\end{equation}
+To simplify the expression and calculations even more let's make two more definitions.
+\begin{equation}
+  \mathrm{opi(s,m)} = \sum_k S^{-1}_{mk}\bra{k}\Oi\ket{\mathbf{r}_i,s} = \sum_{s'}\sum_k S^{-1}_{mk} \braket{k}{\mathbf{r}_i,s'}\bra{s'}\Oi\ket{s} = \sum_{s'} \mathrm{sxz(s',i,m)}\bra{s'}\Oi\ket{s}
+\end{equation}
+\begin{equation}
+  \mathrm{di(m)} = \sum_k S^{-1}_{mk}\bra{k}\Oi\ket{\mathbf{r}_i,s_i} = \sum_s\sum_k S^{-1}_{mk}\bra{k}\Oi\ket{\mathbf{r}_i,s}\braket{s}{s_i} = \sum_s \mathrm{opi(s,m)}\braket{s}{s_i}
+\end{equation}
+With these new definitions we can more easily write
+\begin{equation}
+  \mathrm{sxzi(s,n,m)} = \begin{cases}
+  \mathrm{sxz(s,n,m)} - \frac{\mathrm{di(m)}}{\mathrm{di(i)}} \mathrm{sxz(s,n,i)} & n,m \neq i \\
+  \frac{\mathrm{sxz(s,n,i)}}{\mathrm{di(i)}} & n \neq i,m = i \\
+  \mathrm{opi(s,m)} - \frac{\mathrm{di(m)}}{\mathrm{di(i)}} \mathrm{opi(s,i)} & n=1, m \neq i \\
+  \frac{\mathrm{opi(s,i)}}{\mathrm{di(i)}} & n=m=i \\
+  \end{cases}
+\end{equation}
 
 \section{Breakup of correlation operator in Cartesian}
 \subsection{Linear Term Only}
