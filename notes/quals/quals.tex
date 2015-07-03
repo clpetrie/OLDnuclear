@@ -8,11 +8,11 @@
 \usepackage{fancyvrb}
 \usepackage{verbatim}
 \usepackage{graphicx}
-\usepackage{bbm}
 \def\dbar{{\mathchar'26\mkern-12mu d}}
 
 
 %My commands
+\renewcommand{\AA}{\buildrel _\circ \over {\mathrm{A}}}
 \newcommand{\ket}[1]{\left| #1 \right>}
 \newcommand{\bra}[1]{\left< #1 \right|}
 \newcommand{\braket}[2]{\left< #1 | #2 \right>}
@@ -24,6 +24,8 @@
 \newcommand{\A}{\mathbf{A}}
 \newcommand{\J}{\mathbf{J}}
 \newcommand{\F}{\mathbf{F}}
+\renewcommand{\r}{\mathbf{r}}
+\newcommand{\wavr}{\left|\r-\r'\right|}
 
 \title{Study guide for qualifying exams}
 \author{Cody L. Petrie}
@@ -296,9 +298,9 @@
 \textbf{Expand in orthonormal basis:}  $\ket{V} = \sum\limits_i vi \ket{i}$ \\
 \textbf{Hermitian operator:} $\mathcal{O}^\dagger = \mathcal{O}$ \\
 \textbf{Anti-Hermitian operator:} $\mathcal{O}^\dagger = \mathcal{O}$ \\
-\textbf{Unitary operator:} $UU^\dagger = \mathbbm{1}$ \\
+\textbf{Unitary operator:} $UU^\dagger = \mathbb{I}$ \\
 \textbf{Orthogonality:} $\braket{i}{j} = \delta_{ij}$ \\
-\textbf{Completeness:} $\sum\limits_ii = \mathbbm{1}$ \\
+\textbf{Completeness:} $\sum\limits_ii = \mathbb{I}$ \\
 \textbf{Postulates of QM: }
 \begin{enumerate}
   \item  The state of a physical system, at some fixed time, is given by a normalized ray in a Hilbert space over the complex numbers. (ray is vector whose norm doesn't matter)
@@ -381,12 +383,21 @@ $\D = \epsilon_0\E$, $\B = \mu_0\H$ \\
 \textbf{Lorentz Force:} $\F = q(\E+\mathbf{v}\times\B)$ \\
 \textbf{Coulomb's Law (x2):} $\F = \frac{1}{4\pi\epsilon_0}\frac{q_1q_2}{r^2}$, $\F=Q\E$ \\
 \textbf{Gauss' Law:} $\oint \E\cdot d\A = q/\epsilon_0$ \\
+\textbf{Electrostatic Potential (x2):} $\E = -\nabla\Phi$, $\Phi = \frac{1}{4\pi\epsilon_0} \int d^3r' \frac{\rho(\r'}{\wavr}$ \\
+\textbf{Laplace's Equation \& General Solution(Spherical Coordinates, no $\phi$):} $\nabla^2\Phi = 0$ \\
+$\Phi(r,\theta) = \sum\limits_{l=0}^\infty \left( A_lr^l+\frac{B_l}{r^{l+1}} \right) P_l(\cos\theta)$ \\
+\textbf{Poisson's Equation:} $\nabla^2\Phi = -\rho/\epsilon_0$ \\
 
 \section{Miscellaneous Physics}
 \textbf{Taylor Expansion:} $f(\vec{x}+\vec{a}) = f(\vec{x}) + a_i\partial_i f(\vec{x}) + \mathcal{O}(\vec{a}^2)$ \\
 \textbf{Gaussian Integral:} $\int\limits_{-\infty}^\infty dx e^{-ax^2+bx+c} = \sqrt{\frac{\pi}{a}}e^{b^2/(4a)+c}$ \\
+\textbf{3 types of Boundary Conditions:} \\
+Dirichlet: $\Phi(\mathbf{a}) = const$ \\
+Neumann: $\frac{\partial \Phi(\mathbf{a})}{\partial \mathbf{n}} = \hat{\mathbf{n}}\cdot\nabla\Phi = const$ \\
+Robin: Linear combination of the first two \\
 \textbf{Value of fine structure constant:} $\alpha \approx \frac{1}{137}$ \\
 \textbf{Mass of electron in eV:} $m_ec^2 = 0.511 eV$ \\
-\textbf{Value of the Bohr radius:} $a_0 = 0.529 \mathrm{\AA}$ \\
+\textbf{Value of the Bohr radius:} $a_0 = 0.529 \AA$ \\
+\textbf{Explain the Method of Images:} Because of the uniqueness theorem you can add charges OUTSIDE of the computational area to meet the same boundary conditions. A solution to this new configuration is also a solution to the initial configuration.
 
 \end{document}
