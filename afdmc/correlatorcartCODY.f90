@@ -261,11 +261,11 @@ contains
    complex(kind=r8) :: sxzk(4,npart,npart,15)
    complex(kind=r8) :: fkl
    complex(kind=r8) :: detrat,detratin
-   complex(kind=r8) :: sxzl(4,npart,npart),d2ind,d15ind(15) !d15ind is the same as d15 but for corindpair
+   complex(kind=r8) :: sxzl(4,npart,npart),d2ind,d15ind(15) !d2ind is the same as d2 but for corindpair
    complex(kind=r8) :: sx15ind(4,15,npart,npart),sx15l(4,15,npart)
    integer(kind=i4) :: k,l,kl,kop,ks,kt,ls
    do k=1,npart
-      sx15ind(:,:,:,k)=conjg(opmult(conjg(sxzin(:,k,:))))
+     sx15ind(:,:,:,k)=conjg(opmult(conjg(sxzin(:,k,:))))
    enddo
    do k=1,npart-1
       if (k.le.i .or. k.eq.j) cycle
@@ -273,9 +273,9 @@ contains
          call sxzupdate(sxzk(:,:,:,kop),d15ind(kop),sxzin,k,sx15ind(:,kop,:,k),sp(:,k))
       enddo
       do l=k+1,npart
+         if (l.eq.i .or. l.eq.j) cycle
 !Mathematica ij = FullSimplify[(j - i) + (i - 1)*npart + Sum[-n, {n, 1, i - 1}]]
          kl=l-k*(1+k-2*npart)/2-npart
-         if (l.eq.i .or. l.eq.j) cycle
          if (doft(kl)) then
             do kt=1,2
                fkl=ft(kl)

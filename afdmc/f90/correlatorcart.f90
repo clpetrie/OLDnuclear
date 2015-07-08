@@ -265,7 +265,7 @@ contains
    complex(kind=r8) :: sx15ind(4,15,npart,npart),sx15l(4,15,npart)
    integer(kind=i4) :: k,l,kl,kop,ks,kt,ls
    do k=1,npart
-      sx15ind(:,:,:,k)=conjg(opmult(conjg(sxzin(:,k,:))))
+     sx15ind(:,:,:,k)=conjg(opmult(conjg(sxzin(:,k,:))))
    enddo
    do k=1,npart-1
       if (k.le.i .or. k.eq.j) cycle
@@ -370,7 +370,6 @@ contains
       enddo
       do j=i+1,npart
          ij=ij+1
-         if (.not.doft(ij)) write(*,*) 'CODY: ',doft(ij),i,' ,',j !DELETE
          if (doft(ij)) then
             do it=1,2
                fij=ft(ij)
