@@ -23,7 +23,10 @@
 \renewcommand{\H}{\mathbf{H}}
 \newcommand{\A}{\mathbf{A}}
 \newcommand{\J}{\mathbf{J}}
+\newcommand{\K}{\mathbf{K}}
 \newcommand{\F}{\mathbf{F}}
+\renewcommand{\P}{\mathbf{P}}
+\newcommand{\M}{\mathbf{M}}
 \renewcommand{\r}{\mathbf{r}}
 \newcommand{\wavr}{\left|\r-\r'\right|}
 
@@ -33,150 +36,6 @@
 \begin{document}
 \maketitle
 
-\section{Classical Mechanics}
-\begin{enumerate}
-  \item{Newtonian Mechanics}
-  \begin{enumerate}
-    \item{Newton's Laws/Kinematics}
-    \item{Energy}
-    \item{Momentum/Angular Momentum}
-  \end{enumerate}
-
-  \item{Lagrangian Mechanics}
-  \begin{enumerate}
-    \item{Calculous of Variations}
-    \item{Principle of Least Action/Lagranges Equation}
-    \item{Generalized Coordinates}
-    \item{Holonomic/Non-Holonomic Constraints}
-    \item{Noether's Theorem}
-    \item{Rigid Body Motion}
-    \begin{enumerate}
-      \item{Inertia Tensor}
-      \item{Euler's Equations}
-    \end{enumerate}
-  \end{enumerate}
-
-  \item{Hamiltonian Formalism}
-  \begin{enumerate}
-    \item{Legendre Transformation/Hamilton's Equations}
-    \item{Generalized Momenta/Cyclic Coordinates/Conserved Quantities}
-    \item{Liouville's Theorem}
-    \item{Poisson Brackets}
-    \item{Canonical Transformations}
-  \end{enumerate}
-\end{enumerate}
-
-\section{Statistical Mechanics}
-\begin{enumerate}
-  \item{Thermodynamics Review}
-  \begin{enumerate}
-    \item{Laws of Thermodynamics}
-    \item{Intensive vs Extensive Variables}
-    \item{Thermodynamic Potentials and Ensembles}
-    \item{Maxwell's Relations}
-    \item{Various Definitions}
-    \begin{enumerate}
-      \item{Compressibility}
-      \item{Heat Capacity etc.}
-    \end{enumerate}
-  \end{enumerate}
-  \item{Statistical Mechanics}
-  \begin{enumerate}
-    \item{Statistical Review}
-    \item{Partition Function/Trace}
-    \item{Thermodynamic Limit}
-    \item{Density Matrix}
-    \item{Ideal Gas}
-    \item{Ideal Bose Gas}
-    \item{Ideal Fermi Gas}
-    \item{Photons (BB)}
-    \item{Phonons}
-    \item{Bose-Einstein Condensates}
-    \item{Cluster Expansion}
-  \end{enumerate}
-\end{enumerate}
-
-\section{Quantum Mechanics}
-\begin{enumerate}
-  \item{Shankar Math Review}
-  \item{Postulates}
-  \item{Free Particle}
-  \item{Particle in a Box}
-  \item{Harmonic Oscillator}
-  \item{Angular Momentum}
-  \item{Hydrogen Atom}
-  \item{Spin}
-  \item{Angular Momentum Addition}
-  \item{Time-Independent Perturbation Theory}
-  \item{Time-Dependent Perturbation Theory}
-  \begin{enumerate}
-    \item{Einstein A and B Coefficients}
-  \end{enumerate}
-  \item{Scattering}
-  \item{WKB Formula}
-  \item{Dirac Equation}
-\end{enumerate}
-
-\section{Electricity and Magnetism}
-\begin{enumerate}
-  \item{Electrostatics}
-  \begin{enumerate}
-    \item{Coulomb's Law}
-    \item{Electrostatic Potentials}
-    \begin{enumerate}
-      \item{Poisson/Laplace's Equations}
-    \end{enumerate}
-    \item{Boundary Conditions}
-    \item{Method of Images}
-    \item{Multipole Expansion}
-    \item{Work and Energy}
-    \item{Electric Fields in Matter}
-  \end{enumerate}
-  \item{Magnetostatics}
-  \begin{enumerate}
-    \item{Lorentz Force Law}
-    \item{Biot-Savart Law}
-    \item{Vector Potential}
-    \item{Magnetic Fields in Matter}
-  \end{enumerate}
-  \item{Electrodynamics}
-  \begin{enumerate}
-    \item{Faraday's Law}
-    \item{Ampere's Law}
-    \item{Ohm's Law}
-    \item{Maxwell's Equations}
-    \item{Boundary Conditions to Maxwell's Equations}
-    \item{Continuity Equation}
-    \item{Poynting's Theorem}
-    \item{Maxwell Stress Tensor}
-    \item{Electromagnetic Waves}
-    \begin{enumerate}
-      \item{The Wave Equation from Maxwell's Eq.}
-      \item{EM Waves in Matter}
-      \item{Wave Guides}
-    \end{enumerate}
-  \end{enumerate}
-  \item{Scalar and Vector Potentials}
-  \item{Coulomb and Lorentz Gauge}
-  \item{Retarted Potentials}
-  \item{Lienard-Wiechert Potentials}
-  \item{Radiation}
-  \begin{enumerate}
-    \item{Electric/Magnetic Dipole Radiation}
-  \end{enumerate}
-  \item{Helmholtz Theorem}
-  \item{Special Relativity}
-  \begin{enumerate}
-    \item{Einstein's Postulates}
-    \item{Lorentz Transformation}
-    \item{4-Vectors}
-    \item{Field Tensor and Transformation}
-    \item{Relativistic Potentials}
-  \end{enumerate}
-
-\end{enumerate}
-
-\newpage
 \section{Classical Mechanics Equations}
 \subsection*{Newtonian Mechanics}
 \textbf{Newton's Laws:}
@@ -387,6 +246,33 @@ $\D = \epsilon_0\E$, $\B = \mu_0\H$ \\
 \textbf{Laplace's Equation \& General Solution(Spherical Coordinates, no $\phi$):} $\nabla^2\Phi = 0$ \\
 $\Phi(r,\theta) = \sum\limits_{l=0}^\infty \left( A_lr^l+\frac{B_l}{r^{l+1}} \right) P_l(\cos\theta)$ \\
 \textbf{Poisson's Equation:} $\nabla^2\Phi = -\rho/\epsilon_0$ \\
+\textbf{Explain the Method of Images:} Because of the uniqueness theorem you can add charges OUTSIDE of the computational area to meet the same boundary conditions. A solution to this new configuration is also a solution to the initial configuration. \\
+\textbf{Method of Images (plane, sphere, hem boss):} \\
+plane: add one charge below plane. \\
+sphere: 1 test charge inside sphere. \\
+hem boss: 3 test charges. \\
+\textbf{Multipole Expansion of $V(\mathbf{r})$:} $V(\mathbf{r}) = \frac{1}{4\pi\epsilon_0}\sum\limits_{n=0}^\infty \int d^3r' \frac{P_n(\cos\alpha)}{r^{n+1}} \rho(\mathbf{r}')$ \\
+\textbf{Work and Energy in Electrostatics:} The Energy of a system is the work it requires to assemble the system. \\
+\textbf{Atomic Polarizability ($\alpha$):} $\mathbf{p} = \alpha \E$ \\
+\textbf{Polarization:} Electric dipole moment per unit volume. $\D = \epsilon_0\E+\P$ \\
+\textbf{Magnetization:} Magnetic dipole moment per unit volume $\H = \frac{1}{\mu_0}\B - \M$ \\
+\textbf{Bound Charge:} $\rho_b = -\nabla\cdot\P$ \\
+\textbf{Bound Current:} $\J_b = \nabla \times \M$ \\
+\textbf{Linear Media x2:} $\P = \epsilon_0 \chi_e \E$, $\M = \chi_m\H$\\
+\textbf{Biot-Savart Law:} $\B(\r) = \frac{\mu_0}{4\pi} \int d^3r' \frac{\J(\r')\times\wavr}{\wavr}$ \\
+\textbf{Ohm's Law:} $\J = \sigma\E$, where $\sigma$ is the conductivity \\
+\textbf{Resistivity:} $\rho = 1/\sigma$ \\
+\textbf{Boundary Conditions:} \\
+$D_1^\perp-D_2^\perp = \sigma_f$ \\
+$B_1^\perp-B_2^\perp = 0$ \\
+$\E_1^\parallel-\E_2^\parallel = \mathbf{0}$ \\
+$\H_1^\parallel-\H_2^\parallel = \K_f\times\hat{\mathbf{n}}$ \\
+\textbf{Poynting's Theorem, units of $\mathbf{S}$:} $\mathbf{S} = \frac{energy}{time \cdot energy}$\\
+$\frac{dW}{dt} = -\frac{d}{dt}\int d^3r \frac{1}{2}\left( \epsilon_0 E^2 + \frac{1}{\mu_0}B^2 \right) - \frac{1}{\mu_0}\oint d\mathbf{a} \cdot (\E\times\B) = -\frac{d}{dt}(W_e+W_m) - \oint d\mathbf{a}\cdot\mathbf{S}$ \\
+\textbf{Maxwell Stress Tensor and Static Force:} \\
+$T_{ij} = \epsilon_0\left(E_iE_j-\frac{1}{2}\delta_{ij}E^2\right) + \frac{1}{\mu_0}\left(B_iB_j-\frac{1}{2}\delta_{ij}B^2\right)$ \\
+$\F = \oint d\mathbf{a}\cdot\overleftrightarrow{T}$ \\
+
 
 \section{Miscellaneous Physics}
 \textbf{Taylor Expansion:} $f(\vec{x}+\vec{a}) = f(\vec{x}) + a_i\partial_i f(\vec{x}) + \mathcal{O}(\vec{a}^2)$ \\
@@ -398,6 +284,5 @@ Robin: Linear combination of the first two \\
 \textbf{Value of fine structure constant:} $\alpha \approx \frac{1}{137}$ \\
 \textbf{Mass of electron in eV:} $m_ec^2 = 0.511 eV$ \\
 \textbf{Value of the Bohr radius:} $a_0 = 0.529 \AA$ \\
-\textbf{Explain the Method of Images:} Because of the uniqueness theorem you can add charges OUTSIDE of the computational area to meet the same boundary conditions. A solution to this new configuration is also a solution to the initial configuration.
 
 \end{document}

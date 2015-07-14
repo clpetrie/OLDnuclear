@@ -244,9 +244,25 @@ contains
    d1b=czero
    d2b=czero
    d3b=czero
-   call g1bval(d1b,sxz0,cone)
-   call g2bval(d2b,sxz0,cone)
+!   call g1bval(d1b,sxz0,cone) CODY
+   do i=1,npart
+      d1b(:,1)=d1b(:,i)+cone*sxz0(:,i,i)
+   enddo
+
+!   call g2bval(d2b,sxz0,cone) CODY
+   ij=0
+   do i=1,npart-1
+      do j=i+1,npart
+         ij=ij+1
+         do js=1,4
+            d2b(:,js,ij)=d2b(:,js,ij) &
+               +cone*(sxz0(:,i,i)*sxz0(js,j,j)-sxz0(:,i,j)*sxz0(js,j,i))
+         enddo
+      enddo
+   enddo
+
    detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
+! CODY, LEAVE THIS PART THE SAME FOR SPEED OF WRITTING SAKE
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
       detrat=detrat+sum(d3b*f3b)
