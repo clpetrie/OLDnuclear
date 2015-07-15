@@ -136,7 +136,7 @@
 \textbf{$Z_{gc}$ for ideal fermi gas:} $Z_{gc} = \prod\limits_k \left(1+e^{-\beta(\epsilon_k-\mu)}\right)$ \\
 \textbf{$Z_{gc}$ for ideal bose gas:} $Z_{gc} = \prod\limits_k \frac{1}{\left(1-e^{-\beta(\epsilon_k-\mu)}\right)}$ \\
 \textbf{Stuff here for black-body and phonons and bose condensates.} \\
-\textbf{Explain Bose-Condensates with Bose statistics:} $\lim\limits_{T->0}n(p) = \lim\limits_{\beta->\infty} \frac{1}{1-e^{\beta(\epsilon-\mu)}} \rightarrow 0$ unless $\epsilon \rightarrow \mu$, which happens at the ground state. \textcolor{red}{Is this true?} \\
+\textbf{Explain Bose-Condensates with Bose statistics:} $\lim\limits_{T->0}n(p) = \lim\limits_{\beta->\infty} \frac{1}{1-e^{\beta(\epsilon-\mu)}} \rightarrow 0$ unless $\epsilon \rightarrow \mu$, which happens at the ground state. \\
 \textbf{What is cluster expansion used for?:} Systems of interacting particles. \\
 
 \section{Quantum Mechanics Equations}
@@ -150,7 +150,7 @@
     \item associative: $a(b\ket{V}) = ab\ket{V}$, $\ket{V}+(\ket{W}+\ket{Z})=(\ket{V}+\ket{W})+\ket{Z}$
     \item commutative: $\ket{V} + \ket{W} = \ket{W} + \ket{V}$
     \item addative inverse: $\ket{V} + \ket{-V} = \ket{0}$
-    \item null vector: $\ket{V} + \ket{)} = \ket{V}$
+    \item null vector: $\ket{V} + \ket{0} = \ket{V}$
   \end{enumerate}
 \end{itemize}
 \textbf{Hilbert space:} Vector space with defined inner product. \\
@@ -289,6 +289,26 @@ TEM: both \\
 \textbf{Helmholtz Theorem:} If you know the divergence ($D$) and the curl ($\mathbf{C}$) of a function $\mathbf{F}$ then $\mathbf{F} = -\nabla U + \nabla\times\mathbf{W}$ where \\
 $U(\r) = \frac{1}{4\pi} \int d^3r' \frac{D(\r')}{\wavr}$ \\
 $W(\r) = \frac{1}{4\pi} \int d^3r' \frac{\mathbf{C}(\r')}{\wavr}$ \\
+\textbf{Einstein's Postulates of Special Relativity:} \\
+1. The laws of physics are the same in all inertial frames of reference. \\
+2. The speed of light in free space has the same value c in all inertial frames of reference. \\
+\textbf{Boost in the x-direction in terms of $x_i$, $\gamma$ and $\beta$:} \\
+$x'_0 = \gamma(x_0-\beta x_1)$ \\
+$x'_1 = \gamma(x_1-\beta x_0)$ \\
+$x'_2 = x_2$ \\
+$x'_3 = x_3$ \\
+$\gamma = \frac{1}{\sqrt{1-\beta^2}}$, $\beta = \frac{v}{c}$ \\
+\textbf{Boost in the x-direction in matrix form:} $x'^\mu = \Lambda^\mu_\nu x^\nu$, $\Lambda = \begin{pmatrix} \gamma&-\gamma\beta&0&0 \\ -\gamma\beta&\gamma&0&0 \\ 0&0&1&0 \\ 0&0&0&1 \end{pmatrix}$ \\
+\textbf{Covariant vs. Contravariant:} covariant: $a_\mu$, contravariant: $a^\mu$, $(a_0,a_1,a_2,a_3) = (-a^0,a^1,a^2,a^3)$ \\
+\textbf{Minkowski metric:} $a_\mu = g_{\mu\nu} a^\nu$, $g_{\mu\nu} = \begin{pmatrix} -1&0&0&0 \\ 0&1&0&0 \\ 0&0&1&0 \\ 0&0&0&1 \end{pmatrix}$ \\
+\textbf{Four-(v, p, J, A):} \\
+$v^\mu=\frac{dx^\mu}{d\tau}=(\gamma c, \gamma \mathbf{v})$ \\
+$p^\mu=mv^\mu=(E/c,\mathbf{p})$ \\
+$J^\mu=(c\rho,\J)$ \\
+$A^\mu=(\Phi/c,\A)$ \\
+\textbf{Relativistic Energy x2:} $E=\gamma mc^2=\sqrt{p^2c^2+m^2c^4}$ \\
+\textbf{Field Tensor and Transformation:} $F^{\mu\nu} = \begin{pmatrix} 0&E_x/c&E_y/c&E_z/c \\-E_x/c&0&B_z&-B_y \\ -E_y/c&-B_z&0&B_x \\ -E_z/c&B_y&-B_x&0 \end{pmatrix}$, $F'^{ij} = \Lambda^i_k\Lambda^j_l F^{kl} \rightarrow F'=\Lambda F \Lambda^\mathrm{T}$ \\
+\textbf{Maxwell's Equations with d'Alenbertian:} $\square^2A^\mu = -\mu_0J^\mu, \square^2 = \nabla^2-\frac{1}{c^2}\frac{\partial^2}{\partial t^2}$ \\
 
 \section{Miscellaneous Physics}
 \textbf{Taylor Expansion:} $f(\vec{x}+\vec{a}) = f(\vec{x}) + a_i\partial_i f(\vec{x}) + \mathcal{O}(\vec{a}^2)$ \\
