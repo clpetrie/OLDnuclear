@@ -965,4 +965,5 @@
     write(6,*) 'Total time= ',real(s_time1-s_time0)/real(clock_rate),'seconds'
     write (6,*) 'Finished!'
    endif
+   write(6,*) 'vcoul = ', w1%vcoul
    end program afnuclear
