@@ -78,6 +78,13 @@ alpha.orb        0   1.0  # radial file, then L, then rscal
 0.0             # eps_vdc3 in tnicor
 0.0             # eps_vec3 in tnicor
 0.0             # eps_ve in tnicor
+0.0             # eps_comm #CODY added from here down until ks...
+0.0             # eps_comm-xd
+0.0             # eps_comm-dd
+0.0             # rscpp
+0.0             # rscnn
+0.0             # bpp
+0.0             # bnn
 5.0             # ks attempt for coulomb
 5.0             # ks attempt for coulomb
 0.0             # ks attempt for coulomb

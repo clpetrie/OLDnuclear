@@ -34,6 +34,7 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
+   logical, private, save :: doindpair = .true. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -380,7 +381,9 @@ contains
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
-               call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+               if (doindpair) then
+                  call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+               endif
             enddo
          endif
          if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
@@ -395,7 +398,9 @@ contains
             call g1bval(d1b,sxzj,fij)
             call g2bval(d2b,sxzj,fij)
             call g3bval(d3b,sxzj,fij,.false.)
-            call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+            if (doindpair) then
+               call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+            endif
          endif
          if (dofs(ij)) then
             do is=1,3
@@ -407,7 +412,9 @@ contains
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
-                  call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+                  if (doindpair) then
+                     call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+                  endif
                enddo
             enddo
          endif         
@@ -423,7 +430,9 @@ contains
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
-                     call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+                     if (doindpair) then
+                        call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+                     endif
                   enddo
                enddo
             enddo
