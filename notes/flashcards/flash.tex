@@ -1,0 +1,68 @@
+\documentclass[12pt]{extarticle}
+\usepackage[margin=1in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{color}
+\usepackage{cancel}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+
+%My commands
+\newcommand{\Oi}{\mathcal{O}_{i}}
+\newcommand{\Oij}{\mathcal{O}_{ij}}
+\newcommand{\Okl}{\mathcal{O}_{kl}}
+\newcommand{\Oijp}{\mathcal{O}^p_{ij}}
+\newcommand{\Oklp}{\mathcal{O}^p_{kl}}
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\braket}[2]{\left< #1 | #2 \right>}
+\newcommand{\ketbra}[2]{\left| #1 \right> \left< #2 \right|}
+\newcommand{\taui}{\bm{\tau}_i}
+\newcommand{\tauj}{\bm{\tau}_j}
+\newcommand{\sigmai}{\bm{\sigma}_i}
+\newcommand{\sigmaj}{\bm{\sigma}_j}
+\newcommand{\rij}{\hat{r}_{ij}}
+\newcommand{\sigmaia}{\sigma_{i\alpha}}
+\newcommand{\sigmaib}{\sigma_{i\beta}}
+\newcommand{\tauig}{\tau_{i\gamma}}
+\newcommand{\sigmaja}{\sigma_{j\alpha}}
+\newcommand{\sigmajb}{\sigma_{j\beta}}
+\newcommand{\taujg}{\tau_{j\gamma}}
+\newcommand{\tauij}{\taui \cdot \tauj}
+\newcommand{\sigmaij}{\sigmai \cdot \sigmaj}
+\newcommand{\mycolor}[1]{\textit{\textcolor{red}{#1}}}
+\newcommand{\longsi}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_A}
+\newcommand{\longsij}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_{j-1}, s', s_{j+1}, \ldots ,s_A}
+\newcommand{\Ot}{\mathcal{O}^\tau_{n\alpha}}
+\newcommand{\Os}{\mathcal{O}^\sigma_{n}}
+\newcommand{\Ost}{\mathcal{O}^{\sigma\tau}_{n\alpha}}
+\newcommand{\detr}{\mathrm{det}}
+\newcommand{\R}{\mathrm{\mathbf{R}}}
+
+\title{Flash Cards for Quantum/Nuclear Monte Carlo}
+\author{Cody L. Petrie}
+
+\begin{document}
+\maketitle
+
+\section*{Variational Monte Carlo}
+\textbf{Steps for Metropolis Algorithm:}
+\begin{enumerate}
+   \item{Start with some random walker configuration $\R$}
+   \item{Propose a move to a new walker $\R'$ from the distribution $T(\R'\leftarrow\R)$}
+   \item{The probability of accepting the move is given by \[A(\R'\leftarrow\R) = \mathrm{min}\left(1,\frac{T(\R'\leftarrow\R)P(\R')}{T(\R'\leftarrow\R)P(\R)}\right).\] The move is accepted if $U[0,1]<A(\R'\leftarrow\R)$.}
+   \item{Repeat from step 2.}
+\end{enumerate}
+\textbf{Variational Energy (In terms of $E_L(\R)$ and $P(\R)$), x2 + $E_L$ and $P$:}
+\begin{align*}
+   E_V = \frac{\int\Psi^*(\R)\hat{H}\Psi(\R)d\R}{\int\Psi^*(\R)\Psi(\R)d\R} = \int P(\R)E_L(\R)d\R \\ P(\R) = |\Psi_T(\R)|^2/\int |\Psi_T(\R)|^2d\R\ \\ E_L(\R) = \Psi_T^{-1}(\R)\hat{H}\Psi_T(\R)
+\end{align*}
+\textbf{Sampled Variational Energy:}
+\begin{equation*}
+   E_V \approx \frac{1}{N}\sum\limits_{n=1}^N E_L(\R_n)
+\end{equation*}
+where $\R_n$ are drawn from $P(\R)$.
+
+\end{document}
