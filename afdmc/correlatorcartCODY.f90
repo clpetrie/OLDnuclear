@@ -245,8 +245,21 @@ contains
    d1b=czero
    d2b=czero
    d3b=czero
-   call g1bval(d1b,sxz0,cone)
-   call g2bval(d2b,sxz0,cone)
+   !call g1bval(d1b,sxz0,cone)
+   do i=1,npart
+      d1b(:,i)=d1b(:,i)+cone*sxz(:,i,i)
+   enddo
+   !call g2bval(d2b,sxz0,cone)
+   ij=0
+   do i=1,npart-1
+      do j=i+1,npart
+         ij=ij+1
+         do js=1,4
+            d2b(:,js,ij)=d2b(:,js,ij) &
+               +cone*(sxz(:,i,i)*sxz(js,j,j)-sxz(:,i,j)*sxz(js,j,i))
+         enddo
+      enddo
+   enddo
    detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
