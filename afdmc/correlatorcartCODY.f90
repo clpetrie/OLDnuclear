@@ -34,7 +34,7 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
-   logical, private, save :: doindpair = .true. !CODY
+   logical, private, save :: doindpair = .false. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -247,7 +247,7 @@ contains
    d3b=czero
    !call g1bval(d1b,sxz0,cone)
    do i=1,npart
-      d1b(:,i)=d1b(:,i)+cone*sxz(:,i,i)
+      d1b(:,i)=d1b(:,i)+cone*sxz0(:,i,i)
    enddo
    !call g2bval(d2b,sxz0,cone)
    ij=0
@@ -256,7 +256,7 @@ contains
          ij=ij+1
          do js=1,4
             d2b(:,js,ij)=d2b(:,js,ij) &
-               +cone*(sxz(:,i,i)*sxz(js,j,j)-sxz(:,i,j)*sxz(js,j,i))
+               +cone*(sxz0(:,i,i)*sxz0(js,j,j)-sxz0(:,i,j)*sxz0(js,j,i))
          enddo
       enddo
    enddo
