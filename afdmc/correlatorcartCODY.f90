@@ -34,7 +34,8 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
-   logical, private, save :: doindpair = .false. !CODY
+   logical, private, save :: doindpair1 = .false. !CODY
+   logical, private, save :: doindpair2 = .false. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -245,11 +246,9 @@ contains
    d1b=czero
    d2b=czero
    d3b=czero
-   !call g1bval(d1b,sxz0,cone)
-   do i=1,npart
-      d1b(:,i)=d1b(:,i)+cone*sxz0(:,i,i)
-   enddo
+   call g1bval(d1b,sxz0,cone)
    !call g2bval(d2b,sxz0,cone)
+! Here are the explicit loops from g2bval, CODY
    ij=0
    do i=1,npart-1
       do j=i+1,npart
@@ -257,9 +256,15 @@ contains
          do js=1,4
             d2b(:,js,ij)=d2b(:,js,ij) &
                +cone*(sxz0(:,i,i)*sxz0(js,j,j)-sxz0(:,i,j)*sxz0(js,j,i))
+!! do independent pair stuff
+            if(doindpair1) then
+                
+            endif
+!!
          enddo
       enddo
    enddo
+!
    detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
@@ -394,7 +399,7 @@ contains
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
-               if (doindpair) then
+               if (doindpair2) then
                   call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
                endif
             enddo
@@ -411,7 +416,7 @@ contains
             call g1bval(d1b,sxzj,fij)
             call g2bval(d2b,sxzj,fij)
             call g3bval(d3b,sxzj,fij,.false.)
-            if (doindpair) then
+            if (doindpair2) then
                call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
             endif
          endif
@@ -425,7 +430,7 @@ contains
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
-                  if (doindpair) then
+                  if (doindpair2) then
                      call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
                   endif
                enddo
@@ -443,7 +448,7 @@ contains
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
-                     if (doindpair) then
+                     if (doindpair2) then
                         call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
                      endif
                   enddo
