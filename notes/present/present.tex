@@ -2,13 +2,13 @@
 \usepackage{amsmath}
 %\usepackage{beamerthemesplit} % new 
 \usetheme{Madrid}
+\usefonttheme[onlymath]{serif}
+\setbeamertemplate{frametitle}[default][center] %center slide titles
+
 \begin{document}
 \title{Correlated Trial Wave Function}
 \author{Cody Petrie} 
 \date{\today} 
-
-%center the slide titles
-\setbeamertemplate{frametitle}[default][center]
 
 %commands
 \newcommand{\Oi}{\mathcal{O}_{i}}
@@ -60,13 +60,41 @@
    \begin{equation}
    \begin{split}
       \braket{\Psi_T}{\RS} = \bra{\Phi} \left[\prod\limits_{i<j}f_c(r_{ij})\right]\left[1+\sum\limits_{i<j,p}f_p(r_{ij})\Oijp \right. \\
-         \left.+\sum\limits_{i<j,p}\sum\limits_{k<l}f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp\right] \ket{\RS}
+         \left.+\sum\limits_{i<j,p}\sum\limits_{\substack{k<l \\ \mathrm{ind pair?}}}f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp\right] \ket{\RS}
    \end{split}
    \end{equation}
 }
 }
 
+\frame{\frametitle{Independent Pair}
+\begin{itemize}
+   \item Independent pair sum looks like this.
+   \begin{equation}
+      \sum\limits_{\substack{k<l \\ \mathrm{ind pair}}} \rightarrow \sum\limits_{\substack{k<l \\ k,l \ne i,j}}
+   \end{equation}
+   \item This will give us insight into how much the correlations from different sets of particle effect the energy.
+\end{itemize}
+}
 
+\frame{\frametitle{Method}
+\begin{itemize}
+   \item Correlation terms are currently calculated in the code as
+   \begin{equation}
+      \frac{\braket{\Psi_T}{\RS}}{\braket{\Phi}{RS}} = \mathrm{sum(d2b*f2b)}
+   \end{equation}
+   where the d2b and f2b look like
+   \begin{equation}
+      \mathrm{d2b}(s,s',ij) = \frac{\braket{\Phi}{R,\longsij}}{\braket{\Phi}{R,S}}
+   \end{equation}
+   \begin{equation}
+      \mathrm{f2b}(s,s',ij) = \bra{s,s'} \Oijp \ket{s_i,s_j}
+   \end{equation}
+\end{itemize}
+}
+
+\frame{\frametitle{Method}
+
+}
 
 \end{document}
 

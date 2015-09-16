@@ -246,7 +246,9 @@ contains
    d1b=czero
    d2b=czero
    d3b=czero
+   detrat=cone+fctau
    call g1bval(d1b,sxz0,cone)
+   detrat=detrat+sum(d1b*f1b)
    !call g2bval(d2b,sxz0,cone)
 ! Here are the explicit loops from g2bval, CODY
    ij=0
@@ -256,16 +258,17 @@ contains
          do js=1,4
             d2b(:,js,ij)=d2b(:,js,ij) &
                +cone*(sxz0(:,i,i)*sxz0(js,j,j)-sxz0(:,i,j)*sxz0(js,j,i))
-!! do independent pair stuff
-            if(doindpair1) then
+            detrat=detrat+sum(d2b(:,js,ij)*f2b(:,js,ij))
+!! do independent pair stuff, CODY
+!!!            if(doindpair1) then
                 
-            endif
+!!!            endif
 !!
          enddo
       enddo
    enddo
 !
-   detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
+!!!   detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
       detrat=detrat+sum(d3b*f3b)
