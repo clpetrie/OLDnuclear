@@ -1,0 +1,72 @@
+\documentclass{beamer}
+\usepackage{amsmath}
+%\usepackage{beamerthemesplit} % new 
+\usetheme{Madrid}
+\begin{document}
+\title{Correlated Trial Wave Function}
+\author{Cody Petrie} 
+\date{\today} 
+
+%center the slide titles
+\setbeamertemplate{frametitle}[default][center]
+
+%commands
+\newcommand{\Oi}{\mathcal{O}_{i}}
+\newcommand{\Oij}{\mathcal{O}_{ij}}
+\newcommand{\Okl}{\mathcal{O}_{kl}}
+\newcommand{\Oijp}{\mathcal{O}^p_{ij}}
+\newcommand{\Oklp}{\mathcal{O}^p_{kl}}
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\braket}[2]{\left< #1 | #2 \right>}
+\newcommand{\ketbra}[2]{\left| #1 \right> \left< #2 \right|}
+\newcommand{\taui}{\bm{\tau}_i}
+\newcommand{\tauj}{\bm{\tau}_j}
+\newcommand{\sigmai}{\bm{\sigma}_i}
+\newcommand{\sigmaj}{\bm{\sigma}_j}
+\newcommand{\rij}{\hat{r}_{ij}}
+\newcommand{\sigmaia}{\sigma_{i\alpha}}
+\newcommand{\sigmaib}{\sigma_{i\beta}}
+\newcommand{\tauig}{\tau_{i\gamma}}
+\newcommand{\sigmaja}{\sigma_{j\alpha}}
+\newcommand{\sigmajb}{\sigma_{j\beta}}
+\newcommand{\taujg}{\tau_{j\gamma}}
+\newcommand{\tauij}{\taui \cdot \tauj}
+\newcommand{\sigmaij}{\sigmai \cdot \sigmaj}
+\newcommand{\mycolor}[1]{\textit{\textcolor{red}{#1}}}
+\newcommand{\longsi}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_A}
+\newcommand{\longsij}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_{j-1}, s', s_{j+1}, \ldots ,s_A}
+\newcommand{\Ot}{\mathcal{O}^\tau_{n\alpha}}
+\newcommand{\Os}{\mathcal{O}^\sigma_{n}}
+\newcommand{\Ost}{\mathcal{O}^{\sigma\tau}_{n\alpha}}
+\newcommand{\detr}{\mathrm{det}}
+\newcommand{\RS}{\mathrm{RS}}
+
+%start slides
+\frame{\titlepage} 
+
+\frame{\frametitle{Correlated Trial Wave Function}
+\uncover<1,2,3>{
+   \begin{equation}
+      \braket{\Psi_T}{\RS} = \bra{\Phi} \prod\limits_{i<j}\left[f_c(r_{ij})\left[1+\sum\limits_{i<j,p}f_p(r_{ij})\Oijp\right]\right] \ket{\RS}
+   \end{equation}
+}
+\uncover<2,3>{
+   \begin{equation}
+      \braket{\Psi_T}{\RS} = \bra{\Phi} \left[\prod\limits_{i<j}f_c(r_{ij})\right]\left[1+\sum\limits_{i<j,p}f_p(r_{ij})\Oijp\right] \ket{\RS}
+   \end{equation}
+}
+\uncover<3>{
+   \begin{equation}
+   \begin{split}
+      \braket{\Psi_T}{\RS} = \bra{\Phi} \left[\prod\limits_{i<j}f_c(r_{ij})\right]\left[1+\sum\limits_{i<j,p}f_p(r_{ij})\Oijp \right. \\
+         \left.+\sum\limits_{i<j,p}\sum\limits_{k<l}f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp\right] \ket{\RS}
+   \end{split}
+   \end{equation}
+}
+}
+
+
+
+\end{document}
+
