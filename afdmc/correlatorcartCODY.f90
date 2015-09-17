@@ -250,7 +250,7 @@ contains
    call g1bval(d1b,sxz0,cone)
    detrat=detrat+sum(d1b*f1b)
    !call g2bval(d2b,sxz0,cone)
-! Here are the explicit loops from g2bval, CODY
+! Here are the explicit loops from g2bval and independent pair stuff, CODY
    ij=0
    do i=1,npart-1
       do j=i+1,npart
@@ -259,11 +259,9 @@ contains
             d2b(:,js,ij)=d2b(:,js,ij) &
                +cone*(sxz0(:,i,i)*sxz0(js,j,j)-sxz0(:,i,j)*sxz0(js,j,i))
             detrat=detrat+sum(d2b(:,js,ij)*f2b(:,js,ij))
-!! do independent pair stuff, CODY
-!!!            if(doindpair1) then
-                
-!!!            endif
-!!
+            if(doindpair1) then
+               if(k.ne.i .and. k.ne.j
+            endif
          enddo
       enddo
    enddo
