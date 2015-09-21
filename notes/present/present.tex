@@ -11,6 +11,7 @@
 \date{\today} 
 
 %commands
+\renewcommand{\O}{\mathcal{O}}
 \newcommand{\Oi}{\mathcal{O}_{i}}
 \newcommand{\Oij}{\mathcal{O}_{ij}}
 \newcommand{\Okl}{\mathcal{O}_{kl}}
@@ -36,6 +37,7 @@
 \newcommand{\mycolor}[1]{\textit{\textcolor{red}{#1}}}
 \newcommand{\longsi}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_A}
 \newcommand{\longsij}{s_1, \ldots, s_{i-1} , s, s_{i+1}, \ldots, s_{j-1}, s', s_{j+1}, \ldots ,s_A}
+\newcommand{\longskl}{s_1, \ldots, s_{k-1} , s, s_{k+1}, \ldots, s_{l-1}, s', s_{l+1}, \ldots ,s_A}
 \newcommand{\Ot}{\mathcal{O}^\tau_{n\alpha}}
 \newcommand{\Os}{\mathcal{O}^\sigma_{n}}
 \newcommand{\Ost}{\mathcal{O}^{\sigma\tau}_{n\alpha}}
@@ -51,6 +53,15 @@
       \braket{\Psi_T}{\RS} = \bra{\Phi} \prod\limits_{i<j}\left[f_c(r_{ij})\left[1+\sum\limits_{i<j,p}f_p(r_{ij})\Oijp\right]\right] \ket{\RS}
    \end{equation}
 }
+\only<1>{
+\begin{itemize}
+   \item This does not obey cluster decomposition because if you exchange two particles it changes who the operators operate on. A fully cluster decomposable correlated wave function could look like an exponential
+   \begin{equation}
+      \ket{\Psi} = e^{\O_{corr}}\ket{\Psi_0}
+   \end{equation}
+\end{itemize}
+   \qquad where $\O_{corr} = \O_{corr1} +\ldots+ \O_{corrA}$.
+}
 \uncover<2,3>{
    \begin{equation}
       \braket{\Psi_T}{\RS} = \bra{\Phi} \left[\prod\limits_{i<j}f_c(r_{ij})\right]\left[1+\sum\limits_{i<j,p}f_p(r_{ij})\Oijp\right] \ket{\RS}
@@ -63,14 +74,14 @@
          \left.+\sum\limits_{i<j,p}\sum\limits_{\substack{k<l \\ \mathrm{ind pair?}}}f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp\right] \ket{\RS}
    \end{split}
    \end{equation}
-}
+   }
 }
 
 \frame{\frametitle{Independent Pair}
 \begin{itemize}
    \item Independent pair sum looks like this.
    \begin{equation}
-      \sum\limits_{\substack{k<l \\ \mathrm{ind pair}}} \rightarrow \sum\limits_{\substack{k<l \\ k,l \ne i,j}}
+      \sum\limits_{\substack{k<l \\ \mathrm{ind pair}}} \rightarrow \sum\limits_{\substack{k<l \\ k,l \ne i,j \\ k,l > i,j}}
    \end{equation}
    \item This will give us insight into how much the correlations from different sets of particle effect the energy.
 \end{itemize}
@@ -93,7 +104,9 @@
 }
 
 \frame{\frametitle{Method}
-   
+\begin{itemize}
+   \item Now everywhere that we calculate d2b($s,s',ij$) we will need to calculate d2b($s,s',s'',s''',ij,kl$) and the corresponding f2b($s,s',s'',s''',ij,kl$) for the independent pair terms.
+\end{itemize}
 }
 
 \end{document}
