@@ -242,6 +242,8 @@ contains
    complex(kind=r8) :: ctmp1,d1,d2,d3,d4
    integer(kind=i4) :: i,j,ij,is,js,it
    complex(kind=r8) :: d1b(4,npart),d2b(4,4,npair),d3b(4,4,4,ntrip)
+   integer(kind=i4) :: k,l,kl,kop,ks,ls,kt !Added variables start here CODY
+   complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
    sxz0=sxzin
    d1b=czero
    d2b=czero
@@ -260,7 +262,15 @@ contains
                +cone*(sxz0(:,i,i)*sxz0(js,j,j)-sxz0(:,i,j)*sxz0(js,j,i))
             detrat=detrat+sum(d2b(:,js,ij)*f2b(:,js,ij))
             if(doindpair1) then
-               if(k.ne.i .and. k.ne.j
+               do k=1,npart
+                  sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
+               enddo
+               do k=1,npart-1
+                  if(k.le.i .or. k.eq.j) cycle
+                  do kop=1,15
+                     call sxzupdate(sxzk(:,:,:,kop),d15ind(kop),sxzin,k,sx15ind(:,kop,:,k),sp(:,k)) !IS THIS RIGHT??????????????? ADD VARIABLES!!!!!!!
+                  enddo
+               enddo
             endif
          enddo
       enddo
