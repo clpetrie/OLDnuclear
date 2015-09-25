@@ -524,7 +524,7 @@ contains
       sxmallz=reshape(matmul(smati,reshape(ph(:,:,:,idet) &
            ,(/npart,4*npart/))),shape(sxmallz))
       sxz=reshape(transpose(reshape(sxmallz,(/npart,4*npart/))),shape(sxz))
-      call cordet(detrat,sxz)
+      call cordet(detrat,sxz,w%sp)
       tdet=tdet+det*detrat
       totdet(idet)=cdet0(idet)*det*detrat/cdet(idet)
       if (dopot) then

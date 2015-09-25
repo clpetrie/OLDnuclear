@@ -34,7 +34,7 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
-   logical, private, save :: doindpair1 = .false. !CODY
+   logical, private, save :: doindpair1 = .true. !CODY
    logical, private, save :: doindpair2 = .false. !CODY
 contains
    subroutine initcormod(npartin,elin)
@@ -235,13 +235,18 @@ contains
    enddo
    end subroutine calfop
 
-   subroutine cordet(detrat,sxzin)
+   subroutine cordet(detrat,sxzin,sp) !CODY added sp here, make sure to remove all if you remove this
 ! calfop must be called first
    complex(kind=r8) :: detrat,sxzin(:,:,:)
    complex(kind=r8) :: sxmall(npart,15,npart)
    complex(kind=r8) :: ctmp1,d1,d2,d3,d4
    integer(kind=i4) :: i,j,ij,is,js,it
    complex(kind=r8) :: d1b(4,npart),d2b(4,4,npair),d3b(4,4,4,ntrip)
+   integer(kind=i4) :: k,l,kl,kop,ks,ls,kt !Added variables start here CODY
+   complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
+   complex(kind=r8) :: d15(15),fkl,sxzk(4,npart,npart,15),sxzl(4,npart,npart)
+   complex(kind=r8) :: detrattemp
+   complex(kind=r8), intent(in) :: sp(:,:)
    sxz0=sxzin
    d1b=czero
    d2b=czero
@@ -250,7 +255,7 @@ contains
    call g1bval(d1b,sxz0,cone)
    detrat=detrat+sum(d1b*f1b)
    !call g2bval(d2b,sxz0,cone)
-! Here are the explicit loops from g2bval, CODY
+! Here are the explicit loops from g2bval and independent pair stuff, CODY
    ij=0
    do i=1,npart-1
       do j=i+1,npart
@@ -259,11 +264,63 @@ contains
             d2b(:,js,ij)=d2b(:,js,ij) &
                +cone*(sxz0(:,i,i)*sxz0(js,j,j)-sxz0(:,i,j)*sxz0(js,j,i))
             detrat=detrat+sum(d2b(:,js,ij)*f2b(:,js,ij))
-!! do independent pair stuff, CODY
-!!!            if(doindpair1) then
-                
-!!!            endif
-!!
+            if(doindpair1) then !Start independant pair terms here
+               kl=0
+               do k=1,npart
+                  sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
+               enddo
+               do k=1,npart-1
+                  if(k.le.i .or. k.eq.j) cycle
+                  do kop=1,15
+                     call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxz0,k,sx15(:,kop,:,k),sp(:,k))
+                  enddo
+                  do l=k+1,npart
+                     if(l.eq.i .or. l.eq.j) cycle
+!Mathematica ij = FullSimplify[(j - i) + (i - 1)*npart + Sum[-n, {n, 1, i - 1}]]
+                     kl=l-k*(1+k-2*npart)/2-npart
+                     if(doft(kl)) then
+                        do kt=1,3
+                           fkl=ft(kl)
+                           sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
+                           call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
+!???                           detrattemp=detrat*d15(3+kt)*d2
+!???                           fkl=detrattemp*fkl
+                           call g2bval(d2b,sxzl,fkl)
+                        enddo
+                     endif
+                     if(dofs(kl)) then
+                        do ks=1,3
+                           sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
+                           do ls=1,3
+                              call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
+!???                            detrattemp=detrat*d15*d2
+!???                            fkl=detrat*fs(ks,ls,kl)
+                              fkl=fs(ks,ls,kl)
+                              call g2bval(d2b,sxzl,fkl)
+                           enddo
+                        enddo
+                     endif
+                     if(dofst(kl)) then
+                        do kt=1,3
+                           do ks=1,3
+                              sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
+                              do ls=1,3
+                                 call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
+!???                                detrattemp=detrat*d15(3*ks+kt+3)*d2
+!???                                fkl=detrattemp*fst(ks,ls,kl)
+                                 fkl=fst(ks,ls,kl)
+                                 call g2bval(d2b,sxzl,fkl)
+                              enddo
+                           enddo
+                        enddo
+                     endif
+                     do ls=1,4
+                        detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl))
+!???                        detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl)*f2b(:,js,ij))
+                     enddo
+                  enddo
+               enddo
+            endif
          enddo
       enddo
    enddo
