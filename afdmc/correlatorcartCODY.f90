@@ -35,7 +35,7 @@ module correlator
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
    logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .false. !CODY
+   logical, private, save :: doindpair2 = .true. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -283,8 +283,8 @@ contains
                            fkl=ft(kl)
                            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
                            call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
-                           detrattemp=d15(3+kt)*d2
-                           fkl=detrattemp*fkl
+!???                           detrattemp=d15(3+kt)*d2
+!???                           fkl=detrattemp*fkl
                            call g2bval(d2b,sxzl,fkl)
                         enddo
                      endif
@@ -293,9 +293,9 @@ contains
                            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
                            do ls=1,3
                               call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
-                               detrattemp=d15(ks)*d2
-                               fkl=detrat*fs(ks,ls,kl)
-!???                              fkl=fs(ks,ls,kl)
+!???                              detrattemp=d15(ks)*d2
+!???                              fkl=detrat*fs(ks,ls,kl)
+                              fkl=fs(ks,ls,kl)
                               call g2bval(d2b,sxzl,fkl)
                            enddo
                         enddo
@@ -306,9 +306,9 @@ contains
                               sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
                               do ls=1,3
                                  call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
-                                detrattemp=detrattemp*d15(3*ks+kt+3)*d2
-                                fkl=detrattemp*fst(ks,ls,kl)
-!???                                 fkl=fst(ks,ls,kl)
+!???                                 detrattemp=detrattemp*d15(3*ks+kt+3)*d2
+!???                                 fkl=detrattemp*fst(ks,ls,kl)
+                                 fkl=fst(ks,ls,kl)
                                  call g2bval(d2b,sxzl,fkl)
                               enddo
                            enddo

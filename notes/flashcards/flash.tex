@@ -8,8 +8,10 @@
 \usepackage{cancel}
 \usepackage{verbatim}
 \usepackage{fancyvrb}
+\usepackage{datatool}
 
 %My commands
+\newcommand{\Oip}{\mathcal{O}^p_{i}}
 \newcommand{\Oi}{\mathcal{O}_{i}}
 \newcommand{\Oij}{\mathcal{O}_{ij}}
 \newcommand{\Okl}{\mathcal{O}_{kl}}
@@ -41,11 +43,39 @@
 \newcommand{\detr}{\mathrm{det}}
 \newcommand{\R}{\mathrm{\mathbf{R}}}
 
+% sorting command
+\newcommand{\sortitem}[2]{%
+  \DTLnewrow{list}%
+  \DTLnewdbentry{list}{label}{#1}%
+  \DTLnewdbentry{list}{description}{#2}%
+}
+
+\newenvironment{sortedlist}%
+{%
+  \DTLifdbexists{list}{\DTLcleardb{list}}{\DTLnewdb{list}}%
+}%
+{%
+  \DTLsort{label}{list}%
+  \begin{description}%
+    \DTLforeach*{list}{\theLabel=label,\theDesc=description}{%
+      \item[\theLabel] \theDesc
+    }%
+  \end{description}% 
+}
+
 \title{Flash Cards for Quantum/Nuclear Monte Carlo}
 \author{Cody L. Petrie}
 
 \begin{document}
 \maketitle
+
+\section*{Parameters in the Code}
+\begin{sortedlist}
+   \sortitem{sp(s,i)}{$=\braket{s}{s_i}$}
+   \sortitem{spx(s,15,i)}{$=\bra{s}\Oip\ket{s_i}$, where $p$ goes over the 15 cartesian coordinates.}
+   \sortitem{d2b(s,s',ij)}{$=\frac{\braket{\Phi}{R,\longsij}}{\braket{\Phi}{RS}}$}
+   \sortitem{f2b(s,s',ij)}{$?=\bra{ss'}\Oijp\ket{s_is_j}$}
+\end{sortedlist}
 
 \section*{Variational Monte Carlo}
 \textbf{Steps for Metropolis Algorithm:}
@@ -64,10 +94,5 @@
    E_V \approx \frac{1}{N}\sum\limits_{n=1}^N E_L(\R_n)
 \end{equation*}
 where $\R_n$ are drawn from $P(\R)$.
-
-\section*{Parameters in the Code}
-\begin{itemize}
-   \item 
-\end{itemize}
 
 \end{document}
