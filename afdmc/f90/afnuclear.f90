@@ -530,8 +530,8 @@
             endif
 !write (6,*) ' calling chkder '
 !call chkder(w1,7.e-5_r8,1.e-4_r8)
-!write (6,*) ' calling chkpot'
-!call chkpot(w1)
+write (6,*) ' calling chkpot'
+call chkpot(w1)
 !call chkls(w1)
 !write (6,*) ' calling chkop'
 !call chkop(w1)
