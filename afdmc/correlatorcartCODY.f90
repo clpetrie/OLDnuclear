@@ -35,7 +35,7 @@ module correlator
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
    logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .true. !CODY
+   logical, private, save :: doindpair2 = .false. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -283,8 +283,8 @@ contains
                            fkl=ft(kl)
                            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
                            call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
-!???                           detrattemp=d15(3+kt)*d2
-!???                           fkl=detrattemp*fkl
+                           detrattemp=d15(3+kt)*d2 !???????????????
+                           fkl=detrattemp*fkl !??????????????????
                            call g2bval(d2b,sxzl,fkl)
                         enddo
                      endif

@@ -42,6 +42,7 @@
 \newcommand{\Ost}{\mathcal{O}^{\sigma\tau}_{n\alpha}}
 \newcommand{\detr}{\mathrm{det}}
 \newcommand{\R}{\mathrm{\mathbf{R}}}
+\newcommand{\subr}[1]{\color{blue}{#1}}
 
 % sorting command
 \newcommand{\sortitem}[2]{%
@@ -77,10 +78,11 @@
    \sortitem{f2b(s,s',ij)}{$=f^p(r_{ij})\bra{ss'}\Oijp\ket{s_is_j}$}
    \sortitem{fst(3,3,ij)}{$=f$ in front of specific operator}
    \sortitem{ph(i,4,j,idet)}{$=\sum\limits_k S_{ik}\bra{k}\mathcal{O}_j\ket{s_j}$}
-   \sortitem{sxz(s,i,j)}{$=\sum\limits_k S^{-1}_{jk}\braket{k}{\mathbf{r}_i,s_i}$}
+   \sortitem{sxz(s,i,j)}{$=\sum\limits_k S^{-1}_{jk}\braket{k}{\mathbf{r}_i,s}$}
    \sortitem{opi(s,m)}{$=\sum\limits_k S^{-1}_{mk}\bra{k}\mathcal{O}_i\ket{\mathbf{r_i},s} = \sum\limits_{s'}\mathrm{sxz(s',i,m)}\bra{s'}\mathcal{O}_i\ket{s}$}
    \sortitem{di(m)}{$=\sum\limits_k S^{-1}_{mk}\bra{k}\mathcal{O}_i\ket{\mathbf{r_i},s_i} = \sum\limits_s \mathrm{opi(s,m)}\braket{s}{s_i}$}
    \sortitem{sx15(s,15,i,j)}{$=?????$}
+   \sortitem{\subr{sxzupdate(sxznew(out),detrat(out),sxzold,i,opi,sp)}}{}
 \end{sortedlist}
 
 \section*{Variational Monte Carlo}

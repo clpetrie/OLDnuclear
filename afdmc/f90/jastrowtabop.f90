@@ -68,7 +68,7 @@ contains
       read (5,*) ptni(5) ! eps_vd2
       read (5,*) ptni(6) ! eps_vdc3
       read (5,*) ptni(7) ! eps_vec3
-      read (5,*) ptni(8) ! eps_ve !CODY DELETE good to here
+      read (5,*) ptni(8) ! eps_ve
       read (5,*) ptni(9) ! eps_comm
       read (5,*) ptni(10) ! eps_comm-xd
       read (5,*) ptni(11) ! eps_comm-dd
