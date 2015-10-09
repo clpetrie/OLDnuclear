@@ -252,6 +252,7 @@ contains
    d2b=czero
    d3b=czero
    detrat=cone+fctau
+   write(*,*) 'CODY:',detrat
    call g1bval(d1b,sxz0,cone)
    detrat=detrat+sum(d1b*f1b)
    !call g2bval(d2b,sxz0,cone)
