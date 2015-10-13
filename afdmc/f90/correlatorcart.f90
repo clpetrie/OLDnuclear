@@ -34,8 +34,8 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
-   logical, private, save :: doindpair1 = .false. !CODY
-   logical, private, save :: doindpair2 = .true. !CODY
+   logical, private, save :: doindpair1 = .true. !CODY
+   logical, private, save :: doindpair2 = .false. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -245,7 +245,6 @@ contains
    integer(kind=i4) :: k,l,kl,kop,ks,ls,kt !Added variables start here CODY
    complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
    complex(kind=r8) :: d15(15),fkl,sxzk(4,npart,npart,15),sxzl(4,npart,npart)
-   complex(kind=r8) :: detrattemp
    complex(kind=r8), intent(in) :: sp(:,:)
    sxz0=sxzin
    d1b=czero
@@ -283,8 +282,7 @@ contains
                            fkl=ft(kl)
                            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
                            call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
-                           detrattemp=d15(3+kt)*d2
-                           fkl=detrattemp*fkl
+                           fkl=d15(3+kt)*d2*fkl
                            call g2bval(d2b,sxzl,fkl)
                         enddo
                      endif
@@ -293,9 +291,7 @@ contains
                            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
                            do ls=1,3
                               call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
-                              detrattemp=d15(ks)*d2
-                              fkl=detrat*fs(ks,ls,kl)
-                              fkl=fs(ks,ls,kl)
+                              fkl=d15(ks)*d2*fs(ks,ls,kl)
                               call g2bval(d2b,sxzl,fkl)
                            enddo
                         enddo
@@ -306,9 +302,7 @@ contains
                               sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
                               do ls=1,3
                                  call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
-                                 detrattemp=detrattemp*d15(3*ks+kt+3)*d2
-                                 fkl=detrattemp*fst(ks,ls,kl)
-                                 fkl=fst(ks,ls,kl)
+                                 fkl=d15(3*ks+kt+3)*d2*fst(ks,ls,kl)
                                  call g2bval(d2b,sxzl,fkl)
                               enddo
                            enddo
@@ -318,7 +312,7 @@ contains
                         do is=1,4
 !???                           detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl))
 !???                           detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl)*f2b(:,js,ij))
-                           detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl)*f2b(is,js,ij))
+                           detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl)*f2b(is,js,ij))!*detrat
                         enddo
                      enddo
                   enddo
