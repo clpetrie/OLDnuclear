@@ -84,10 +84,11 @@
    \sortitem{opi(s,m)}{$=\sum\limits_k S^{-1}_{mk}\bra{k}\mathcal{O}_i\ket{\mathbf{r_i},s} = \sum\limits_{s'}\mathrm{sxz(s',i,m)}\bra{s'}\mathcal{O}_i\ket{s}$}
    \sortitem{di(m)}{$=\sum\limits_k S^{-1}_{mk}\bra{k}\mathcal{O}_i\ket{\mathbf{r_i},s_i} = \sum\limits_s \mathrm{opi(s,m)}\braket{s}{s_i}$}
    \sortitem{sx15(s,15,i,j)}{$=\sum\limits_k S^{-1}_{jk}\bra{k}\sum\limits_{kop=1}^{15}\mathcal{O}_{kop}\ket{\mathbf{r},s} = \mathrm{opmult(sxz0)}$, where sx15(:,kop,:,k) = opi(s,k)}
-   \sortitem{\subr{sxzupdate(sxznew(out),detrat(out),sxzold,i,opi,sp)}}{}
+   \sortitem{\subr{sxzupdate(sxznew(out),detrat(out),sxzold,i,opi,sp)}}{Here the outputted detrat is simply di(i).}
    \sortitem{\subr{vnpsi2(w,dopot)}}{This subroutine ...???}
    \sortitem{\subr{hspot(???)}}{???}
    \sortitem{d15(kop)}{=di(i)$=\sum\limits_k S^{-1}_{ik}\bra{k}\mathcal{O}_i\ket{\mathbf{r},s_i} = (S'/S)_{ii}$ for a specific kop (1 of 15)}
+   \sortitem{\subr{opmult(sp)}}{This multiplies sp(s,i) by the 15 operators in this order 1-3 sx,sy,sz, 4-6 tx,ty,tz, 7-9 sx*(tx,ty,tz), 10-12 sy*(tx,ty,tz), 13-15 sz*(tx,ty,tz). This outputs opmult(s,kop,i)}
 \end{sortedlist}
 
 \section*{Variational Monte Carlo}
