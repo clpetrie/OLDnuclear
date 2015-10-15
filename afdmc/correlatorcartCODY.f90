@@ -264,6 +264,7 @@ contains
                +cone*(sxz0(:,i,i)*sxz0(js,j,j)-sxz0(:,i,j)*sxz0(js,j,i))
             detrat=detrat+sum(d2b(:,js,ij)*f2b(:,js,ij))
             if(doindpair1) then !Start independant pair terms here
+               d2b=czero !DELETE CODY
                do k=1,npart
                   sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
                enddo
@@ -285,7 +286,6 @@ contains
                            fkl=d15(3+kt)*d2*ft(kl)
                            if (kt==3 .and. doftpp(kl)) fkl=fkl+0.25_r8*ftpp(kl)
                            if (kt==3 .and. doftnn(kl)) fkl=fkl+0.25_r8*ftnn(kl)
-!???                           fkl=ft(kl)
                            call g2bval(d2b,sxzl,fkl)
                         enddo
                      endif
@@ -295,7 +295,6 @@ contains
                            do ls=1,3
                               call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
                               fkl=d15(ks)*d2*fs(ks,ls,kl)
-!???                              fkl=fs(ks,ls,kl)
                               call g2bval(d2b,sxzl,fkl)
                            enddo
                         enddo
@@ -307,19 +306,16 @@ contains
                               do ls=1,3
                                  call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
                                  fkl=d15(3*ks+kt+3)*d2*fst(ks,ls,kl)
-!???                                 fkl=fst(ks,ls,kl)
                                  call g2bval(d2b,sxzl,fkl)
                               enddo
                            enddo
                         enddo
                      endif
-                     do ls=1,4
-                        do is=1,4
+                        do ls=1,4
 !???                           detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl))
 !???                           detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl)*f2b(:,js,ij))
-                           detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl)*f2b(is,js,ij))
+                        detrat=detrat+sum(sum(d2b(:,ls,kl)*f2b(:,ls,kl))*f2b(:,js,ij))
                         enddo
-                     enddo
                   enddo
                enddo
             endif
