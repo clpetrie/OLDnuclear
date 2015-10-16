@@ -235,21 +235,23 @@ contains
    enddo
    end subroutine calfop
 
-   subroutine cordet(detrat,sxzin,sp) !CODY added sp here, make sure to remove all if you remove this
+   subroutine cordet(detrat,sxzin,sp,sxzpass) !CODY added sp here, make sure to remove all if you remove this
 ! calfop must be called first
    complex(kind=r8) :: detrat,sxzin(:,:,:)
    complex(kind=r8) :: sxmall(npart,15,npart)
    complex(kind=r8) :: ctmp1,d1,d2,d3,d4
    integer(kind=i4) :: i,j,ij,is,js,it
-   complex(kind=r8) :: d1b(4,npart),d2b(4,4,npair),d3b(4,4,4,ntrip)
+   complex(kind=r8) :: d1b(4,npart),d2b(4,4,npair),d3b(4,4,4,ntrip),d2bip(4,4,npair)
    integer(kind=i4) :: k,l,kl,kop,ks,ls,kt !Added variables start here CODY
    complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
    complex(kind=r8) :: d15(15),fkl,sxzk(4,npart,npart,15),sxzl(4,npart,npart)
    complex(kind=r8), intent(in) :: sp(:,:)
+   complex(kind=r8) :: sxzpass(4,4,4,4,npair,npair,15)
    sxz0=sxzin
    d1b=czero
    d2b=czero
    d3b=czero
+   sxzpass=czero
    detrat=cone+fctau
    call g1bval(d1b,sxz0,cone)
    detrat=detrat+sum(d1b*f1b)
@@ -264,7 +266,7 @@ contains
                +cone*(sxz0(:,i,i)*sxz0(js,j,j)-sxz0(:,i,j)*sxz0(js,j,i))
             detrat=detrat+sum(d2b(:,js,ij)*f2b(:,js,ij))
             if(doindpair1) then !Start independant pair terms here
-               d2b=czero !DELETE CODY
+               d2bip=czero
                do k=1,npart
                   sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
                enddo
@@ -283,10 +285,11 @@ contains
                         do kt=1,3
                            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
                            call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
+                           sxzpass(:,js,
                            fkl=d15(3+kt)*d2*ft(kl)
                            if (kt==3 .and. doftpp(kl)) fkl=fkl+0.25_r8*ftpp(kl)
                            if (kt==3 .and. doftnn(kl)) fkl=fkl+0.25_r8*ftnn(kl)
-                           call g2bval(d2b,sxzl,fkl)
+                           call g2bval(d2bip,sxzl,fkl)
                         enddo
                      endif
                      if(dofs(kl)) then
@@ -295,7 +298,7 @@ contains
                            do ls=1,3
                               call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
                               fkl=d15(ks)*d2*fs(ks,ls,kl)
-                              call g2bval(d2b,sxzl,fkl)
+                              call g2bval(d2bip,sxzl,fkl)
                            enddo
                         enddo
                      endif
@@ -306,15 +309,15 @@ contains
                               do ls=1,3
                                  call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
                                  fkl=d15(3*ks+kt+3)*d2*fst(ks,ls,kl)
-                                 call g2bval(d2b,sxzl,fkl)
+                                 call g2bval(d2bip,sxzl,fkl)
                               enddo
                            enddo
                         enddo
                      endif
                         do ls=1,4
-!???                           detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl))
-!???                           detrat=detrat+sum(d2b(:,ls,kl)*f2b(:,ls,kl)*f2b(:,js,ij))
-                        detrat=detrat+sum(sum(d2b(:,ls,kl)*f2b(:,ls,kl))*f2b(:,js,ij))
+!???                           detrat=detrat+sum(d2bip(:,ls,kl)*f2b(:,ls,kl))
+!???                           detrat=detrat+sum(d2bip(:,ls,kl)*f2b(:,ls,kl)*f2b(:,js,ij))
+                        detrat=detrat+sum(sum(d2bip(:,ls,kl)*f2b(:,ls,kl))*f2b(:,js,ij))
                         enddo
                   enddo
                enddo
@@ -410,7 +413,7 @@ contains
    enddo
    end subroutine corindpair
 
-   subroutine corpsi(sp,d1b,d2b,d3b)
+   subroutine corpsi(sp,d1b,d2b,d3b,sxzpass)
    complex(kind=r8), intent(in) :: sp(:,:)
    complex(kind=r8), intent(inout):: d1b(:,:),d2b(:,:,:),d3b(:,:,:,:)
    complex(kind=r8) :: fij,f1,fijk
@@ -423,6 +426,7 @@ contains
    complex(kind=r8) :: sxzj1(4,npart,npart),sxzj2(4,npart,npart)
    complex(kind=r8) :: sxzk(4,npart,npart),dj1,dj2,dk
    integer(kind=i4) :: i,j,ij,iop,is,it,js,k,ks,ijk
+   complex(kind=r8) :: sxzpass(4,4,4,4,npair,npair,15)
    d1b=czero
    d2b=czero
    d3b=czero
@@ -447,13 +451,13 @@ contains
       enddo
       do j=i+1,npart
          ij=ij+1
-         if (doft(ij)) then
-            do it=1,2
-               fij=ft(ij)
+         if (doft(ij) .or. doftpp(ij) .or. doftnn(ij)) then
+            do it=1,3
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
                call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-               detrat=d15(3+it)*d2
-               fij=detrat*fij
+               fij=d15(3+it)*d2*ft(ij)
+               if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
+               if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
@@ -462,29 +466,12 @@ contains
                endif
             enddo
          endif
-         if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
-            it=3
-            fij=ft(ij)
-            if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
-            if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
-            sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
-            call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-            detrat=d15(3+it)*d2
-            fij=detrat*fij
-            call g1bval(d1b,sxzj,fij)
-            call g2bval(d2b,sxzj,fij)
-            call g3bval(d3b,sxzj,fij,.false.)
-            if (doindpair2) then
-               call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
-            endif
-         endif
          if (dofs(ij)) then
             do is=1,3
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
                do js=1,3
                   call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
-                  detrat=d15(is)*d2
-                  fij=detrat*fs(is,js,ij)
+                  fij=d15(is)*d2*fs(is,js,ij)
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
@@ -501,8 +488,7 @@ contains
                   do js=1,3
                      call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
                         ,sx15j(:,3*js+it+3,:),sp(:,j))
-                     detrat=d15(3*is+it+3)*d2
-                     fij=detrat*fst(is,js,ij)
+                     fij=d15(3*is+it+3)*d2*fst(is,js,ij)
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
@@ -554,7 +540,7 @@ contains
 
    subroutine v6tot(x,sp,v2,v3,v4,v5,v6,cvs,tnic,tni2pia,tni2pitm,tni2pic,&
       tni2picxd,tni2picdd,tnivd1,tnivd2,tnive,tni2piaxd,tni2piadd,tni2piapr,&
-      tni2piaxdpr,tni2piaddpr)
+      tni2piaxdpr,tni2piaddpr,sxzpass)
    use v3bpot
 ! calfop and cordet must be called first.
    real(kind=r8) :: x(:,:)
@@ -567,7 +553,8 @@ contains
    complex(kind=r8) :: tnivd2,tnive,tni2piaxd,tni2piadd
    complex(kind=r8) :: tni2piapr,tni2piaxdpr,tni2piaddpr
    real(kind=r8) :: v2(:,:),v3(:,:),v4(:,:),v5(:,:,:,:),v6(:,:,:,:)
-   call corpsi(sp,d1b,d2b,d3b)
+   complex(kind=r8) :: sxzpass(4,4,4,4,npair,npair,15)
+   call corpsi(sp,d1b,d2b,d3b,sxzpass)
    if (dov3.ne.0) then
       do i=1,ntrip
         if (dotrip(i)) d3b(:,:,:,i)=d3b(:,:,:,i)*probinvijk(i)

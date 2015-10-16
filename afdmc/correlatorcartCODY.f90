@@ -447,13 +447,13 @@ contains
       enddo
       do j=i+1,npart
          ij=ij+1
-         if (doft(ij)) then
-            do it=1,2
-               fij=ft(ij)
+         if (doft(ij) .or. doftpp(ij) .or. doftnn(ij)) then
+            do it=1,3
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
                call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-               detrat=d15(3+it)*d2
-               fij=detrat*fij
+               fij=d15(3+it)*d2*ft(ij)
+               if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
+               if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
@@ -462,29 +462,12 @@ contains
                endif
             enddo
          endif
-         if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
-            it=3
-            fij=ft(ij)
-            if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
-            if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
-            sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
-            call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-            detrat=d15(3+it)*d2
-            fij=detrat*fij
-            call g1bval(d1b,sxzj,fij)
-            call g2bval(d2b,sxzj,fij)
-            call g3bval(d3b,sxzj,fij,.false.)
-            if (doindpair2) then
-               call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
-            endif
-         endif
          if (dofs(ij)) then
             do is=1,3
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
                do js=1,3
                   call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
-                  detrat=d15(is)*d2
-                  fij=detrat*fs(is,js,ij)
+                  fij=d15(is)*d2**fs(is,js,ij)
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
@@ -501,8 +484,7 @@ contains
                   do js=1,3
                      call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
                         ,sx15j(:,3*js+it+3,:),sp(:,j))
-                     detrat=d15(3*is+it+3)*d2
-                     fij=detrat*fst(is,js,ij)
+                     fij=d15(3*is+it+3)*d2*fst(is,js,ij)
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
