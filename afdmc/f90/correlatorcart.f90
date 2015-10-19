@@ -683,10 +683,11 @@ contains
 
    subroutine op2val(d2b,d2bip,sp,spx)
    complex(kind=r8), intent(in) :: d2b(:,:,:),d2bip(:,:,:),sp(:,:),spx(:,:,:)
-   integer(kind=i4) :: i,j,ic,jc,it,ij,k,js
+   integer(kind=i4) :: i,j,ic,jc,it,ij,js
    complex(kind=r8) :: tz(4,4),sz(4,4),stz(4,4),ppz(4,4),nnz(4,4),np0z(4,4),np1z(4,4)
    ! CODY's added variables
-   integer(kind=i4) :: k,l,kl
+   complex(kind=r8) :: tzip(4,4),szip(4,4),stzip(4,4)
+   integer(kind=i4) :: k,l,kl,kc,lc,kt,ls
    ij=0
    do i=1,npart-1
       do j=i+1,npart
@@ -697,15 +698,93 @@ contains
             enddo
             do jc=1,3
                tau(ic,jc,ij)=sum(d2b(:,:,ij)*tz(:,:))
+               if(doindpair2)
+                  kl=0
+                  do k=1,npart-1
+                     do l=k+1,npart
+                        kl=kl+1
+                        do kc=1,3
+                           do ls=1,4
+                              tzip(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)
+                           enddo
+                           do lc=1,3
+                              tau(kc,lc,kl)=sum(sum(d2b(:,:,kl)*tzip(:,:))*tz(:,:))
+                              do js=1,4
+                                 szip(:,ls)=spx(:,kc,k)*spx(ls,lc,l)
+                              enddo
+                              sigma(kc,lc,kl)=sum(sum(d2b(:,:,kl)*szip(:,:))*tz(:,:))
+                              do kt=1,3
+                                 do ls=1,4
+                                    stzip(:,ls)=spx(:,3*(kc-1)+kt+6,i)*spx(ls,3*(lc-1)+kt+6,l)
+                                 enddo
+                                 sigtau(kc,lc,kt,kt,kl)=sum(sum(d2b(:,:,ij)*stzip(:,:))*tz(:,:))
+                              enddo
+                           enddo
+                        enddo
+                     enddo
+                  enddo
+               endif
                do js=1,4
                   sz(:,js)=spx(:,ic,i)*spx(js,jc,j)
                enddo
                sigma(ic,jc,ij)=sum(d2b(:,:,ij)*sz(:,:))
+               if(doindpair2)
+                  kl=0
+                  do k=1,npart-1
+                     do l=k+1,npart
+                        kl=kl+1
+                        do kc=1,3
+                           do ls=1,4
+                              tzip(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)
+                           enddo
+                           do lc=1,3
+                              tau(kc,lc,kl)=sum(sum(d2b(:,:,kl)*tzip(:,:))*sz(:,:))
+                              do js=1,4
+                                 szip(:,ls)=spx(:,kc,k)*spx(ls,lc,l)
+                              enddo
+                              sigma(kc,lc,kl)=sum(sum(d2b(:,:,kl)*szip(:,:))*sz(:,:))
+                              do kt=1,3
+                                 do ls=1,4
+                                    stzip(:,ls)=spx(:,3*(kc-1)+kt+6,i)*spx(ls,3*(lc-1)+kt+6,l)
+                                 enddo
+                                 sigtau(kc,lc,kt,kt,kl)=sum(sum(d2b(:,:,ij)*stzip(:,:))*sz(:,:))
+                              enddo
+                           enddo
+                        enddo
+                     enddo
+                  enddo
+               endif
                do it=1,3
                   do js=1,4
                      stz(:,js)=spx(:,3*(ic-1)+it+6,i)*spx(js,3*(jc-1)+it+6,j)
                   enddo
                   sigtau(ic,jc,it,it,ij)=sum(d2b(:,:,ij)*stz(:,:))
+                  if(doindpair2)
+                     kl=0
+                     do k=1,npart-1
+                        do l=k+1,npart
+                           kl=kl+1
+                           do kc=1,3
+                              do ls=1,4
+                                 tzip(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)
+                              enddo
+                              do lc=1,3
+                                 tau(kc,lc,kl)=sum(sum(d2b(:,:,kl)*tzip(:,:))*stz(:,:))
+                                 do js=1,4
+                                    szip(:,ls)=spx(:,kc,k)*spx(ls,lc,l)
+                                 enddo
+                                 sigma(kc,lc,kl)=sum(sum(d2b(:,:,kl)*szip(:,:))*stz(:,:))
+                                 do kt=1,3
+                                    do ls=1,4
+                                       stzip(:,ls)=spx(:,3*(kc-1)+kt+6,i)*spx(ls,3*(lc-1)+kt+6,l)
+                                    enddo
+                                    sigtau(kc,lc,kt,kt,kl)=sum(sum(d2b(:,:,ij)*stzip(:,:))*stz(:,:))
+                                 enddo
+                              enddo
+                           enddo
+                        enddo
+                     enddo
+                  endif
                enddo
             enddo
          enddo

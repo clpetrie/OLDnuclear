@@ -1,11 +1,11 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.6.23)  16 OCT 2015 16:08
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2015.6.25)  17 OCT 2015 14:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **flash.tex
 (./flash.tex
 LaTeX2e <2011/06/27>
-Babel <3.9h> and hyphenation patterns for 78 languages loaded.
+Babel <3.9h> and hyphenation patterns for 2 languages loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/extsizes/extarticle.cls
 Document Class: extarticle 1996/10/08 v1.0 Non Standard LaTeX document class
 (/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo
@@ -395,13 +395,13 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] (./flash.aux) ) 
 Here is how much of TeX's memory you used:
- 5282 strings out of 493308
- 69907 string characters out of 6140092
- 185636 words of memory out of 5000000
- 8635 multiletter control sequences out of 15000+600000
+ 5282 strings out of 495028
+ 69907 string characters out of 6181497
+ 186140 words of memory out of 5000000
+ 8386 multiletter control sequences out of 15000+600000
  17319 words of font info for 64 fonts, out of 8000000 for 9000
- 957 hyphenation exceptions out of 8191
- 46i,10n,57p,792b,925s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 14 hyphenation exceptions out of 8191
+ 46i,10n,57p,792b,1063s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/s
 hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/t
 exlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/
@@ -415,9 +415,10 @@ m/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.p
 fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></u
 sr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
-Output written on flash.pdf (2 pages, 142126 bytes).
+Output written on flash.pdf (2 pages, 135227 bytes).
 PDF statistics:
- 61 PDF objects out of 1000 (max. 8388607)
+ 63 PDF objects out of 1000 (max. 8388607)
+ 45 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
