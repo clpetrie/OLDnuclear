@@ -24,6 +24,8 @@ module correlator
    private :: opmult
    complex(kind=r8), private, save, allocatable :: tau(:,:,:),sigma(:,:,:)
    complex(kind=r8), private, save, allocatable :: sigtau(:,:,:,:,:)
+   complex(kind=r8), private, save, allocatable :: tauip(:,:,:),sigmaip(:,:,:)
+   complex(kind=r8), private, save, allocatable :: sigtauip(:,:,:,:,:)
    complex(kind=r8), private, save, allocatable :: sigma1(:,:),tau1(:,:)
    complex(kind=r8), private, save, allocatable :: sigtau1(:,:,:)
    complex(kind=r8), private, save, allocatable :: np0(:),np1(:),pp(:),nn(:)
@@ -35,7 +37,7 @@ module correlator
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
    logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .false. !CODY
+   logical, private, save :: doindpair2 = .true. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -59,6 +61,7 @@ contains
    allocate(ftpp(npair),ftnn(npair),ftau1(npart))
    allocate(np0(npair),np1(npair),pp(npair),nn(npair))
    allocate(tau(3,3,npair),sigma(3,3,npair),sigtau(3,3,3,3,npair))
+   allocate(tauip(3,3,npair),sigmaip(3,3,npair),sigtauip(3,3,3,3,npair))
    allocate(sigma1(3,npart),tau1(3,npart),sigtau1(3,3,npart))
    allocate(probinvijk(ntrip),dotrip(ntrip))
    allocate(f1b(4,npart),f2b(4,4,npair),f3(3,3,3,ntrip),f3b(4,4,4,ntrip))
@@ -698,7 +701,7 @@ contains
             enddo
             do jc=1,3
                tau(ic,jc,ij)=sum(d2b(:,:,ij)*tz(:,:))
-               if(doindpair2)
+               if (doindpair2) then
                   kl=0
                   do k=1,npart-1
                      do l=k+1,npart
@@ -708,16 +711,16 @@ contains
                               tzip(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)
                            enddo
                            do lc=1,3
-                              tau(kc,lc,kl)=sum(sum(d2b(:,:,kl)*tzip(:,:))*tz(:,:))
-                              do js=1,4
+                              tauip(kc,lc,kl)=tauip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*tzip(:,:))*tz(:,:))
+                              do ls=1,4
                                  szip(:,ls)=spx(:,kc,k)*spx(ls,lc,l)
                               enddo
-                              sigma(kc,lc,kl)=sum(sum(d2b(:,:,kl)*szip(:,:))*tz(:,:))
+                              sigmaip(kc,lc,kl)=sigmaip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*szip(:,:))*tz(:,:))
                               do kt=1,3
                                  do ls=1,4
                                     stzip(:,ls)=spx(:,3*(kc-1)+kt+6,i)*spx(ls,3*(lc-1)+kt+6,l)
                                  enddo
-                                 sigtau(kc,lc,kt,kt,kl)=sum(sum(d2b(:,:,ij)*stzip(:,:))*tz(:,:))
+                                 sigtauip(kc,lc,kt,kt,kl)=sigtauip(kc,lc,kt,kt,kl)+sum(sum(d2b(:,:,ij)*stzip(:,:))*tz(:,:))
                               enddo
                            enddo
                         enddo
@@ -728,7 +731,7 @@ contains
                   sz(:,js)=spx(:,ic,i)*spx(js,jc,j)
                enddo
                sigma(ic,jc,ij)=sum(d2b(:,:,ij)*sz(:,:))
-               if(doindpair2)
+               if (doindpair2) then
                   kl=0
                   do k=1,npart-1
                      do l=k+1,npart
@@ -738,16 +741,19 @@ contains
                               tzip(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)
                            enddo
                            do lc=1,3
-                              tau(kc,lc,kl)=sum(sum(d2b(:,:,kl)*tzip(:,:))*sz(:,:))
-                              do js=1,4
+                              tauip(kc,lc,kl)=tauip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*tzip(:,:))*sz(:,:))
+                              if(tauip(kc,lc,kl) /= tauip(kc,lc,kl)) write(*,*) '!!!!!!!!!!!!!!BADt!!!!!!!!!!!!!'
+                              do ls=1,4
                                  szip(:,ls)=spx(:,kc,k)*spx(ls,lc,l)
                               enddo
-                              sigma(kc,lc,kl)=sum(sum(d2b(:,:,kl)*szip(:,:))*sz(:,:))
+                              sigmaip(kc,lc,kl)=sigmaip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*szip(:,:))*sz(:,:))
+                              if(sigmaip(kc,lc,kl) /= sigmaip(kc,lc,kl)) write(*,*) '!!!!!!!!!!!!!!BADs!!!!!!!!!!!!!'
                               do kt=1,3
                                  do ls=1,4
                                     stzip(:,ls)=spx(:,3*(kc-1)+kt+6,i)*spx(ls,3*(lc-1)+kt+6,l)
                                  enddo
-                                 sigtau(kc,lc,kt,kt,kl)=sum(sum(d2b(:,:,ij)*stzip(:,:))*sz(:,:))
+                                 sigtauip(kc,lc,kt,kt,kl)=sigtauip(kc,lc,kt,kt,kl)+sum(sum(d2b(:,:,ij)*stzip(:,:))*sz(:,:))
+                              if(sigtauip(kc,lc,kt,kt,kl) /= sigtauip(kc,lc,kt,kt,kl)) write(*,*) '!!!!!!!!!!!!!!BADst!!!!!!!!!!!!!'
                               enddo
                            enddo
                         enddo
@@ -759,7 +765,7 @@ contains
                      stz(:,js)=spx(:,3*(ic-1)+it+6,i)*spx(js,3*(jc-1)+it+6,j)
                   enddo
                   sigtau(ic,jc,it,it,ij)=sum(d2b(:,:,ij)*stz(:,:))
-                  if(doindpair2)
+                  if (doindpair2) then
                      kl=0
                      do k=1,npart-1
                         do l=k+1,npart
@@ -769,16 +775,16 @@ contains
                                  tzip(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)
                               enddo
                               do lc=1,3
-                                 tau(kc,lc,kl)=sum(sum(d2b(:,:,kl)*tzip(:,:))*stz(:,:))
-                                 do js=1,4
+                                 tauip(kc,lc,kl)=tauip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*tzip(:,:))*stz(:,:))
+                                 do ls=1,4
                                     szip(:,ls)=spx(:,kc,k)*spx(ls,lc,l)
                                  enddo
-                                 sigma(kc,lc,kl)=sum(sum(d2b(:,:,kl)*szip(:,:))*stz(:,:))
+                                 sigmaip(kc,lc,kl)=sigmaip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*szip(:,:))*stz(:,:))
                                  do kt=1,3
                                     do ls=1,4
                                        stzip(:,ls)=spx(:,3*(kc-1)+kt+6,i)*spx(ls,3*(lc-1)+kt+6,l)
                                     enddo
-                                    sigtau(kc,lc,kt,kt,kl)=sum(sum(d2b(:,:,ij)*stzip(:,:))*stz(:,:))
+                                    sigtauip(kc,lc,kt,kt,kl)=sigtauip(kc,lc,kt,kt,kl)+sum(sum(d2b(:,:,ij)*stzip(:,:))*stz(:,:))
                                  enddo
                               enddo
                            enddo
@@ -831,16 +837,31 @@ contains
          ij=ij+1
          do it=1,3
             cvs(2)=cvs(2)+tau(it,it,ij)*v2(i,j)
+            if (doindpair2) then
+               cvs(2)=cvs(2)+tauip(it,it,ij)*v2(i,j)
+            endif
             do is=1,3
                cvs(4)=cvs(4)+sigtau(is,is,it,it,ij)*v4(i,j)
+               if (doindpair2) then
+                  cvs(4)=cvs(4)+sigtauip(is,is,it,it,ij)*v4(i,j)
+               endif
             enddo
          enddo
          do is=1,3
             cvs(3)=cvs(3)+sigma(is,is,ij)*v3(i,j)
+            if (doindpair2) then
+               cvs(3)=cvs(3)+sigmaip(is,is,ij)*v3(i,j)
+            endif
             do js=1,3
                cvs(5)=cvs(5)+sigma(is,js,ij)*v5(is,i,js,j)
+               if (doindpair2) then
+                  cvs(5)=cvs(5)+sigmaip(is,js,ij)*v5(is,i,js,j)
+               endif
                do it=1,3
                   cvs(6)=cvs(6)+sigtau(is,js,it,it,ij)*v6(is,i,js,j)
+                  if (doindpair2) then
+                     cvs(6)=cvs(6)+sigtauip(is,js,it,it,ij)*v6(is,i,js,j)
+                  endif
                enddo
             enddo
          enddo
