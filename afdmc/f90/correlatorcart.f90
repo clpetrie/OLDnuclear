@@ -37,7 +37,7 @@ module correlator
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
    logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .true. !CODY
+   logical, private, save :: doindpair2 = .false. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -329,7 +329,7 @@ contains
    endif
    end subroutine cordet
 
-   subroutine corindpair(sp,sxzin,detratin,i,j,d2bip) !CODY
+   subroutine corindpair(sp,sxzin,detratin,i,j,ij,d2bip) !CODY
    complex(kind=r8), intent(in) :: sp(:,:)
    complex(kind=r8), intent(inout) :: d2bip(:,:,:)
    complex(kind=r8), intent(in) :: sxzin(:,:,:)
@@ -386,6 +386,32 @@ contains
          endif
       enddo
    enddo
+   !This is part of what is done in op2val, but I'm going to integrate out the i and j terms here.
+   ij=0
+   do i=1,npart-1
+      do j=i+1,npart
+         ij=ij+1
+         do ic=1,3
+            do k=1,4
+               tz(:,k)=spx(:,ic+3,i)*spx(k,ic+3,j)
+            enddo
+            do jc=1,3
+               tau(ic,jc,ij)=sum(d2b(:,:,ij)*tz(:,:))
+               do k=1,4
+                  sz(:,k)=spx(:,ic,i)*spx(k,jc,j)
+               enddo
+               sigma(ic,jc,ij)=sum(d2b(:,:,ij)*sz(:,:))
+               do it=1,3
+                  do k=1,4
+                     stz(:,k)=spx(:,3*(ic-1)+it+6,i)*spx(k,3*(jc-1)+it+6,j)
+                  enddo
+                  sigtau(ic,jc,it,it,ij)=sum(d2b(:,:,ij)*stz(:,:))
+               enddo
+            enddo
+         enddo
+      enddo
+   enddo
+
    end subroutine corindpair
 
    subroutine corpsi(sp,d1b,d2b,d3b,d2bip)
@@ -427,19 +453,19 @@ contains
       do j=i+1,npart
          ij=ij+1
          if (doft(ij) .or. doftpp(ij) .or. doftnn(ij)) then
-            do it=1,3
-               sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
-               call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-               fij=d15(3+it)*d2*ft(ij)
-               if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
-               if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
-               call g1bval(d1b,sxzj,fij)
-               call g2bval(d2b,sxzj,fij)
-               call g3bval(d3b,sxzj,fij,.false.)
-               if (doindpair2) then
-                  call corindpair(sp,sxzj,detrat,i,j,d2bip) !CODY
-               endif
-            enddo
+                  do it=1,3
+                     sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
+                     call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
+                     fij=d15(3+it)*d2*ft(ij)
+                     if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
+                     if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
+                     call g1bval(d1b,sxzj,fij)
+                     call g2bval(d2b,sxzj,fij)
+                     call g3bval(d3b,sxzj,fij,.false.)
+                     if (doindpair2) then
+                        call corindpair(sp,sxzj,detrat,i,j,ij,d2bip(:,:,:)) !CODY
+                     endif
+                  enddo
          endif
          if (dofs(ij)) then
             do is=1,3
@@ -451,7 +477,7 @@ contains
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
                   if (doindpair2) then
-                     call corindpair(sp,sxzj,detrat,i,j,d2bip) !CODY
+                     call corindpair(sp,sxzj,detrat,i,j,ij,d2bip) !CODY
                   endif
                enddo
             enddo
@@ -468,7 +494,7 @@ contains
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
                      if (doindpair2) then
-                        call corindpair(sp,sxzj,detrat,i,j,d2bip) !CODY
+                        call corindpair(sp,sxzj,detrat,i,j,ij,d2bip) !CODY
                      endif
                   enddo
                enddo
@@ -742,18 +768,15 @@ contains
                            enddo
                            do lc=1,3
                               tauip(kc,lc,kl)=tauip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*tzip(:,:))*sz(:,:))
-                              if(tauip(kc,lc,kl) /= tauip(kc,lc,kl)) write(*,*) '!!!!!!!!!!!!!!BADt!!!!!!!!!!!!!'
                               do ls=1,4
                                  szip(:,ls)=spx(:,kc,k)*spx(ls,lc,l)
                               enddo
                               sigmaip(kc,lc,kl)=sigmaip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*szip(:,:))*sz(:,:))
-                              if(sigmaip(kc,lc,kl) /= sigmaip(kc,lc,kl)) write(*,*) '!!!!!!!!!!!!!!BADs!!!!!!!!!!!!!'
                               do kt=1,3
                                  do ls=1,4
                                     stzip(:,ls)=spx(:,3*(kc-1)+kt+6,i)*spx(ls,3*(lc-1)+kt+6,l)
                                  enddo
                                  sigtauip(kc,lc,kt,kt,kl)=sigtauip(kc,lc,kt,kt,kl)+sum(sum(d2b(:,:,ij)*stzip(:,:))*sz(:,:))
-                              if(sigtauip(kc,lc,kt,kt,kl) /= sigtauip(kc,lc,kt,kt,kl)) write(*,*) '!!!!!!!!!!!!!!BADst!!!!!!!!!!!!!'
                               enddo
                            enddo
                         enddo
