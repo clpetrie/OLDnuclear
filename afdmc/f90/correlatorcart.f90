@@ -37,7 +37,7 @@ module correlator
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
    logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .false. !CODY
+   logical, private, save :: doindpair2 = .true. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -333,13 +333,16 @@ contains
    complex(kind=r8), intent(in) :: sp(:,:)
    complex(kind=r8), intent(inout) :: d2bip(:,:,:)
    complex(kind=r8), intent(in) :: sxzin(:,:,:)
-   integer(kind=i4), intent(in) :: i,j
+   integer(kind=i4), intent(in) :: i,j,ij
+   complex(kind=r8) :: spx(4,15,npart)
    complex(kind=r8) :: sxzk(4,npart,npart,15)
    complex(kind=r8) :: fkl
    complex(kind=r8) :: detrat,detratin
    complex(kind=r8) :: sxzl(4,npart,npart),d2ind,d15ind(15) !d2ind is the same as d2 but for corindpair
    complex(kind=r8) :: sx15ind(4,15,npart,npart),sx15l(4,15,npart)
-   integer(kind=i4) :: k,l,kl,kop,ks,kt,ls,kc,lc
+   integer(kind=i4) :: k,l,kl,kop,ks,kt,ls,kc,lc,ic,jc,js,it,is
+   complex(kind=r8) :: tz(4,4),sz(4,4),stz(4,4)
+   spx=opmult(sp)
    do k=1,npart
      sx15ind(:,:,:,k)=conjg(opmult(conjg(sxzin(:,k,:))))
    enddo
@@ -384,22 +387,36 @@ contains
                enddo
             enddo
          endif
-!This is part of what op2val does, but I'm going to integrate out the k and l terms here.
-         do kc=1,3
-            do ls=1,4
-               tz(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)
-            enddo
-            do lc=1,3
-               tau(kc,lc,kl)=sum(d2b(:,:,kl)*tz(:,:))
-               do ls=1,4
-                  sz(:,ls)=spx(:,kc,k)*spx(ls,lc,l)
-               enddo
-               sigma(kc,lc,kl)=sum(d2b(:,:,kl)*sz(:,:))
-               do kt=1,3
-                  do ls=1,4
-                     stz(:,ls)=spx(:,3*(kc-1)+kt+6,k)*spx(ls,3*(jc-1)+kt+6,l)
+!This is part of what op2val does, but I'm going to integrate out the k and l terms here. This done here within each kl loop
+         do ic=1,3
+            do kc=1,3
+               do is=1,4
+                  do js=1,4
+                     do ls=1,4
+                        tz(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)!*spx(is,ic+3,i)*spx(js,ic+3,j)
+                     enddo
                   enddo
-                  sigtau(kc,lc,kt,kt,kl)=sum(d2b(:,:,kl)*stz(:,:))
+                  do jc=1,3
+                     do lc=1,3
+                        tauip(kc,lc,kl)=sum(d2bip(:,:,kl)*tz(:,:))
+                        do js=1,4
+                           do ls=1,4
+                              sz(:,ls)=spx(:,kc,k)*spx(ls,lc,l)!*spx(is,ic,i)*spx(js,jc,j)
+                           enddo
+                        enddo
+                        sigmaip(kc,lc,kl)=sum(d2bip(:,:,kl)*sz(:,:))
+                        do it=1,3
+                           do kt=1,3
+                              do js=1,4
+                                 do ls=1,4
+                                    stz(:,ls)=spx(:,3*(kc-1)+kt+6,k)*spx(ls,3*(lc-1)+kt+6,l)!*spx(is,3*(ic-1)+it+6,i)*spx(js,3*(jc-1)+it+6,j)
+                                 enddo
+                              enddo
+                              sigtauip(kc,lc,kt,kt,kl)=sum(d2bip(:,:,kl)*stz(:,:))
+                           enddo
+                        enddo
+                     enddo
+                  enddo
                enddo
             enddo
          enddo
@@ -407,10 +424,9 @@ contains
    enddo
    end subroutine corindpair
 
-   subroutine corpsi(sp,d1b,d2b,d3b,d2bpass)
+   subroutine corpsi(sp,d1b,d2b,d3b,d2bip)
    complex(kind=r8), intent(in) :: sp(:,:)
-   complex(kind=r8), intent(inout):: d1b(:,:),d2b(:,:,:),d3b(:,:,:,:),d2bpass(:,:,:)
-   complex(kind=r8) :: d2bip(4,4,npair)
+   complex(kind=r8), intent(inout):: d1b(:,:),d2b(:,:,:),d3b(:,:,:,:),d2bip(:,:,:)
    complex(kind=r8) :: fij,f1,fijk
    complex(kind=r8) :: detrat,sxzi(4,npart,npart,15)
    complex(kind=r8) :: sxzj(4,npart,npart),d1,d2,d15(15)
@@ -425,7 +441,6 @@ contains
    d2b=czero
    d3b=czero
    d2bip=czero
-   d2bpass=czero
    tauip=czero
    sigmaip=czero
    sigtauip=czero
@@ -454,14 +469,15 @@ contains
                   do it=1,3
                      sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
                      call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-                     fij=d15(3+it)*d2*ft(ij)
+                     detrat=d15(3+it)*d2
+                     fij=detrat*ft(ij)
                      if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
                      if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
                      if (doindpair2) then
-                        call corindpair(sp,sxzj,detrat,i,j,ij,d2bpass(:,:,:)) !CODY
+                        call corindpair(sp,sxzj,detrat,i,j,ij,d2bip(:,:,:)) !CODY
                      endif
                   enddo
          endif
@@ -470,7 +486,8 @@ contains
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
                do js=1,3
                   call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
-                  fij=d15(is)*d2*fs(is,js,ij)
+                  detrat=d15(is)*d2
+                  fij=detrat*fs(is,js,ij)
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
@@ -487,7 +504,8 @@ contains
                   do js=1,3
                      call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
                         ,sx15j(:,3*js+it+3,:),sp(:,j))
-                     fij=d15(3*is+it+3)*d2*fst(is,js,ij)
+                     detrat=d15(3*is+it+3)*d2
+                     fij=detrat*fst(is,js,ij)
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
@@ -755,63 +773,11 @@ contains
                   sz(:,js)=spx(:,ic,i)*spx(js,jc,j)
                enddo
                sigma(ic,jc,ij)=sum(d2b(:,:,ij)*sz(:,:))
-               if (doindpair2) then
-                  kl=0
-                  do k=1,npart-1
-                     do l=k+1,npart
-                        kl=kl+1
-                        do kc=1,3
-                           do ls=1,4
-                              tzip(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)
-                           enddo
-                           do lc=1,3
-                              tauip(kc,lc,kl)=tauip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*tzip(:,:))*sz(:,:))
-                              do ls=1,4
-                                 szip(:,ls)=spx(:,kc,k)*spx(ls,lc,l)
-                              enddo
-                              sigmaip(kc,lc,kl)=sigmaip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*szip(:,:))*sz(:,:))
-                              do kt=1,3
-                                 do ls=1,4
-                                    stzip(:,ls)=spx(:,3*(kc-1)+kt+6,i)*spx(ls,3*(lc-1)+kt+6,l)
-                                 enddo
-                                 sigtauip(kc,lc,kt,kt,kl)=sigtauip(kc,lc,kt,kt,kl)+sum(sum(d2b(:,:,ij)*stzip(:,:))*sz(:,:))
-                              enddo
-                           enddo
-                        enddo
-                     enddo
-                  enddo
-               endif
                do it=1,3
                   do js=1,4
                      stz(:,js)=spx(:,3*(ic-1)+it+6,i)*spx(js,3*(jc-1)+it+6,j)
                   enddo
                   sigtau(ic,jc,it,it,ij)=sum(d2b(:,:,ij)*stz(:,:))
-                  if (doindpair2) then
-                     kl=0
-                     do k=1,npart-1
-                        do l=k+1,npart
-                           kl=kl+1
-                           do kc=1,3
-                              do ls=1,4
-                                 tzip(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)
-                              enddo
-                              do lc=1,3
-                                 tauip(kc,lc,kl)=tauip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*tzip(:,:))*stz(:,:))
-                                 do ls=1,4
-                                    szip(:,ls)=spx(:,kc,k)*spx(ls,lc,l)
-                                 enddo
-                                 sigmaip(kc,lc,kl)=sigmaip(kc,lc,kl)+sum(sum(d2b(:,:,kl)*szip(:,:))*stz(:,:))
-                                 do kt=1,3
-                                    do ls=1,4
-                                       stzip(:,ls)=spx(:,3*(kc-1)+kt+6,i)*spx(ls,3*(lc-1)+kt+6,l)
-                                    enddo
-                                    sigtauip(kc,lc,kt,kt,kl)=sigtauip(kc,lc,kt,kt,kl)+sum(sum(d2b(:,:,ij)*stzip(:,:))*stz(:,:))
-                                 enddo
-                              enddo
-                           enddo
-                        enddo
-                     enddo
-                  endif
                enddo
             enddo
          enddo
