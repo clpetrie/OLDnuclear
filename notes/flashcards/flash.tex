@@ -9,6 +9,7 @@
 \usepackage{verbatim}
 \usepackage{fancyvrb}
 \usepackage{datatool}
+\usepackage{graphicx}
 
 %My commands
 \newcommand{\Oip}{\mathcal{O}^p_{i}}
@@ -118,5 +119,21 @@
    E_V \approx \frac{1}{N}\sum\limits_{n=1}^N E_L(\R_n)
 \end{equation*}
 where $\R_n$ are drawn from $P(\R)$.
+
+\section*{General Physics}
+\textbf{Atomic Shell Model}
+\begin{itemize}
+   \item \textbf{Shells} are areas in which an electron can "orbit" a nucleus. They correspond to the principle quantum numbers (n=1,2,3,4,...) where n=1 is the closest shell.
+   \item The number of allowed electrons is controlled by the spin statistics the other allowed quantum numbers being l=0,1,...,n-1 and ml=-l,...,l. The number allowed for each shell is all the possible times two since ms=-1/2,1/2.
+   \item \textbf{Subshells} are given by the l quantum numbers where l=1,2,3,4 are s,p,d,f,g.
+   \item List of how many each shell can hold
+   \begin{figure}[h!]
+      \includegraphics[width=0.25\textwidth]{shell.png}
+   \end{figure}
+\\
+\textbf{Nuclear Shell Model} \\
+The nuclear shell model is similar to the atomic shell model except that n=1,2,3,4,... and l=0,1,2,3,... independently from n. So you can have states like 1g
+   
+\end{itemize}
 
 \end{document}
