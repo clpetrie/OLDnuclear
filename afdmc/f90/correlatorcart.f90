@@ -393,7 +393,7 @@ contains
                do is=1,4
                   do js=1,4
                      do ls=1,4
-                        tz(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)!*spx(is,ic+3,i)*spx(js,ic+3,j)
+                        tz(:,ls)=spx(:,kc+3,k)*spx(ls,kc+3,l)*spx(is,ic+3,i)*spx(js,ic+3,j)
                      enddo
                   enddo
                   do jc=1,3
@@ -401,7 +401,7 @@ contains
                         tauip(kc,lc,kl)=sum(d2bip(:,:,kl)*tz(:,:))
                         do js=1,4
                            do ls=1,4
-                              sz(:,ls)=spx(:,kc,k)*spx(ls,lc,l)!*spx(is,ic,i)*spx(js,jc,j)
+                              sz(:,ls)=spx(:,kc,k)*spx(ls,lc,l)*spx(is,ic,i)*spx(js,jc,j)
                            enddo
                         enddo
                         sigmaip(kc,lc,kl)=sum(d2bip(:,:,kl)*sz(:,:))
@@ -409,7 +409,8 @@ contains
                            do kt=1,3
                               do js=1,4
                                  do ls=1,4
-                                    stz(:,ls)=spx(:,3*(kc-1)+kt+6,k)*spx(ls,3*(lc-1)+kt+6,l)!*spx(is,3*(ic-1)+it+6,i)*spx(js,3*(jc-1)+it+6,j)
+                                    stz(:,ls)=spx(:,3*(kc-1)+kt+6,k)*spx(ls,3*(lc-1)+kt+6,l) &
+                                       *spx(is,3*(ic-1)+it+6,i)*spx(js,3*(jc-1)+it+6,j)
                                  enddo
                               enddo
                               sigtauip(kc,lc,kt,kt,kl)=sum(d2bip(:,:,kl)*stz(:,:))
