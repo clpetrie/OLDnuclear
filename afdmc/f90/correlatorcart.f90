@@ -36,8 +36,8 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
-   logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .true. !CODY
+   logical, private, save :: doindpair1 = .false. !CODY
+   logical, private, save :: doindpair2 = .false. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -744,7 +744,7 @@ contains
             enddo
             do jc=1,3
                tau(ic,jc,ij)=sum(d2b(:,:,ij)*tz(:,:))
-!               if (doindpair2) then !I have deleted the next two but they will be the same, just change tz(:,:) to sz and stz.
+!???               if (doindpair2) then !I have deleted the next two but they will be the same, just change tz(:,:) to sz and stz.
 !                  kl=0
 !                  do k=1,npart-1
 !                     do l=k+1,npart
