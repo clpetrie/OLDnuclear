@@ -2,7 +2,7 @@
 20.73554        # hbar^2/2m
 0               # 0 = vmc, 1=psitrial wt, 2 = elocal weight, 3 spazzatura
 .true.          # use lattice sites if true
-1000           # 24000 default number of walkers, for faster try 1000
+100           # 24000 default number of walkers, for faster try 1000
 10              # equilibrium blocks
 50              # averaging blocks
 10              # steps/block
