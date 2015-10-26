@@ -311,7 +311,7 @@ contains
                            enddo
                         enddo
                      endif
-                     detrat=detrat+sum(d2b(:,:,kl)*f2b(:,:,kl))
+!???                     detrat=detrat+sum(d2b(:,:,kl)*f2b(:,:,kl))
 !???                     detrat=detrat+sum(sum(d2b(:,:,kl)*f2b(:,:,kl))*f2b(:,js,ij))
                   enddo
                enddo
@@ -319,6 +319,7 @@ contains
          enddo
       enddo
    enddo
+   detrat=detrat+sum(d2b*f2b)
 !
 !!!   detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
    if (dof3) then
@@ -327,9 +328,9 @@ contains
    endif
    end subroutine cordet
 
-   subroutine corindpair(sp,sxzin,detratin,i,j,d1b,d2b,d3b) !CODY
+   subroutine corindpair(sp,sxzin,detratin,i,j,d2b) !CODY
    complex(kind=r8), intent(in) :: sp(:,:)
-   complex(kind=r8), intent(inout) :: d1b(:,:),d2b(:,:,:),d3b(:,:,:,:)
+   complex(kind=r8), intent(inout) :: d2b(:,:,:)
    complex(kind=r8), intent(in) :: sxzin(:,:,:)
    integer(kind=i4), intent(in) :: i,j
    complex(kind=r8) :: sxzk(4,npart,npart,15)
@@ -350,30 +351,16 @@ contains
          if (l.eq.i .or. l.eq.j) cycle
 !Mathematica ij = FullSimplify[(j - i) + (i - 1)*npart + Sum[-n, {n, 1, i - 1}]]
          kl=l-k*(1+k-2*npart)/2-npart
-         if (doft(kl)) then
-            do kt=1,2
-               fkl=ft(kl)
+         if (doft(kl) .or. doftpp(kl) .or. doftnn(kl)) then
+            do kt=1,3
                sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
                call sxzupdate(sxzl,d2ind,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
                detrat=detratin*d15ind(3+kt)*d2ind
-               fkl=detrat*fkl
-               call g1bval(d1b,sxzl,fkl)
+               fkl=detrat*ft(kl)
+               if (doftpp(kl)) fkl=fkl+0.25_r8*ftpp(kl)
+               if (doftnn(kl)) fkl=fkl+0.25_r8*ftnn(kl)
                call g2bval(d2b,sxzl,fkl)
-               call g3bval(d3b,sxzl,fkl,.false.)
             enddo
-         endif
-         if (doft(kl).or.doftpp(kl).or.doftnn(kl)) then
-            kt=3
-            fkl=ft(kl)
-            if (doftpp(kl)) fkl=fkl+0.25_r8*ftpp(kl)
-            if (doftnn(kl)) fkl=fkl+0.25_r8*ftnn(kl)
-            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
-            call sxzupdate(sxzl,d2ind,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
-            detrat=detratin*d15ind(3+kt)*d2ind
-            fkl=detrat*fkl
-            call g1bval(d1b,sxzl,fkl)
-            call g2bval(d2b,sxzl,fkl)
-            call g3bval(d3b,sxzl,fkl,.false.)
          endif
          if (dofs(kl)) then
             do ks=1,3
@@ -382,9 +369,7 @@ contains
                   call sxzupdate(sxzl,d2ind,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
                   detrat=detratin*d15ind(ks)*d2ind
                   fkl=detrat*fs(ks,ls,kl)
-                  call g1bval(d1b,sxzl,fkl)
                   call g2bval(d2b,sxzl,fkl)
-                  call g3bval(d3b,sxzl,fkl,.false.)
                enddo
             enddo
          endif
@@ -396,9 +381,7 @@ contains
                      call sxzupdate(sxzl,d2ind,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
                      detrat=detratin*d15ind(3*ks+kt+3)*d2ind
                      fkl=detrat*fst(ks,ls,kl)
-                     call g1bval(d1b,sxzl,fkl)
                      call g2bval(d2b,sxzl,fkl)
-                     call g3bval(d3b,sxzl,fkl,.false.)
                   enddo
                enddo
             enddo
@@ -448,14 +431,15 @@ contains
             do it=1,3
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
                call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-               fij=d15(3+it)*d2*ft(ij)
+               detrat=d15(3+it)*d2
+               fij=detrat*ft(ij)
                if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
                if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
                if (doindpair2) then
-                  call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+                  call corindpair(sp,sxzj,detrat,i,j,d2b) !CODY
                endif
             enddo
          endif
@@ -464,12 +448,13 @@ contains
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
                do js=1,3
                   call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
-                  fij=d15(is)*d2**fs(is,js,ij)
+                  detrat=d15(is)*d2
+                  fij=detrat*fs(is,js,ij)
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
                   if (doindpair2) then
-                     call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+                     call corindpair(sp,sxzj,detrat,i,j,d2b) !CODY
                   endif
                enddo
             enddo
@@ -481,12 +466,13 @@ contains
                   do js=1,3
                      call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
                         ,sx15j(:,3*js+it+3,:),sp(:,j))
-                     fij=d15(3*is+it+3)*d2*fst(is,js,ij)
+                     detrat=d15(3*is+it+3)*d2
+                     fij=detrat*fst(is,js,ij)
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
                      if (doindpair2) then
-                        call corindpair(sp,sxzj,detrat,i,j,d1b,d2b,d3b) !CODY
+                        call corindpair(sp,sxzj,detrat,i,j,d2b) !CODY
                      endif
                   enddo
                enddo
