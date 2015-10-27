@@ -13,6 +13,9 @@
 %commands
 \renewcommand{\O}{\mathcal{O}}
 \newcommand{\Oi}{\mathcal{O}_{i}}
+\newcommand{\Oj}{\mathcal{O}_{j}}
+\newcommand{\Ok}{\mathcal{O}_{k}}
+\newcommand{\Ol}{\mathcal{O}_{l}}
 \newcommand{\Oij}{\mathcal{O}_{ij}}
 \newcommand{\Okl}{\mathcal{O}_{kl}}
 \newcommand{\Oijp}{\mathcal{O}^p_{ij}}
@@ -49,15 +52,12 @@
 
 \frame{\frametitle{Slater Matrix}
 \begin{equation}
-\uncover<1,2>{
 S=\begin{pmatrix}
    \braket{\phi_1}{\mathbf{r}_1 s_1} & \dots & \braket{\phi_1}{\mathbf{r}_A s_A} \\
    \vdots & \ddots & \vdots \\
    \braket{\phi_A}{\mathbf{r}_1 s_1} & \dots & \braket{\phi_A}{\mathbf{r}_A s_A} \\
 \end{pmatrix}
 \end{equation}
-}
-\uncover<2>{
 \begin{equation}
 S''=\begin{pmatrix}
    \braket{\phi_1}{\mathbf{r}_1 s_1} & \dots & \braket{\phi_1}{\mathbf{r}_i s} & \dots & \braket{\phi_1}{\mathbf{r}_j s'} & \dots & \braket{\phi_1}{\mathbf{r}_A s_A} \\
@@ -66,14 +66,70 @@ S''=\begin{pmatrix}
 \end{pmatrix}
 \end{equation}
 }
-}
 
 \frame{\frametitle{Trial Wave Function}
+\uncover<1,2,3,4>{
 \begin{equation}
    \begin{split}
       \braket{\Psi_T}{\RS} = \bra{\Phi} \left[\prod\limits_{i<j}f_c(r_{ij})\right]\left[1+\sum\limits_{i<j,p}f_p(r_{ij})\Oijp \right. \\
-         \left.+\sum\limits_{i<j,p}\sum\limits_{\substack{k<l \\ \mathrm{ip}}}f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp\right] \ket{\RS}
+         \left.+\sum\limits_{i<j,p}\sum\limits_{\substack{k<l \\ \mathrm{ip}}}f_p(r_{ij})\Oijp f_p(r_{kl})\Oklp\right] \ket{\RS} = \psi_T^{(0)}+\psi_T^{(1)}+\psi_T^{(2)}
    \end{split}
+\end{equation}
+}
+\uncover<2,3,4>{
+\begin{equation}
+   \psi_T^{(0)} = \detr(S)
+\end{equation}
+}
+\uncover<3,4>{
+\begin{equation}
+   \psi_T^{(1)} = \sum \detr(S'') = \sum \detr(S^{-1}S'')\detr(S)
+\end{equation}
+}
+\uncover<4>{
+\begin{equation}
+   \psi_T^{(2)} = \sum \detr(S'''') = \sum \detr(S''^{-1}S'''')\detr(S^{-1}S'')\detr(S)
+\end{equation}
+}
+}
+
+\frame{\frametitle{Trial Wave Function (look like code)}
+\uncover<1,2>{
+\begin{equation}
+   \psi_T^{(0)} = \detr(S)
+\end{equation}
+\begin{equation}
+   \psi_T^{(1)} = \sum \detr(S^{-1}S'')\detr(S)
+\end{equation}
+}
+\uncover<2>{
+\begin{equation}
+   \psi_T^{(0)} = \detr(S)
+\end{equation}
+\begin{align}
+   \psi_T^{(1)} &= \sum\limits_{s,s'=1}^4 \sum \detr(S^{-1}S''(s,s'))\bra{ss'}\Oi\Oj\ket{s_is_j}\detr(S) \\
+   &= \sum\limits_{s,s'=1}^4 \mathrm{d2b(s,s',ij)f2b(s,s',ij)}\detr(S)
+\end{align}
+}
+}
+
+\frame{\frametitle{Trial Wave Function (look like code)}
+\begin{equation}
+   \psi_T^{(2)} = \sum \detr(S''^{-1}S'''')\detr(S^{-1}S'')\detr(S)
+\end{equation}
+\begin{align}
+   \psi_T^{(2)} &= \sum\limits_{s,s'=1}^4 \sum \detr(S''^{-1}S''''(s,s')) \bra{ss'}\Ok\Ol\ket{s_ks_l} \detr(S^{-1}S'')\detr(S) \\
+   &= \sum\limits_{s,s'=1}^4 \mathrm{d2b(s,s',kl)f2b(s,s',kl)}\detr(S^{-1}S'')\detr(S)
+\end{align}
+}
+
+\frame{\frametitle{Combining $\psi_T^{(1)}$ and $\psi_T^{(2)}$}
+\begin{equation}
+\begin{split}
+   \psi_T^{(1)}+\psi_T^{(2)} = \sum\limits_{s,s'=1}^4 \left[ \sum\detr(S^{-1}S''(s,s')) \right. \\
+   \left. +\sum\detr(S''^{-1}S''''(s,s'))\det(S^{-1}S'') \right] \bra{ss'}\Oi\Oj\ket{s_is_j} \detr(S) \\
+   = \sum\limits_{s,s'=1}^4 (\mathrm{d2b(s,s',ij)f2b(s,s',ij)})\detr(S)
+\end{split}
 \end{equation}
 }
 
