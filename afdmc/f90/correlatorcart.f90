@@ -246,7 +246,6 @@ contains
    complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
    complex(kind=r8) :: d15(15),fkl,sxzk(4,npart,npart,15),sxzl(4,npart,npart)
    complex(kind=r8), intent(in) :: sp(:,:)
-   integer(kind=i4) :: myop !DELETE
    sxz0=sxzin
    d1b=czero
    d2b=czero
@@ -269,7 +268,6 @@ contains
                do k=1,npart
                   sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
                enddo
-               myop=0 !DELETE
                do k=1,npart-1
                   if(k.le.i .or. k.eq.j) cycle !independent pairs
 !???                  if(k.lt.i) cycle !all second order terms
@@ -283,7 +281,6 @@ contains
                      kl=l-k*(1+k-2*npart)/2-npart
                      if(doft(kl) .or. doftpp(kl) .or. doftnn(kl)) then
                         do kt=1,3
-                           myop=myop+1 !DELETE
                            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
                            call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
                            fkl=d15(3+kt)*d2*ft(kl)
@@ -300,7 +297,6 @@ contains
                         do ks=1,3
                            sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
                            do ls=1,3
-                              myop=myop+1 !DELETE
                               call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
                               fkl=d15(ks)*d2*fs(ks,ls,kl)
 !???                              call g2bval(d2b,sxzl,fkl)
@@ -316,7 +312,6 @@ contains
                            do ks=1,3
                               sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
                               do ls=1,3
-                                 myop=myop+1 !DELETE
                                  call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
                                  fkl=d15(3*ks+kt+3)*d2*fst(ks,ls,kl)
 !???                                 call g2bval(d2b,sxzl,fkl)
@@ -331,7 +326,6 @@ contains
 !???                     detrat=detrat+sum(d2b(:,:,kl)*f2b(:,:,kl))
 !???                     detrat=detrat+sum(sum(d2b(:,:,kl)*f2b(:,:,kl))*f2b(:,js,ij))
                   enddo
-                  write(*,*) '!!!!!!!!?????????myop=',myop !DELETE
                enddo
             endif
          enddo
