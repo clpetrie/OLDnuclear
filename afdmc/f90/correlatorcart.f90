@@ -303,6 +303,7 @@ contains
                               do kc=1,4
                                  d2b(:,kc,kl)=d2b(:,kc,kl) &
                                     +fkl*(sxzl(:,k,k)*sxzl(kc,l,l)-sxzl(:,k,l)*sxzl(kc,l,k))
+                                 write(*,*) fkl*(sxzl(:,k,k)*sxzl(kc,l,l)-sxzl(:,k,l)*sxzl(kc,l,k)) !DELETE
                               enddo
                            enddo
                         enddo
