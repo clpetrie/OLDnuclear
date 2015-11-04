@@ -253,88 +253,74 @@ contains
    detrat=cone+fctau
    call g1bval(d1b,sxz0,cone)
    detrat=detrat+sum(d1b*f1b)
-   !call g2bval(d2b,sxz0,cone)
-! Here are the explicit loops from g2bval and independent pair stuff, CODY
-   ij=0
-   do i=1,npart-1
-      do j=i+1,npart
+   call g2bval(d2b,sxz0,cone)
+   if(doindpair1) then !Start independant pair terms here
+      ij=0
+      do i=1,npart-1
+         do j=i+1,npart
          ij=ij+1
-         do js=1,4
-            d2b(:,js,ij)=d2b(:,js,ij) &
-               +cone*(sxz0(:,i,i)*sxz0(js,j,j)-sxz0(:,i,j)*sxz0(js,j,i))
-!???            detrat=detrat+sum(d2b(:,js,ij)*f2b(:,js,ij))
-            if(doindpair1) then !Start independant pair terms here
-!???               d2b=czero
-               do k=1,npart
-                  sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
-               enddo
-               do k=1,npart-1
-                  if(k.le.i .or. k.eq.j) cycle !independent pairs
+            do k=1,npart
+               sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
+            enddo
+            do k=1,npart-1
+               if(k.le.i .or. k.eq.j) cycle !independent pairs
 !???                  if(k.lt.i) cycle !all second order terms
-                  do kop=1,15
-                     call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxz0,k,sx15(:,kop,:,k),sp(:,k))
-                  enddo
-                  do l=k+1,npart
-                     if(l.eq.i .or. l.eq.j) cycle !independent pairs
+               do kop=1,15
+                  call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxz0,k,sx15(:,kop,:,k),sp(:,k))
+               enddo
+               do l=k+1,npart
+                  if(l.eq.i .or. l.eq.j) cycle !independent pairs
 !???                     if((k.eq.i .and. l.eq.j) .or. ((i+j)>(k+l))) cycle ! all second order terms
 !Mathematica ij = FullSimplify[(j - i) + (i - 1)*npart + Sum[-n, {n, 1, i - 1}]]
-                     kl=l-k*(1+k-2*npart)/2-npart
-                     if(doft(kl) .or. doftpp(kl) .or. doftnn(kl)) then
-                        do kt=1,3
-                           sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
-                           call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
-                           fkl=d15(3+kt)*d2*ft(kl)
-                           if (kt==3 .and. doftpp(kl)) fkl=fkl+0.25_r8*ftpp(kl)
-                           if (kt==3 .and. doftnn(kl)) fkl=fkl+0.25_r8*ftnn(kl)
-!???                           call g2bval(d2b,sxzl,fkl)
+                  kl=l-k*(1+k-2*npart)/2-npart
+                  if(doft(kl) .or. doftpp(kl) .or. doftnn(kl)) then
+                     do kt=1,3
+                        sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
+                        call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
+                        fkl=d15(3+kt)*d2*ft(kl)
+                        if (kt==3 .and. doftpp(kl)) fkl=fkl+0.25_r8*ftpp(kl)
+                        if (kt==3 .and. doftnn(kl)) fkl=fkl+0.25_r8*ftnn(kl)
+                        do kc=1,4
+                           d2b(:,kc,kl)=d2b(:,kc,kl) &
+                              +fkl*(sxzl(:,k,k)*sxzl(kc,l,l)-sxzl(:,k,l)*sxzl(kc,l,k))
+                        enddo
+                     enddo
+                  endif
+                  if(dofs(kl)) then
+                     do ks=1,3
+                        sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
+                        do ls=1,3
+                           call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
+                           fkl=d15(ks)*d2*fs(ks,ls,kl)
                            do kc=1,4
                               d2b(:,kc,kl)=d2b(:,kc,kl) &
                                  +fkl*(sxzl(:,k,k)*sxzl(kc,l,l)-sxzl(:,k,l)*sxzl(kc,l,k))
+                              write(*,*) fkl*(sxzl(:,k,k)*sxzl(kc,l,l)-sxzl(:,k,l)*sxzl(kc,l,k)) !DELETE
                            enddo
                         enddo
-                     endif
-                     if(dofs(kl)) then
+                     enddo
+                  endif
+                  if(dofst(kl)) then
+                     do kt=1,3
                         do ks=1,3
-                           sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
+                           sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
                            do ls=1,3
-                              call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
-                              fkl=d15(ks)*d2*fs(ks,ls,kl)
-!???                              call g2bval(d2b,sxzl,fkl)
+                              call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
+                              fkl=d15(3*ks+kt+3)*d2*fst(ks,ls,kl)
                               do kc=1,4
                                  d2b(:,kc,kl)=d2b(:,kc,kl) &
                                     +fkl*(sxzl(:,k,k)*sxzl(kc,l,l)-sxzl(:,k,l)*sxzl(kc,l,k))
-                                 write(*,*) fkl*(sxzl(:,k,k)*sxzl(kc,l,l)-sxzl(:,k,l)*sxzl(kc,l,k)) !DELETE
                               enddo
                            enddo
                         enddo
-                     endif
-                     if(dofst(kl)) then
-                        do kt=1,3
-                           do ks=1,3
-                              sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
-                              do ls=1,3
-                                 call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
-                                 fkl=d15(3*ks+kt+3)*d2*fst(ks,ls,kl)
-!???                                 call g2bval(d2b,sxzl,fkl)
-                                 do kc=1,4
-                                    d2b(:,kc,kl)=d2b(:,kc,kl) &
-                                       +fkl*(sxzl(:,k,k)*sxzl(kc,l,l)-sxzl(:,k,l)*sxzl(kc,l,k))
-                                 enddo
-                              enddo
-                           enddo
-                        enddo
-                     endif
-!???                     detrat=detrat+sum(d2b(:,:,kl)*f2b(:,:,kl))
-!???                     detrat=detrat+sum(sum(d2b(:,:,kl)*f2b(:,:,kl))*f2b(:,js,ij))
-                  enddo
+                     enddo
+                  endif
                enddo
-            endif
+            enddo
          enddo
       enddo
-   enddo
+   endif
    detrat=detrat+sum(d2b*f2b)
-!
-!!!   detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
       detrat=detrat+sum(d3b*f3b)
