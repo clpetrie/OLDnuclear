@@ -255,7 +255,7 @@ contains
    if (doindpair1) then
       do i=1,npart-1
          do j=i,npart
-            call paircorrelation(sp,sxz0,cone,d2b,.true.,i,j)
+            call paircorrelation(sp,sxz0,cone,d2b,.true.,.true.,i,j)
          enddo
       enddo
    endif
@@ -266,12 +266,12 @@ contains
    endif
    end subroutine cordet
 
-   subroutine paircorrelation(sp,sxzin,detratin,d2b,doindpair,i,j) !CODY
+   subroutine paircorrelation(sp,sxzin,detratin,d2b,doindpair,skipijloops,i,j) !CODY
    complex(kind=r8), intent(in) :: sp(:,:)
    complex(kind=r8), intent(inout) :: d2b(:,:,:)
    complex(kind=r8), intent(in) :: sxzin(:,:,:)
    integer(kind=i4), intent(in) :: i,j
-   logical, intent(in) :: doindpair
+   logical, intent(in) :: doindpair,skipijloops
    complex(kind=r8) :: sxzk(4,npart,npart,15)
    complex(kind=r8) :: fkl
    complex(kind=r8) :: detrat,detratin
@@ -300,7 +300,7 @@ contains
                fkl=detrat*ft(kl)
                if (kt==3 .and. doftpp(kl)) fkl=fkl+0.25_r8*ftpp(kl)
                if (kt==3 .and. doftnn(kl)) fkl=fkl+0.25_r8*ftnn(kl)
-               if (doindpair) then
+               if (skipijloops) then
                   do kc=1,4
                      d2b(:,kc,ij)=d2b(:,kc,ij) &
                         +fkl*(sxzl(:,i,i)*sxzl(kc,j,j)-sxzl(:,i,j)*sxzl(kc,j,i))
@@ -317,7 +317,7 @@ contains
                   call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
                   detrat=detratin*d15(ks)*d2
                   fkl=detrat*fs(ks,ls,kl)
-                  if (doindpair) then
+                  if (skipijloops) then
                      do kc=1,4
                         d2b(:,kc,ij)=d2b(:,kc,ij) &
                            +fkl*(sxzl(:,i,i)*sxzl(kc,j,j)-sxzl(:,i,j)*sxzl(kc,j,i))
@@ -336,7 +336,7 @@ contains
                      call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
                      detrat=detratin*d15(3*ks+kt+3)*d2
                      fkl=detrat*fst(ks,ls,kl)
-                     if (doindpair) then
+                     if (skipijloops) then
                         do kc=1,4
                            d2b(:,kc,ij)=d2b(:,kc,ij) &
                               +fkl*(sxzl(:,i,i)*sxzl(kc,j,j)-sxzl(:,i,j)*sxzl(kc,j,i))
@@ -364,7 +364,8 @@ contains
    complex(kind=r8) :: sxzi1(4,npart,npart),di1
    complex(kind=r8) :: sxzj1(4,npart,npart),sxzj2(4,npart,npart)
    complex(kind=r8) :: sxzk(4,npart,npart),dj1,dj2,dk
-   integer(kind=i4) :: i,j,ij,iop,is,it,js,k,ks,ijk
+   integer(kind=i4) :: i,j,ij,iop,is,it,js,k,ks,ijk,kc
+   integer(kind=i4) :: n,m,nm !these are used to that I can select the independent pair terms
    d1b=czero
    d2b=czero
    d3b=czero
@@ -383,12 +384,17 @@ contains
       call g3bval(d3b,sxzj,f1,.false.)
    enddo
    if (doindpair2) then
+   do n=1,npart-1
+   do m=n,npart
+   nm=m-n*(1+n-2*npart)/2-npart
    ij=0
    do i=1,npart-1
+      if (i.le.n .or. i.eq.m) cycle
       do iop=1,15
          call sxzupdate(sxzi(:,:,:,iop),d15(iop),sxz0,i,sx15(:,iop,:,i),sp(:,i))
       enddo
       do j=i+1,npart
+         if (j.eq.n .or. j.eq.m) cycle
          ij=ij+1
          if (doft(ij) .or. doftpp(ij) .or. doftnn(ij)) then
             do it=1,3
@@ -399,10 +405,13 @@ contains
                if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
                if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
                call g1bval(d1b,sxzj,fij)
-               call g2bval(d2b,sxzj,fij)
+               do kc=1,4
+                  d2b(:,kc,nm)=d2b(:,kc,nm) &
+                     +fij*(sxzj(:,n,n)*sxzj(kc,m,m)-sxzj(:,n,m)*sxzj(kc,m,n))
+               enddo
                call g3bval(d3b,sxzj,fij,.false.)
                if (doindpair2) then
-                  call paircorrelation(sp,sxzj,detrat,d2b,.false.,i,j) !CODY
+                  call paircorrelation(sp,sxzj,detrat,d2b,.false.,.true.,i,j) !CODY
                endif
             enddo
          endif
@@ -414,10 +423,13 @@ contains
                   detrat=d15(is)*d2
                   fij=detrat*fs(is,js,ij)
                   call g1bval(d1b,sxzj,fij)
-                  call g2bval(d2b,sxzj,fij)
+                  do kc=1,4
+                     d2b(:,kc,nm)=d2b(:,kc,nm) &
+                        +fij*(sxzj(:,n,n)*sxzj(kc,m,m)-sxzj(:,n,m)*sxzj(kc,m,n))
+                  enddo
                   call g3bval(d3b,sxzj,fij,.false.)
                   if (doindpair2) then
-                     call paircorrelation(sp,sxzj,detrat,d2b,.false.,i,j) !CODY
+                     call paircorrelation(sp,sxzj,detrat,d2b,.false.,.true.,i,j) !CODY
                   endif
                enddo
             enddo
@@ -432,10 +444,13 @@ contains
                      detrat=d15(3*is+it+3)*d2
                      fij=detrat*fst(is,js,ij)
                      call g1bval(d1b,sxzj,fij)
-                     call g2bval(d2b,sxzj,fij)
+                     do kc=1,4
+                        d2b(:,kc,nm)=d2b(:,kc,nm) &
+                           +fij*(sxzj(:,n,n)*sxzj(kc,m,m)-sxzj(:,n,m)*sxzj(kc,m,n))
+                     enddo
                      call g3bval(d3b,sxzj,fij,.false.)
                      if (doindpair2) then
-                        call paircorrelation(sp,sxzj,detrat,d2b,.false.,i,j) !CODY
+                        call paircorrelation(sp,sxzj,detrat,d2b,.false.,.true.,i,j) !CODY
                      endif
                   enddo
                enddo
@@ -443,8 +458,10 @@ contains
          endif
       enddo
    enddo
+   enddo
+   enddo
    else
-      call paircorrelation(sp,sxz0,cone,d2b,.false.,1,1) !the 1 and 1 are just place holders as long as it's .false.
+      call paircorrelation(sp,sxz0,cone,d2b,.false.,.false.,1,1) !the 1 and 1 are just place holders as long as it's .false.
    endif
    if (.not.dof3) return !skip 3-body correlation
    do i=1,npart-2
