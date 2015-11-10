@@ -34,8 +34,8 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
-   logical, private, save :: doindpair1 = .false. !CODY
-   logical, private, save :: doindpair2 = .false. !CODY
+   logical, private, save :: doindpair1 = .true. !CODY
+   logical, private, save :: doindpair2 = .true. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -279,6 +279,7 @@ contains
    complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
    integer(kind=i4) :: k,l,kl,kop,ks,kt,ls
    integer(kind=i4) :: kc,ij
+!Mathematica ij = FullSimplify[Sum[(npart - n), {n, 1, i - 1}] + (j - i)]
    ij=j-i*(1+i-2*npart)/2-npart
    do k=1,npart
      sx15(:,:,:,k)=conjg(opmult(conjg(sxzin(:,k,:))))
@@ -289,8 +290,7 @@ contains
          call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxzin,k,sx15(:,kop,:,k),sp(:,k))
       enddo
       do l=k+1,npart
-         if ((l.eq.i .or. l.eq.j) .and. doindpair) cycle
-!Mathematica ij = FullSimplify[(j - i) + (i - 1)*npart + Sum[-n, {n, 1, i - 1}]]
+         if (l.eq.j .and. doindpair) cycle
          kl=l-k*(1+k-2*npart)/2-npart
          if (doft(kl) .or. doftpp(kl) .or. doftnn(kl)) then
             do kt=1,3
@@ -394,7 +394,7 @@ contains
          call sxzupdate(sxzi(:,:,:,iop),d15(iop),sxz0,i,sx15(:,iop,:,i),sp(:,i))
       enddo
       do j=i+1,npart
-         if (j.eq.n .or. j.eq.m) cycle
+         if (j.eq.m) cycle
          ij=ij+1
          if (doft(ij) .or. doftpp(ij) .or. doftnn(ij)) then
             do it=1,3
@@ -461,7 +461,7 @@ contains
    enddo
    enddo
    else
-      call paircorrelation(sp,sxz0,cone,d2b,.false.,.false.,1,1) !the 1 and 1 are just place holders as long as it's .false.
+      call paircorrelation(sp,sxz0,cone,d2b,.false.,.false.,1,1) !the 1 and 1 don't matter since skipijloops=.false.
    endif
    if (.not.dof3) return !skip 3-body correlation
    do i=1,npart-2
