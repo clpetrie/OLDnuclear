@@ -35,7 +35,7 @@ module correlator
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
    logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .true. !CODY
+   logical, private, save :: doindpair2 = .false. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -253,11 +253,11 @@ contains
    call g1bval(d1b,sxz0,cone)
    call g2bval(d2b,sxz0,cone)
    if (doindpair1) then
-      do i=1,npart-1
-         do j=i,npart
-            call paircorrelation(sp,sxz0,cone,d2b,.true.,.true.,i,j)
-         enddo
-      enddo
+!      do i=1,npart-1
+!         do j=i,npart
+            call paircorrelation(sp,sxz0,cone,d2b,.true.,.false.,1,1)
+!         enddo
+!      enddo
    endif
    detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
    if (dof3) then
@@ -270,7 +270,7 @@ contains
    complex(kind=r8), intent(in) :: sp(:,:)
    complex(kind=r8), intent(inout) :: d2b(:,:,:)
    complex(kind=r8), intent(in) :: sxzin(:,:,:)
-   integer(kind=i4), intent(in) :: i,j
+!   integer(kind=i4), intent(in) :: i,j
    logical, intent(in) :: doindpair,skipijloops
    complex(kind=r8) :: sxzk(4,npart,npart,15)
    complex(kind=r8) :: fkl
@@ -279,18 +279,19 @@ contains
    complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
    integer(kind=i4) :: k,l,kl,kop,ks,kt,ls
    integer(kind=i4) :: kc,ij
+   integer(kind=i4) :: i,j,js
 !Mathematica ij = FullSimplify[Sum[(npart - n), {n, 1, i - 1}] + (j - i)]
    ij=j-i*(1+i-2*npart)/2-npart
    do k=1,npart
      sx15(:,:,:,k)=conjg(opmult(conjg(sxzin(:,k,:))))
    enddo
    do k=1,npart-1
-      if ((k.le.i .or. k.eq.j) .and. doindpair) cycle
+!      if ((k.le.i .or. k.eq.j) .and. doindpair) cycle
       do kop=1,15
          call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxzin,k,sx15(:,kop,:,k),sp(:,k))
       enddo
       do l=k+1,npart
-         if (l.eq.j .and. doindpair) cycle
+!         if (l.eq.j .and. doindpair) cycle
          kl=l-k*(1+k-2*npart)/2-npart
          if (doft(kl) .or. doftpp(kl) .or. doftnn(kl)) then
             do kt=1,3
@@ -306,7 +307,17 @@ contains
                         +fkl*(sxzl(:,i,i)*sxzl(kc,j,j)-sxzl(:,i,j)*sxzl(kc,j,i))
                   enddo
                else
-                  call g2bval(d2b,sxzl,fkl)
+!                  call g2bval(d2b,sxzl,fkl)
+                  ij=0
+                  do i=1,npart-1
+                     do j=i+1,npart
+                        ij=ij+1
+                        do js=1,4
+                           d2b(:,js,ij)=d2b(:,js,ij) &
+                              +fkl*(sxzl(:,i,i)*sxzl(js,j,j)-sxzl(:,i,j)*sxzl(js,j,i))
+                        enddo
+                     enddo
+                  enddo
                endif
             enddo
          endif
@@ -323,7 +334,17 @@ contains
                            +fkl*(sxzl(:,i,i)*sxzl(kc,j,j)-sxzl(:,i,j)*sxzl(kc,j,i))
                      enddo
                   else
-                     call g2bval(d2b,sxzl,fkl)
+!                     call g2bval(d2b,sxzl,fkl)
+                     ij=0
+                     do i=1,npart-1
+                        do j=i+1,npart
+                           ij=ij+1
+                           do js=1,4
+                              d2b(:,js,ij)=d2b(:,js,ij) &
+                                 +fkl*(sxzl(:,i,i)*sxzl(js,j,j)-sxzl(:,i,j)*sxzl(js,j,i))
+                           enddo
+                        enddo
+                     enddo
                   endif
                enddo
             enddo
@@ -342,7 +363,17 @@ contains
                               +fkl*(sxzl(:,i,i)*sxzl(kc,j,j)-sxzl(:,i,j)*sxzl(kc,j,i))
                         enddo
                      else
-                        call g2bval(d2b,sxzl,fkl)
+!                        call g2bval(d2b,sxzl,fkl)
+                        ij=0
+                        do i=1,npart-1
+                           do j=i+1,npart
+                              ij=ij+1
+                              do js=1,4
+                                 d2b(:,js,ij)=d2b(:,js,ij) &
+                                    +fkl*(sxzl(:,i,i)*sxzl(js,j,j)-sxzl(:,i,j)*sxzl(js,j,i))
+                              enddo
+                           enddo
+                        enddo
                      endif
                   enddo
                enddo
