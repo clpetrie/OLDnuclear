@@ -573,7 +573,8 @@
             call addval(26,real(w1%tnivd2)*nfac,real(w1%weight))
             call addval(27,real(w1%tnive)*nfac,real(w1%weight))
             call addval(28,w1%tnic*nfac,real(w1%weight))
-            vn=sum(w1%v8all(:))+w1%tnic+w1%tni2piapr+w1%tni2pic+w1%tni2pitm+w1%tnivd1+w1%tnivd2+w1%tnive+w1%tni2piaxdpr+w1%tni2piaddpr
+            vn=sum(w1%v8all(:))+w1%tnic+w1%tni2piapr+w1%tni2pic+w1%tni2pitm &
+		+w1%tnivd1+w1%tnivd2+w1%tnive+w1%tni2piaxdpr+w1%tni2piaddpr
             call addval(30,real(ek+vn)*nfac,real(w1%weight))
             if (el.lt.0.0_r8) then
                call checkj(w1,1.e-2_r8,t2,tz,j2,jz)

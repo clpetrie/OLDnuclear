@@ -35,7 +35,7 @@ module correlator
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
    logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .false. !CODY
+   logical, private, save :: doindpair2 = .true. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -370,7 +370,7 @@ contains
    complex(kind=r8) :: sxzj1(4,npart,npart),sxzj2(4,npart,npart)
    complex(kind=r8) :: sxzk(4,npart,npart),dj1,dj2,dk
    integer(kind=i4) :: i,j,ij,iop,is,it,js,k,ks,ijk,kc
-   integer(kind=i4) :: n,m,nm !these are used to that I can select the independent pair terms
+   integer(kind=i4) :: n,m,mn !these are used to that I can select the independent pair terms
    d1b=czero
    d2b=czero
    d3b=czero
@@ -389,17 +389,12 @@ contains
       call g3bval(d3b,sxzj,f1,.false.)
    enddo
    if (doindpair2) then
-   do n=1,npart-1
-   do m=n,npart
-   nm=m-n*(1+n-2*npart)/2-npart
    ij=0
    do i=1,npart-1
-      if (i.le.n .or. i.eq.m) cycle
       do iop=1,15
          call sxzupdate(sxzi(:,:,:,iop),d15(iop),sxz0,i,sx15(:,iop,:,i),sp(:,i))
       enddo
       do j=i+1,npart
-         if (j.eq.m) cycle
          ij=ij+1
          if (doft(ij) .or. doftpp(ij) .or. doftnn(ij)) then
             do it=1,3
@@ -410,9 +405,16 @@ contains
                if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
                if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
                call g1bval(d1b,sxzj,fij)
-               do kc=1,4
-                  d2b(:,kc,nm)=d2b(:,kc,nm) &
-                     +fij*(sxzj(:,n,n)*sxzj(kc,m,m)-sxzj(:,n,m)*sxzj(kc,m,n))
+               do m=1,npart-1
+                  if (i.le.m) cycle
+                  do n=m,npart
+                     if (i.eq.n .or. j.eq.n) cycle
+                     mn=n-m*(1+m-2*npart)/2-npart
+                     do kc=1,4
+                        d2b(:,kc,mn)=d2b(:,kc,mn) &
+                           +fij*(sxzj(:,m,m)*sxzj(kc,n,n)-sxzj(:,m,n)*sxzj(kc,n,m))
+                     enddo
+                  enddo
                enddo
                if (doindpair2) then
                   call paircorrelation(sp,sxzj,detrat,d2b,.false.) !CODY
@@ -428,9 +430,16 @@ contains
                   detrat=d15(is)*d2
                   fij=detrat*fs(is,js,ij)
                   call g1bval(d1b,sxzj,fij)
-                  do kc=1,4
-                     d2b(:,kc,nm)=d2b(:,kc,nm) &
-                        +fij*(sxzj(:,n,n)*sxzj(kc,m,m)-sxzj(:,n,m)*sxzj(kc,m,n))
+                  do m=1,npart-1
+                     if (i.le.m) cycle
+                     do n=m,npart
+                        if (i.eq.n .or. j.eq.n) cycle
+                        mn=n-m*(1+m-2*npart)/2-npart
+                        do kc=1,4
+                           d2b(:,kc,mn)=d2b(:,kc,mn) &
+                              +fij*(sxzj(:,m,m)*sxzj(kc,n,n)-sxzj(:,m,n)*sxzj(kc,n,m))
+                        enddo
+                     enddo
                   enddo
                   if (doindpair2) then
                      call paircorrelation(sp,sxzj,detrat,d2b,.false.) !CODY
@@ -449,9 +458,16 @@ contains
                      detrat=d15(3*is+it+3)*d2
                      fij=detrat*fst(is,js,ij)
                      call g1bval(d1b,sxzj,fij)
-                     do kc=1,4
-                        d2b(:,kc,nm)=d2b(:,kc,nm) &
-                           +fij*(sxzj(:,n,n)*sxzj(kc,m,m)-sxzj(:,n,m)*sxzj(kc,m,n))
+                     do m=1,npart-1
+                        if (i.le.m) cycle
+                        do n=m,npart
+                           if (i.eq.n .or. j.eq.n) cycle
+                           mn=n-m*(1+m-2*npart)/2-npart
+                           do kc=1,4
+                              d2b(:,kc,mn)=d2b(:,kc,mn) &
+                                 +fij*(sxzj(:,m,m)*sxzj(kc,n,n)-sxzj(:,m,n)*sxzj(kc,n,m))
+                           enddo
+                        enddo
                      enddo
                      if (doindpair2) then
                         call paircorrelation(sp,sxzj,detrat,d2b,.false.) !CODY
@@ -462,8 +478,6 @@ contains
             enddo
          endif
       enddo
-   enddo
-   enddo
    enddo
    else
       call paircorrelation(sp,sxz0,cone,d2b,.false.)
