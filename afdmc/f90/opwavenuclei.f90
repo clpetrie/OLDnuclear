@@ -844,6 +844,10 @@ contains
    write(6,'(''chkpot, v= '',6e15.7)') vc+vtau+vsig+vsigtau
    call vnpsi2(w,.true.)
    write(6,'(''hpsi,   v= '',6e15.7)') sum(w%v8all(1:6))
+   !DELETE
+   open(unit=10293,file='test.dat',position='append')
+   write(10293,"(6e15.7,6e15.7)") real(vc+vtau+vsig+vsigtau),real(sum(w%v8all(1:6)))
+   close(10293)
    end subroutine chkpot
 
    subroutine chkls(w)
