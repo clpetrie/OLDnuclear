@@ -1,1 +1,1 @@
-\contentsline {section}{\numberline {1}Expand the plane wave in terms of spherical harmonics}{2}
+\contentsline {section}{\numberline {1}Expand the plane wave in terms of spherical harmonics}{1}

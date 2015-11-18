@@ -1,3 +1,41 @@
-\addcontentsline{toc}{section}{Expand the plane wave in terms of spherical harmonics}
-\section{Expand the plane wave in terms of spherical harmonics}
-
+Expanding a plane wave in the spherical harmonic basis gives
+\begin{equation}
+   e^{i\mathbf{k}\cdot\mathbf{r}} = \sum\limits_l C_l Y_l^0(\theta).
+\end{equation}
+There is no $\phi$ dependance here because the plane wave only depend on $\theta$ the angle between $\mathbf{k}$ and $\mathbf{r}$, since the plane wave is propagating in the z direction. Now solving for the expansion coefficients $C_l$ using the orthogonality relationship
+\begin{equation}
+   \int_0^{\pi} \int_0^{2\pi} Y_l^m Y_{l'}^{m'*} d\Omega = \delta_{ll'}\delta_{mm'},
+\end{equation}
+gives us
+\begin{equation}
+   C_l = 2\pi \int_0^{\pi} e^{ikr\cos\theta}Y_l^0(\theta)\sin\theta d\theta.
+\end{equation}
+Now writting the spherical harmonics in terms of legendre polynomials
+\begin{equation}
+   Y_l^m(\theta,\phi) = \sqrt{\frac{2l+1(l-m)!}{4\pi(l+m!)}}P_l^m(\cos\theta)e^{im\phi},
+\end{equation}
+or for $m=0$,
+\begin{equation}
+   Y_l^0(\theta)=\sqrt{\frac{2l+1}{4\pi}}P_l(\cos\theta)
+\end{equation}
+we get,
+\begin{equation}
+   C_l = \pi \int_0^\pi e^{ikr\cos\theta}\sqrt{\frac{2l+1}{4\pi}}P_l(\cos\theta) \sin\theta d\theta.
+\end{equation}
+Now if you use an identity relating the spherical bessel functions of the first kind to the legendre polynomials (an identity which I found online and proved with Mathematica)
+\begin{equation}
+   j_l(kr)=\frac{1}{2i^l}\int_0^\pi e^{ikr\cos\theta}P_l{\cos\theta},
+\end{equation}
+we can get an expansion of the plane wave in terms of spherical bessel functions and legendre polynomials.
+\begin{equation}
+   \boxed{e^{i\mathbf{k}\cdot\mathbf{r}} = \sum\limits_l 2i^l \sqrt{\pi}\sqrt{2l+1} j_l(kr)Y_l^0(\theta)}
+\end{equation}
+Often we want to look at these things in the scattering or radiation limit where r is large. We can use the expansion of the spherical bessel function as given by Jackson eq. 9.89 to be
+\begin{equation}
+   \lim\limits_{r->\infty} j_l(kr) = \frac{1}{kr} \sin\left( kr-\frac{l\pi}{2} \right) = \frac{i}{2kr}(e^{-i(kr-\frac{l\pi}{2}) - e^{i(kr-\frac{l\pi}{2})}}).
+\end{equation}
+We can thus write the expansion in the asymptotic limit as
+\begin{equation}
+   \boxed{e^{i\mathbf{k}\cdot\mathbf{r}} \approx \sum\limits_l \frac{\sqrt{\pi}}{kr} \sqrt{2l+1} \, i^{l+1} \left( e^{-i(kr-\frac{l\pi}{2})} - e^{i(kr-\frac{l\pi}{2})} \right) Y_l^0(\theta)}.
+\end{equation}
+This is equation 3.1.1 in Siemens.
