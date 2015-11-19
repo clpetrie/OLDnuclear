@@ -1,0 +1,63 @@
+\documentclass[12pt]{extarticle}
+\usepackage[margin=1in]{geometry}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{url}
+\usepackage{bm}
+\usepackage{color}
+\usepackage{graphicx}
+
+\title{Notes on Siemens Elements of Nuclei}
+\author{Cody L. Petrie}
+
+\begin{document}
+\maketitle
+
+\section*{Chapter 3}
+\subsection*{The Black Sphere}
+To talk about the scattering of a neutron from some nuclei we are first going to consider scattering from an absorbing spherical object. We start by assuming the incident neutron beam is a plane wave $e^{ikz}$. We then expand this plane wave in terms of legendre polynomials in the scattering regiem.
+
+\input{expandplane}
+
+The scattering is going to happen for some finite amount of time while the nucleon interacts with the nucleus and then the scattering interaction will turn off. After the interaction has turned off we can imaging that the amplitude of outgoing wave, $e^{i(kr-\frac{l\pi}{2})}$ has been modified giving us a wave function of
+\begin{equation}
+   \phi(r\rightarrow\infty) = \sum\limits_l \frac{\sqrt{\pi}}{kr} \sqrt{2l+1} \, i^{l+1} \left( e^{-i(kr-\frac{l\pi}{2})} - \eta_l e^{i(kr-\frac{l\pi}{2})} \right) Y_l^0(\theta).
+\end{equation}
+Now we can get the scattered wave $\phi_s$ by subtracting the incident plane wave from this since $\phi = \phi_i + \phi_s$.
+\begin{align}
+   \phi_s &= \sum\limits_l \frac{\sqrt{\pi}}{kr} \sqrt{2l+1} \, i^{l+1} \left( e^{-i(kr-\frac{l\pi}{2})} - \eta_l e^{i(kr-\frac{l\pi}{2})} - e^{-i(kr-\frac{l\pi}{2})} + e^{i(kr-\frac{l\pi}{2})} \right) Y_l^0(\theta) \\
+   &= \sum\limits_l \frac{\sqrt{\pi}}{kr} \sqrt{2l+1} \, i^{l+1} e^{i(kr-\frac{l\pi}{2})}(1 - \eta_l) Y_l^0(\theta) \\
+   &= \sum\limits_l i \frac{\sqrt{\pi}}{kr} \sqrt{2l+1} e^{ikr}(1 - \eta_l) Y_l^0(\theta) \\
+   &= f(\theta) \frac{e^{ikr}}{r}
+\end{align}
+Where in the last line I have used the face that $i=e^{\pi/2}$, and where
+\begin{equation}
+   f(\theta) = \sum\limits_l i \frac{\sqrt{\pi}}{k}\sqrt{2l+1} Y_l^0(\theta) (1-\eta_l)
+\end{equation}
+
+Putting these together we get
+\begin{equation}
+   \phi(r\rightarrow\infty) = e^{ikz} + f(\theta)\frac{e^{ikr}}{r},
+\end{equation}
+where we can recognize the $f(\theta)$ term as being part of the differential scattering cross section, $\frac{d\sigma}{d\Omega} = \left|f(\theta)\right|^2$.
+
+Now let's make some approximations. Siemens says that the classical turning point for a neutron is when $k^2 = l(l+1)/R^2 \approx (l+\frac{1}{2})^2/R^2$. Solving this for l gives $l=kR-\frac{1}{2}$. Now, if a particle passes within the range $R$ then we can say that it is absorbed and $\eta_l=0$. This happens for small angular momentum $l < kR-\frac{1}{2}$. But for large enough angular momentum, $l > kR - \frac{1}{2}$, the particles pass too far away to be scattered and the scattered wave is the same as the incident plane wave, $\eta_l=1$, which gives $\frac{d\sigma}{d\Omega} = 0$, thus we only need to sum to $l=kR-\frac{1}{2}$. Finally this gives us the differential scattering cross section.
+\begin{equation}
+   \frac{d\sigma}{d\Omega} = \frac{\pi}{k^2} \left|\sum\limits_{l=0}^{kr-1/2} \sqrt{2l+1} Y_l^0(\theta)\right|^2
+\end{equation}
+The next thing Siemens does is to approximate these for large and small scattering angles. I had a hard time doing the integrals they did so I'll just quote the results here. These are equations 3.1.9a and 3.1.9b in the book.
+\begin{equation}
+   \frac{d\sigma}{d\Omega} \approx
+\begin{cases}
+   \frac{2R}{\pi} k\theta^2 \sin\theta\cos^2\left(kR\theta+\frac{\pi}{4}\right),& \text{for } kR\theta \gg 1 \\
+   \frac{k^2R^4}{4}(1-(kR\theta/2)^2)^2,& \text{for } kR\theta \ll 1
+\end{cases}
+\end{equation}
+I have plotted these two as in figure 3.2 of the book. My reproduction isn't exactly like there's but it is roughly the same.
+\begin{figure}[h]
+   \centering
+   \includegraphics[width=0.5\textwidth]{fig3_2.png}
+   \caption{Comparison of approximations where R=7 and k=2. The dashed curve is low angle approximate and the dotted curve is the high angle approximation.}
+\end{figure}
+
+\end{document}
