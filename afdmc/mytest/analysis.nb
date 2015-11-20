@@ -1,0 +1,175 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 10.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      5050,        166]
+NotebookOptionsPosition[      4299,        136]
+NotebookOutlinePosition[      4636,        151]
+CellTagsIndexPosition[      4593,        148]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"SetDirectory", "[", 
+   RowBox[{"NotebookDirectory", "[", "]"}], "]"}], ";"}]], "Input",
+ CellChangeTimes->{{3.6569617938328342`*^9, 3.65696180179388*^9}}],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"chkpotnew", "=", 
+   RowBox[{"Import", "[", "\"\<chkpotnew.dat\>\"", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"chkpotold", "=", 
+   RowBox[{"Import", "[", "\"\<chkpotold.dat\>\"", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"hpsinew", "=", 
+   RowBox[{"Import", "[", "\"\<hpsinew.dat\>\"", "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"hpsiold", "=", 
+   RowBox[{"Import", "[", "\"\<hpsiold.dat\>\"", "]"}]}], ";"}]}], "Input",
+ CellChangeTimes->{{3.65696180407782*^9, 3.656961844677137*^9}, {
+  3.656962131188183*^9, 3.656962136086626*^9}, {3.656962194462688*^9, 
+  3.65696222675004*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"Total", "[", 
+  RowBox[{
+   RowBox[{"Transpose", "[", "chkpotnew", "]"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Total", "[", 
+  RowBox[{
+   RowBox[{"Transpose", "[", "chkpotold", "]"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Total", "[", 
+  RowBox[{
+   RowBox[{"Transpose", "[", "hpsinew", "]"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Total", "[", 
+  RowBox[{
+   RowBox[{"Transpose", "[", "hpsiold", "]"}], "[", 
+   RowBox[{"[", "1", "]"}], "]"}], "]"}]}], "Input",
+ CellChangeTimes->{{3.656962232246497*^9, 3.656962240062482*^9}, {
+  3.656965017933278*^9, 3.656965049942937*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "2.6516198800000006`"}]], "Output",
+ CellChangeTimes->{{3.656965019206112*^9, 3.656965050415805*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "2.6961801000000003`"}]], "Output",
+ CellChangeTimes->{{3.656965019206112*^9, 3.656965050416737*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "2.6961801000000003`"}]], "Output",
+ CellChangeTimes->{{3.656965019206112*^9, 3.656965050417432*^9}}],
+
+Cell[BoxData[
+ RowBox[{"-", "2.6961801000000003`"}]], "Output",
+ CellChangeTimes->{{3.656965019206112*^9, 3.656965050418117*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{"Total", "[", 
+  SqrtBox[
+   RowBox[{
+    SuperscriptBox[
+     RowBox[{
+      RowBox[{"Transpose", "[", "chkpotnew", "]"}], "[", 
+      RowBox[{"[", "1", "]"}], "]"}], "2"], "+", 
+    SuperscriptBox[
+     RowBox[{
+      RowBox[{"Transpose", "[", "chkpotnew", "]"}], "[", 
+      RowBox[{"[", "2", "]"}], "]"}], "2"]}]], "]"}], "\[IndentingNewLine]", 
+ RowBox[{"Total", "[", 
+  SqrtBox[
+   RowBox[{
+    SuperscriptBox[
+     RowBox[{
+      RowBox[{"Transpose", "[", "chkpotold", "]"}], "[", 
+      RowBox[{"[", "1", "]"}], "]"}], "2"], "+", 
+    SuperscriptBox[
+     RowBox[{
+      RowBox[{"Transpose", "[", "chkpotold", "]"}], "[", 
+      RowBox[{"[", "2", "]"}], "]"}], "2"]}]], "]"}]}], "Input",
+ CellChangeTimes->{{3.6569651801044064`*^9, 3.656965216976633*^9}}],
+
+Cell[BoxData["41.86966203139066`"], "Output",
+ CellChangeTimes->{{3.656965203325595*^9, 3.656965217770473*^9}}],
+
+Cell[BoxData["42.98439826942153`"], "Output",
+ CellChangeTimes->{{3.656965203325595*^9, 3.6569652177713337`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Total", "[", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"Transpose", "[", "chkpotnew", "]"}], "[", 
+    RowBox[{"[", "1", "]"}], "]"}], "-", 
+   RowBox[{
+    RowBox[{"Transpose", "[", "chkpotold", "]"}], "[", 
+    RowBox[{"[", "1", "]"}], "]"}]}], "]"}]], "Input",
+ CellChangeTimes->{{3.6569673094489813`*^9, 3.656967319499889*^9}}],
+
+Cell[BoxData["0.044560219999999776`"], "Output",
+ CellChangeTimes->{{3.656967314144085*^9, 3.6569673198326187`*^9}}]
+}, Open  ]]
+},
+WindowSize->{808, 911},
+WindowMargins->{{Automatic, 55}, {Automatic, 52}},
+FrontEndVersion->"10.0 for Linux x86 (64-bit) (December 4, 2014)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 190, 4, 32, "Input"],
+Cell[751, 26, 684, 18, 99, "Input"],
+Cell[CellGroupData[{
+Cell[1460, 48, 736, 18, 99, "Input"],
+Cell[2199, 68, 129, 2, 32, "Output"],
+Cell[2331, 72, 129, 2, 32, "Output"],
+Cell[2463, 76, 129, 2, 32, "Output"],
+Cell[2595, 80, 129, 2, 32, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[2761, 87, 787, 23, 90, "Input"],
+Cell[3551, 112, 111, 1, 32, "Output"],
+Cell[3665, 115, 113, 1, 32, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[3815, 121, 349, 9, 32, "Input"],
+Cell[4167, 132, 116, 1, 65, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)

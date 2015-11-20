@@ -34,8 +34,6 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
-   logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .true. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -235,127 +233,25 @@ contains
    enddo
    end subroutine calfop
 
-   subroutine cordet(detrat,sxzin,sp) !CODY added sp here, make sure to remove all if you remove this
+   subroutine cordet(detrat,sxzin)
 ! calfop must be called first
    complex(kind=r8) :: detrat,sxzin(:,:,:)
    complex(kind=r8) :: sxmall(npart,15,npart)
    complex(kind=r8) :: ctmp1,d1,d2,d3,d4
    integer(kind=i4) :: i,j,ij,is,js,it
    complex(kind=r8) :: d1b(4,npart),d2b(4,4,npair),d3b(4,4,4,ntrip)
-   integer(kind=i4) :: k,l,kl,kop,ks,ls,kt,kc !Added variables start here CODY
-   complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
-   complex(kind=r8) :: d15(15),fkl,sxzk(4,npart,npart,15),sxzl(4,npart,npart)
-   complex(kind=r8), intent(in) :: sp(:,:)
    sxz0=sxzin
    d1b=czero
    d2b=czero
    d3b=czero
    call g1bval(d1b,sxz0,cone)
    call g2bval(d2b,sxz0,cone)
-   if (doindpair1) then
-      call paircorrelation(sp,sxz0,cone,d2b,.true.)
-   endif
    detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
       detrat=detrat+sum(d3b*f3b)
    endif
    end subroutine cordet
-
-   subroutine paircorrelation(sp,sxzin,detratin,d2b,doindpair) !CODY
-   complex(kind=r8), intent(in) :: sp(:,:)
-   complex(kind=r8), intent(inout) :: d2b(:,:,:)
-   complex(kind=r8), intent(in) :: sxzin(:,:,:)
-   logical, intent(in) :: doindpair
-   complex(kind=r8) :: sxzk(4,npart,npart,15)
-   complex(kind=r8) :: fkl
-   complex(kind=r8) :: detrat,detratin
-   complex(kind=r8) :: sxzl(4,npart,npart),d2,d15(15)
-   complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
-   integer(kind=i4) :: k,l,kl,kop,ks,kt,ls
-   integer(kind=i4) :: kc,ij
-   integer(kind=i4) :: i,j,js
-   do k=1,npart
-     sx15(:,:,:,k)=conjg(opmult(conjg(sxzin(:,k,:))))
-   enddo
-   do k=1,npart-1
-      do kop=1,15
-         call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxzin,k,sx15(:,kop,:,k),sp(:,k))
-      enddo
-      do l=k+1,npart
-!Mathematica ij = FullSimplify[Sum[(npart - n), {n, 1, i - 1}] + (j - i)]
-         kl=l-k*(1+k-2*npart)/2-npart
-         if (doft(kl) .or. doftpp(kl) .or. doftnn(kl)) then
-            do kt=1,3
-               sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
-               call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
-               detrat=detratin*d15(3+kt)*d2
-               fkl=detrat*ft(kl)
-               if (kt==3 .and. doftpp(kl)) fkl=fkl+0.25_r8*ftpp(kl)
-               if (kt==3 .and. doftnn(kl)) fkl=fkl+0.25_r8*ftnn(kl)
-!              below is the same as g2bval but with independent pairs picked out
-               do i=1,npart-1
-                  if (k.le.i .and. doindpair) cycle !only do independent pairs
-                  do j=i+1,npart
-                     if ((k.eq.j .or. l.eq.j) .and. doindpair) cycle ! only do independent pairs
-                     ij=j-i*(1+i-2*npart)/2-npart
-                     do js=1,4
-                        d2b(:,js,ij)=d2b(:,js,ij) &
-                           +fkl*(sxzl(:,i,i)*sxzl(js,j,j)-sxzl(:,i,j)*sxzl(js,j,i))
-                     enddo
-                  enddo
-               enddo
-            enddo
-         endif
-         if (dofs(kl)) then
-            do ks=1,3
-               sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
-               do ls=1,3
-                  call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
-                  detrat=detratin*d15(ks)*d2
-                  fkl=detrat*fs(ks,ls,kl)
-!                 below is the same as g2bval but with independent pairs picked out
-                  do i=1,npart-1
-                     if (k.le.i .and. doindpair) cycle !only do independent pairs
-                     do j=i+1,npart
-                        if ((k.eq.j .or. l.eq.j) .and. doindpair) cycle ! only do independent pairs
-                        ij=j-i*(1+i-2*npart)/2-npart
-                        do js=1,4
-                           d2b(:,js,ij)=d2b(:,js,ij) &
-                              +fkl*(sxzl(:,i,i)*sxzl(js,j,j)-sxzl(:,i,j)*sxzl(js,j,i))
-                        enddo
-                     enddo
-                  enddo
-               enddo
-            enddo
-         endif
-         if (dofst(kl)) then
-            do kt=1,3
-               do ks=1,3
-                  sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
-                  do ls=1,3
-                     call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
-                     detrat=detratin*d15(3*ks+kt+3)*d2
-                     fkl=detrat*fst(ks,ls,kl)
-!                    below is the same as g2bval but with independent pairs picked out
-                     do i=1,npart-1
-                        if (k.le.i .and. doindpair) cycle !only do independent pairs
-                        do j=i+1,npart
-                           if ((k.eq.j .or. l.eq.j) .and. doindpair) cycle ! only do independent pairs
-                           ij=j-i*(1+i-2*npart)/2-npart
-                           do js=1,4
-                              d2b(:,js,ij)=d2b(:,js,ij) &
-                                 +fkl*(sxzl(:,i,i)*sxzl(js,j,j)-sxzl(:,i,j)*sxzl(js,j,i))
-                           enddo
-                        enddo
-                     enddo
-                  enddo
-               enddo
-            enddo
-         endif
-      enddo
-   enddo
-   end subroutine paircorrelation
 
    subroutine corpsi(sp,d1b,d2b,d3b)
    complex(kind=r8), intent(in) :: sp(:,:)
@@ -369,8 +265,7 @@ contains
    complex(kind=r8) :: sxzi1(4,npart,npart),di1
    complex(kind=r8) :: sxzj1(4,npart,npart),sxzj2(4,npart,npart)
    complex(kind=r8) :: sxzk(4,npart,npart),dj1,dj2,dk
-   integer(kind=i4) :: i,j,ij,iop,is,it,js,k,ks,ijk,kc
-   integer(kind=i4) :: n,m,mn !these are used to that I can select the independent pair terms
+   integer(kind=i4) :: i,j,ij,iop,is,it,js,k,ks,ijk
    d1b=czero
    d2b=czero
    d3b=czero
@@ -388,7 +283,6 @@ contains
       call g2bval(d2b,sxzj,f1)
       call g3bval(d3b,sxzj,f1,.false.)
    enddo
-   if (doindpair2) then
    ij=0
    do i=1,npart-1
       do iop=1,15
@@ -396,31 +290,30 @@ contains
       enddo
       do j=i+1,npart
          ij=ij+1
-         if (doft(ij) .or. doftpp(ij) .or. doftnn(ij)) then
-            do it=1,3
+         if (doft(ij)) then
+            do it=1,2
+               fij=ft(ij)
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
                call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
                detrat=d15(3+it)*d2
-               fij=detrat*ft(ij)
-               if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
-               if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
+               fij=detrat*fij
                call g1bval(d1b,sxzj,fij)
-               do m=1,npart-1
-                  if (i.le.m) cycle
-                  do n=m,npart
-                     if (i.eq.n .or. j.eq.n) cycle
-                     mn=n-m*(1+m-2*npart)/2-npart
-                     do kc=1,4
-                        d2b(:,kc,mn)=d2b(:,kc,mn) &
-                           +fij*(sxzj(:,m,m)*sxzj(kc,n,n)-sxzj(:,m,n)*sxzj(kc,n,m))
-                     enddo
-                  enddo
-               enddo
-               if (doindpair2) then
-                  call paircorrelation(sp,sxzj,detrat,d2b,.false.) !CODY
-               endif
+               call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
             enddo
+         endif
+         if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
+            it=3
+            fij=ft(ij)
+            if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
+            if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
+            sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
+            call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
+            detrat=d15(3+it)*d2
+            fij=detrat*fij
+            call g1bval(d1b,sxzj,fij)
+            call g2bval(d2b,sxzj,fij)
+            call g3bval(d3b,sxzj,fij,.false.)
          endif
          if (dofs(ij)) then
             do is=1,3
@@ -430,20 +323,7 @@ contains
                   detrat=d15(is)*d2
                   fij=detrat*fs(is,js,ij)
                   call g1bval(d1b,sxzj,fij)
-                  do m=1,npart-1
-                     if (i.le.m) cycle
-                     do n=m,npart
-                        if (i.eq.n .or. j.eq.n) cycle
-                        mn=n-m*(1+m-2*npart)/2-npart
-                        do kc=1,4
-                           d2b(:,kc,mn)=d2b(:,kc,mn) &
-                              +fij*(sxzj(:,m,m)*sxzj(kc,n,n)-sxzj(:,m,n)*sxzj(kc,n,m))
-                        enddo
-                     enddo
-                  enddo
-                  if (doindpair2) then
-                     call paircorrelation(sp,sxzj,detrat,d2b,.false.) !CODY
-                  endif
+                  call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
                enddo
             enddo
@@ -458,20 +338,7 @@ contains
                      detrat=d15(3*is+it+3)*d2
                      fij=detrat*fst(is,js,ij)
                      call g1bval(d1b,sxzj,fij)
-                     do m=1,npart-1
-                        if (i.le.m) cycle
-                        do n=m,npart
-                           if (i.eq.n .or. j.eq.n) cycle
-                           mn=n-m*(1+m-2*npart)/2-npart
-                           do kc=1,4
-                              d2b(:,kc,mn)=d2b(:,kc,mn) &
-                                 +fij*(sxzj(:,m,m)*sxzj(kc,n,n)-sxzj(:,m,n)*sxzj(kc,n,m))
-                           enddo
-                        enddo
-                     enddo
-                     if (doindpair2) then
-                        call paircorrelation(sp,sxzj,detrat,d2b,.false.) !CODY
-                     endif
+                     call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
                   enddo
                enddo
@@ -479,9 +346,6 @@ contains
          endif
       enddo
    enddo
-   else
-      call paircorrelation(sp,sxz0,cone,d2b,.false.)
-   endif
    if (.not.dof3) return !skip 3-body correlation
    do i=1,npart-2
       do is=1,3
