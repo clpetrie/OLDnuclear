@@ -46,18 +46,39 @@ Now let's make some approximations. Siemens says that the classical turning poin
    \frac{d\sigma}{d\Omega} = \frac{\pi}{k^2} \left|\sum\limits_{l=0}^{kr-1/2} \sqrt{2l+1} Y_l^0(\theta)\right|^2
 \end{equation}
 The next thing Siemens does is to approximate these for large and small scattering angles. I had a hard time doing the integrals they did so I'll just quote the results here. These are equations 3.1.9a and 3.1.9b in the book.
-\begin{equation}
+\begin{align}
    \frac{d\sigma}{d\Omega} \approx
 \begin{cases}
    \frac{2R}{\pi} k\theta^2 \sin\theta\cos^2\left(kR\theta+\frac{\pi}{4}\right),& \text{for } kR\theta \gg 1 \\
    \frac{k^2R^4}{4}(1-(kR\theta/2)^2)^2,& \text{for } kR\theta \ll 1
 \end{cases}
-\end{equation}
+\label{eq:crossapprox}
+\end{align}
 I have plotted these two as in figure 3.2 of the book. My reproduction isn't exactly like there's but it is roughly the same.
 \begin{figure}[h]
    \centering
    \includegraphics[width=0.5\textwidth]{fig3_2.png}
    \caption{Comparison of approximations where R=7 and k=2. The dashed curve is low angle approximate and the dotted curve is the high angle approximation.}
 \end{figure}
+
+\subsection*{Nuclear Sizes and the Saturation of Nuclear Forces}
+We can use these expressions to learn about the radius of the nucleus. For example if we look for the minimum of the large angle of equation~\ref{eq:crossapprox} we get an expression in terms of the radius.
+\begin{align}
+   \frac{d}{d\theta}\frac{d\sigma}{d\Omega} &= -\frac{2R}{\pi k\theta^2\sin\theta}2\cos\left(kR\theta+\frac{\pi}{4}\right) + \frac{2R}{\pi k}\cos^2\left(kR\theta+\frac{\pi}{4}\right)\left(-\frac{2}{\theta^3\sin\theta}-\frac{\cos\theta}{\theta^2\sin^2\theta}\right) \\
+   &= -\frac{4R}{\pi k\theta^2\sin\theta}\cos\left(kR\theta+\frac{\pi}{4}\right) \left[1 + \cos\left(kR\theta+\frac{\pi}{4}\right)\left(-\frac{1}{\theta}-\frac{1}{2}\frac{\cos\theta}{\sin\theta}\right)\right] \\
+\end{align}
+This is zero when the argument of the $\cos$ is $n\frac{\pi}{2}$, where n is some integer. So solving $kR\theta+\frac{\pi}{4} = n\frac{\pi}{2}$ we get
+\begin{equation}
+   \theta_{min} = \frac{\pi}{4kR}(2n-1).
+\end{equation}
+For some reason (I assume based on where the first minimum in the experimental curves is located) Siemens says that
+\begin{equation}
+   \boxed{ \theta_{min} = \frac{5\pi}{4kR} }.
+\end{equation}
+Or equivalently for the nuclear volue $\Omega_r$.
+\begin{equation}
+   \Omega_r = \frac{4}{3}\pi R^3 = \frac{125}{48}\frac{\pi^4}{(k\theta_{min})^3}
+\end{equation}
+He then goes to say based on figure 3.1 in his book that if $\epsilon = 84$ MeV for Pb, where $k = \sqrt{2m_n\epsilon/\hbar^2} \approx 2.0$ fm$^{-1}$, and with $\theta_{min} \approx 15^\circ$ you get an esimated radius of lead to be $7.5$ fm. A quick google search shows that the radius is somewhere around $7$ fm.
 
 \end{document}
