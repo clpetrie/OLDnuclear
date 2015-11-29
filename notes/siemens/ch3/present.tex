@@ -1,0 +1,44 @@
+\documentclass{beamer}
+\usepackage{amsmath}
+%\usepackage{beamerthemesplit} % new 
+\usetheme{Madrid}
+\usefonttheme[onlymath]{serif}
+\setbeamertemplate{frametitle}[default][center] %center slide titles
+
+\begin{document}
+\title{Notes on Siemens Ch. 3}
+\author{Cody Petrie} 
+\date{\today} 
+
+%start slides
+\frame{\titlepage} 
+
+\frame{\frametitle{The Black Sphere}
+\begin{itemize}
+   \item Model neutron scattering from nuclei as a particle being absorbed by spherical object.
+   \item Start by expanding an incident plane wave in terms of spherical harmonics.
+   \begin{align}
+      e^{i\mathbf{k}\cdot\mathbf{r}} &= \sum\limits_l C_l Y_l^0(\theta) \\
+      e^{ikz} &\approx \sum\limits_l \frac{\sqrt{\pi}}{kr} \sqrt{2l+1} \, i^{l+1} \left( e^{-i(kr-\frac{l\pi}{2})} - e^{i(kr-\frac{l\pi}{2})} \right) Y_l^0(\theta)
+   \end{align}
+   \item Here we have used the fact that $\mathbf{k}\cdot\mathbf{r}$ only depends on $\theta$, and not on $\phi$, thus $m=0$. Also, we have used various identities and the orthonormality of spherical harmonics.
+\end{itemize}
+}
+
+\frame{\frametitle{The Black Sphere}
+\begin{itemize}
+   \item Scattering only happens for short time
+   \begin{equation}
+      \phi(r\rightarrow\infty) = \sum\limits_l \frac{\sqrt{\pi}}{kr} \sqrt{2l+1} \, i^{l+1} \left( e^{-i(kr-\frac{l\pi}{2})} - \eta_l e^{i(kr-\frac{l\pi}{2})} \right) Y_l^0(\theta)
+   \end{equation}
+   \item Scattered wave is just the total wave function minus the incident wave function, $\phi_{sct} = e^{ikz}-\phi(r\rightarrow\infty)$.
+   \begin{equation}
+      \phi(r\rightarrow\infty) = e^{ikz} + f(\theta)\frac{e^{ikr}}{r}
+   \end{equation}
+   \begin{equation}
+      f(\theta) = \sum\limits_l i \frac{\sqrt{\pi}}{k}\sqrt{2l+1} Y_l^0(\theta) (1-\eta_l)
+   \end{equation}
+\end{itemize}
+}
+
+\end{document}
