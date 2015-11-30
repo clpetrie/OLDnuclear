@@ -38,6 +38,52 @@
    \begin{equation}
       f(\theta) = \sum\limits_l i \frac{\sqrt{\pi}}{k}\sqrt{2l+1} Y_l^0(\theta) (1-\eta_l)
    \end{equation}
+   \item This looks like a scattering amplitude, $\frac{d\sigma}{d\Omega} = |f(\theta)|^2$.
+\end{itemize}
+}
+
+\frame{\frametitle{The Black Sphere}
+\begin{itemize}
+   \item \textbf{Approximations:} Classical turning point is where $k^2 = l(l+1)/R^2 \approx (l+\frac{1}{2})^2/R^2$. If particle passes inside the range of force ($R$) you get absorption ($\eta_l = 0$), but if not you get none ($\eta_l$).
+   \begin{equation}
+      \frac{d\sigma}{d\Omega} = \frac{\pi}{k^2} \left|\sum\limits_{l=0}^{kr-1/2} \sqrt{2l+1} Y_l^0(\theta)\right|^2
+   \end{equation}
+   \item \textbf{More Approximations:} Here we approximate this for large and small angle scattering. I was not able to figure out the integrals so I'll just quote their answer here.
+   \begin{align}
+      \frac{d\sigma}{d\Omega} \approx
+   \begin{cases}
+      \frac{2R}{\pi} k\theta^2 \sin\theta\cos^2\left(kR\theta+\frac{\pi}{4}\right),& \text{for } kR\theta \gg 1 \\
+      \frac{k^2R^4}{4}(1-(kR\theta/2)^2)^2,& \text{for } kR\theta \ll 1
+   \end{cases}
+   \end{align}
+\end{itemize}
+}
+
+\frame{\frametitle{The Black Sphere}
+\begin{figure}[h]
+   \centering
+   \includegraphics[width=0.4\textwidth]{../fig3_2.png}
+   \caption{Rough reproduction of figure 3.2 in the book.}
+\end{figure}
+\begin{itemize}
+   \item To find the angle of minumum scattering I have taken the derivative of the high angle scattering and set it equal to zero to get.
+   \begin{equation}
+      \theta_{min} = \frac{\pi}{4kR}(2n-1)
+   \end{equation}
+   \item Experiment must show that it's actually
+   \begin{equation}
+      \theta_{min} = \frac{5\pi}{4kR}
+   \end{equation}
+\end{itemize}
+}
+
+\frame{\frametitle{The Black Sphere}
+\begin{equation}
+   \theta_{min} = \frac{5\pi}{4kR}
+\end{equation}
+\begin{itemize}
+   \item Now we can use this diffraction pattern to estimate the radius of nuclei. For Pb with $\epsilon = 84$ MeV we get $k = \sqrt{2m_N\epsilon/\hbar} \approx 2.0$ fm$^{-1}$. Now the graph above shows that $\theta_{min} \approx 15^\circ$. This gives us a radius of 7.5 fm.
+   \item A quick google search gives Pb a radius of 7 fm.
 \end{itemize}
 }
 
