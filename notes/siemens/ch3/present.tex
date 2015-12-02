@@ -31,7 +31,7 @@
    \begin{equation}
       \phi(r\rightarrow\infty) = \sum\limits_l \frac{\sqrt{\pi}}{kr} \sqrt{2l+1} \, i^{l+1} \left( e^{-i(kr-\frac{l\pi}{2})} - \eta_l e^{i(kr-\frac{l\pi}{2})} \right) Y_l^0(\theta)
    \end{equation}
-   \item Scattered wave is just the total wave function minus the incident wave function, $\phi_{sct} = e^{ikz}-\phi(r\rightarrow\infty)$.
+   \item Scattered wave is just the total wave function minus the incident wave function, $\phi_{sct} = \phi(r\rightarrow\infty) - e^{ikz}$.
    \begin{equation}
       \phi(r\rightarrow\infty) = e^{ikz} + f(\theta)\frac{e^{ikr}}{r}
    \end{equation}
@@ -44,7 +44,7 @@
 
 \frame{\frametitle{The Black Sphere}
 \begin{itemize}
-   \item \textbf{Approximations:} Classical turning point is where $k^2 = l(l+1)/R^2 \approx (l+\frac{1}{2})^2/R^2$. If particle passes inside the range of force ($R$) you get absorption ($\eta_l = 0$), but if not you get none ($\eta_l$).
+   \item \textbf{Approximations:} Classical turning point is where $k^2 = l(l+1)/R^2 \approx (l+\frac{1}{2})^2/R^2$. If particle passes inside the range of force ($R$) you get absorption ($\eta_l = 0$), but if not you get none ($\eta_l = 1$).
    \begin{equation}
       \frac{d\sigma}{d\Omega} = \frac{\pi}{k^2} \left|\sum\limits_{l=0}^{kr-1/2} \sqrt{2l+1} Y_l^0(\theta)\right|^2
    \end{equation}
@@ -116,7 +116,7 @@
    \begin{equation}
       H = \frac{\mathbf{p}^2}{2m_N}+U(\mathbf{r}).
    \end{equation}
-   \item Let's compare this to the absorbing model. Experiment tells us that $\sigma_{el}$ and $\sigma_{abs}$ should be comparable, where.
+   \item Let's compare this to the black sphere model. Experiment tells us that $\sigma_{el}$ and $\sigma_{abs}$ should be comparable, where.
    \begin{equation}
       \sigma_{tot} = \sigma_{el} + \sigma_{abs}
    \end{equation}
@@ -165,7 +165,7 @@
 
 \frame{\frametitle{Optical Model}
 \begin{itemize}
-   \item Now you can look at probability density and see how fast things attenuate.
+   \item Now you can look at probability density and see how fast it attenuates.
    \begin{equation}
       \left|\phi(\mathbf{r})\right|^2 \sim e^{-2\kappa x}
    \end{equation}
@@ -186,7 +186,7 @@
    \end{equation}
    \item Fitting the results to various forms for thse potentials shows that the following gives good results.
    \begin{align}
-      U(r) &= U_0f((r-R(A))/r_u)+U_C(r) \\
+      U(r) &= U_0f((r-R(A))/a_u)+U_C(r) \\
       W(r) &= \left(W_0-4W_1a_W\frac{\partial}{\partial r}\right)f((r-R(A))/a_W) \\
       U^{ls}(r) &= U^{ls}_0\frac{1}{r}\frac{\partial}{\partial r}f((r-R(A))/a_{ls})
    \end{align}
