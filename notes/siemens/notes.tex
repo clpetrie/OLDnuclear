@@ -13,8 +13,9 @@
 \begin{document}
 \maketitle
 
-\section*{Chapter 3}
-\subsection*{The Black Sphere}
+\setcounter{section}{2}
+\section{Scattering by Nuclei}
+\subsection{The Black Sphere}
 To talk about the scattering of a neutron from some nuclei we are first going to consider scattering from an absorbing spherical object. We start by assuming the incident neutron beam is a plane wave $e^{ikz}$. We then expand this plane wave in terms of legendre polynomials in the scattering regiem.
 
 \input{expandplane}
@@ -62,7 +63,7 @@ I have plotted these two as in figure 3.2 of the book. My reproduction isn't exa
    \caption{Comparison of approximations where R=7 and k=2. The dashed curve is low angle approximate and the dotted curve is the high angle approximation.}
 \end{figure}
 
-\subsection*{Nuclear Sizes and the Saturation of Nuclear Forces}
+\subsection{Nuclear Sizes and the Saturation of Nuclear Forces}
 We can use these expressions to learn about the radius of the nucleus. For example if we look for the minimum of the large angle of equation~\ref{eq:crossapprox} we get an expression in terms of the radius.
 \begin{align}
    \frac{d}{d\theta}\frac{d\sigma}{d\Omega} &= -\frac{2R}{\pi k\theta^2\sin\theta}2\cos\left(kR\theta+\frac{\pi}{4}\right) + \frac{2R}{\pi k}\cos^2\left(kR\theta+\frac{\pi}{4}\right)\left(-\frac{2}{\theta^3\sin\theta}-\frac{\cos\theta}{\theta^2\sin^2\theta}\right) \\
@@ -93,7 +94,7 @@ or
 where $r_0 \approx 1.3$ fm or $\Omega_0 = \frac{4}{3} \pi r_0^3 \approx 9$ fm$^3$.
 This conparison with molecular forces tells us two things about the force between nucleons. First, the attractive force falls off quickly with separation, and second, The force is repulsive as the nucleons get close enough.
 
-\subsection*{The Optical Model}
+\subsection{The Optical Model}
 Now that we have talked about the black sphere model, which accounts for absorption, let's compare this with other models. Let's start with the potential model. We model the motion of the nucleons with a Hamiltonian
 \begin{equation}
    H = \frac{\mathbf{p}^2}{2m_N}+U(\mathbf{r}).
@@ -154,7 +155,7 @@ which falls off by $1/e$ at the mean free path of
    \label{eq:meanfreepath}
 \end{equation}
 
-Of course we know that there should be spin dependant pieces to the Hamiltonian and so we include a spin-orbit term and call it the \textbf{Phenomenological Optical Model}.
+Of course we know that there should be spin dependant pieces to the Hamiltonian and so we include a spin-orbit term and call it the \textbf{Phenomenological Optical Model}. The optical model is given this name for the fact that it allows for partial absorption and partial transmission of an incident beam, like in optics.
 \begin{align}
    H^{POM}=\frac{\mathbf{p}^2}{2m_H} + U(r) + \mathbf{l}\cdot\mathbf{s}U^{ls}(r) - iW(r)
 \end{align}
@@ -199,5 +200,22 @@ Notice how it approaches 1 inside the nuclei and falls from 0.9 to 0.1 as $r$ va
 Looking at this Hamiltonian we recognize that it's more like the $\mathcal{T}$ matrix that we encountered in chapter 2 than a true Hamiltonian. It doesn't conserve probability and it depends on the energy. We will see the connection next chapter between the $\mathcal{T}$ and the optical Hamiltonian.
 
 One last riddle the book mentions is in relation to the magnitude of $W_0$. Using equations~\ref{eq:Wwithkappa} and \ref{eq:meanfreepath} the mean free path is of a 40 MeV neutron is estimated to be 5 fm, where the $\lambda = (n\sigma)^{-1} \approx 0.4$ fm, where $\sigma \approx 4\pi d\sigma/d\Omega$, and $n=(4\pi r_0^3/3)^{-1}$. This is off by a factor of about 10. This riddle will be solved in chapter 4.
+
+\subsection{Nuclear Matter}
+Given the success of this model it is appropriate to think of a nucleus of a uniform center surrounded by a surface that is about one particle thick. This uniform center, that exists in all nuclei, can be though of as a drop of nuclear matter.
+
+It is convenient then to sometimes think of these nuclear centers extending on forever (obviously having to neglect the Coulomb interaction which pushed the nucleus apart). This can make calculations easier. One way in which this is made easier is in the fact that correlations which depend on the coordinates of two particles, $\mathbf{r_1}$ and $\mathbf{r_2}$, now only depend on one coordinate, the differenct $\mathbf{r_1}-\mathbf{r_2}$ because of translational invariance.
+
+\subsection{Electromagnetic Forces; Scattering of Electrons and Protons by Nuclei}
+To experimentally learn about the the electrostatic potential it is convenient to scatter electrons rather than protons from a nucleus, since the electron will not feel the nuclear force. This can be done within the born approximation in the usual way, by making the interaction (electrostatic) smaller than the kinetic energy.
+
+It turns out that the shape of the charge distribution is similar to the optical potential and thus can be fit the the Woods-Saxon shape. If fit to this shape the thickness is about $0.55$ fm, and the radius is about $R(A) \approx 1.15 ~\mathrm{fm}A^{1/3}$. These numbers are a little smaller than the equivalent values for the potential. It makes sence that the potential reaches farther than the charge density.
+
+Handling this coulomb potential is tedious theoretically because of its long range, but it is at least straight forward.
+
+\subsection{Scattering of Pions by Nuclei}
+Figure 3.5 in the book shows the differential cross section of negative pions scattering from ${}^{12}C$ and shows the same diffractive pattern seen before. So here there is also both elastic and absorptive scattering. Before we said that something was absorbed if the enregy changed from the C.M. energy, but with pions the final state may not contain any pions, and so it true absorption.
+
+To be able to conserve both energy and momentum you have to have at least two nucleons in the scattering process. The first nucleon will absorb the pion and create a delta. Then the delta will scatter inelastically with the second nucleon creating two nucleons again.
 
 \end{document}

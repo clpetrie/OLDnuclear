@@ -845,12 +845,6 @@ contains
    write(6,'(''chkpot, v= '',6e15.7)') vc+vtau+vsig+vsigtau
    call vnpsi2(w,.true.)
    write(6,'(''hpsi,   v= '',6e15.7)') sum(w%v8all(1:6))
-!   open(10293,file='chkpotold.dat',position='append') !DELETE
-!   open(102932,file='hpsiold.dat',position='append') !DELETE
-!   write(10293,'(6e15.7)') vc+vtau+vsig+vsigtau !DELETE
-!   write(102932,'(6e15.7)') sum(w%v8all(1:6)) !DELETE
-!   close(10293) !DELETE
-!   close(102932) !DELETE
    end subroutine chkpot
 
    subroutine chkls(w)
