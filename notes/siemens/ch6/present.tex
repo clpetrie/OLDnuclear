@@ -1,0 +1,121 @@
+\documentclass{beamer}
+\usepackage{amsmath}
+%\usepackage{beamerthemesplit} % new 
+\usetheme{Madrid}
+\usefonttheme[onlymath]{serif}
+\setbeamertemplate{frametitle}[default][center] %center slide titles
+
+%My commands
+\newcommand{\ket}[1]{\left| #1 \right>}
+\newcommand{\bra}[1]{\left< #1 \right|}
+\newcommand{\braket}[2]{\left<\left. #1 \right| #2 \right>}
+
+\begin{document}
+\title{Notes on Siemens Ch. 6}
+\author{Cody Petrie} 
+\date{\today} 
+
+%start slides
+\frame{\titlepage} 
+
+\frame{\frametitle{Interactions Beyond the Mean Field}
+\begin{itemize}
+   \item The mean field approximation gives us basic features of nuclei. But now we're going to move beyond the mean field approximation.
+   \item The first thing we are going to do is look at the pairing term to the binding energy.
+   \begin{equation}
+      B_p = \frac{\left[(-1)^N+(-1)^Z\right]\delta}{A^{1/2}}
+   \end{equation}
+   \item This gives even-even nuclei a tighter binding energy. Also it turns out that the ground state of even-even nuclei have zero angular momentum.
+   \item To explain these things we are going to go beyond the independent-particle motion (mean field).
+\end{itemize}
+}
+
+\frame{\frametitle{Interactions Beyond the Mean Field}
+\begin{itemize}
+   \item  Add a perturbation to the mean field Hamiltonian ($H_R$ is called the residual interaction)
+   \begin{equation}
+      H = H_{MF} + H_R
+   \end{equation}
+   \begin{itemize}
+      \item The eigenstates of $H_{MF}$ are Slater determinants (Correlated SD's?).
+   \end{itemize}
+   \item One solution to this is to diagonalize $H_R$ in the $H_{MF}$ basis, but this requires large calculations.
+   \item We are going to use other methods in this chapter. We will split (crudely) into long-range and short-range parts, and look at short-range parts here.
+\end{itemize}
+}
+
+\frame{\frametitle{The $\delta$-Force}
+\begin{itemize}
+   \item Look at degenerate states of $H_{MF}$ because $H_R$ with have a decisive influence.
+   \item Start with $H_{MF}$ in a full $j$ state and two identical nucleons in the next $j$ state.
+   \begin{align}
+      \psi^{nlj}_{JM}(1,2) &= \sum\limits_{m_1m_2} \braket{jm_1jm_2}{JM} \mathcal{A}\left[\Phi_{nljm_1}(1)\Phi_{nljm_2}(2)\right] \\
+      \Phi_{nljm_1} &= \frac{1}{2} u_nlj(r) \sum\limits_{m,s} \braket{lm\frac{1}{2}s}{jm_1}Y_l^m(\theta,\phi)\chi_s
+   \end{align}
+   \item The shortest range for $H_R$ is a $\delta$-force.
+   \begin{equation}
+      H_R = V_0 \delta(\mathbf{r}_1 - \mathbf{r}_2)
+   \end{equation}
+\end{itemize}
+}
+
+\frame{\frametitle{The $\delta$-Force}
+\begin{itemize}
+   \item This Hamiltonian gives an energy
+   \begin{align}
+      E_R &= V_0 \int \psi^*_{JM}\delta(\mathbf{r}_1-\mathbf{r}_2)\psi_{JM}d^3\mathbf{r}_1 d^3\mathbf{r}_2 \\
+      &= \frac{V_0\left[1+(-1)^J\right](2j+1)^2}{32\pi (2J+1)}\left|\braket{j,\frac{1}{2},j,-\frac{1}{2}}{J,0}\right|^2 \int\limits_0^\infty r^{-2}u^4_{nlj(r) dr}
+   \end{align}
+   \item Note here that $E_R$ vanishes for odd values of $J$. This means that two identical Fermi particles in the same j-shell can only be in even angular-momentum states.
+   \item For an attractive force ($V_0$) the lowest energy has $J=0$ and the first excited state is $J=2$.
+\end{itemize}
+}
+
+\frame{\frametitle{The $\delta$-Force}
+\begin{itemize}
+   \item For all $j> \frac{3}{2}$ the difference in energies of these two states is
+   \begin{equation}
+      \left|(E_2-E_0)/E_0\right| \approx \frac{3}{4}
+   \end{equation}
+   which is large as seen in figure 6.2 of the book.
+   \item The two nucleons have their largest spatial overlap in this state.
+   \item Thus an attractive $\delta$-interaction decreases the energy.
+\end{itemize}
+}
+
+\frame{\frametitle{The Degenerate Pairing Model}
+\begin{itemize}
+   \item A main feature of the $\delta$-force that is maintained in the pairing force is that it only has non-zero matrix elements between time-reversed states. Also, they non-zero elements are all identital
+   \begin{equation}
+      \braket{jm_1\overline{jm_1}}{jm_2\overline{jm_2}} \equiv -G
+   \end{equation}
+   \item Let's use the basis states $j+\frac{1}{2} \equiv \Omega$. Now the Schr\"odinger equation becomes
+   \begin{equation}
+      -G\begin{pmatrix} 1 & 1 & \cdots & 1 \\ 1 & \hfill & \hfill & 1 \\ \vdots & \ddots & \vdots & \hfill \\ 1 & \hfill & \cdots & 1\end{pmatrix}
+      \begin{pmatrix} x_1 \\ x_2 \\ \vdots \\ x_\Omega \end{pmatrix}
+      = E\begin{pmatrix} x_1 \\ x_2 \\ \vdots \\ x_\Omega \end{pmatrix}
+   \end{equation}
+   \begin{equation}
+      -G(x_1 + \cdots + x_\Omega) = Ex_1 = Ex_2 = \cdots = Ex_\Omega
+   \end{equation}
+\end{itemize}
+}
+
+\frame{\frametitle{The Degererate Pairing Model}
+\begin{equation}
+   -G(x_1 + \cdots + x_\Omega) = Ex_1 = Ex_2 = \cdots = Ex_\Omega
+\end{equation}
+\begin{itemize}
+   \item This has solutions
+   \begin{equation}
+      E = -G\Omega, \qquad \vec{x} = \frac{1}{\sqrt{\Omega}}(1,1,\cdots,1)
+   \end{equation}
+   and
+   \begin{equation}
+      E=0, \qquad x_1+x_2+\cdots+x_\Omega = 0.
+   \end{equation}
+
+\end{itemize}
+}
+
+\end{document}
