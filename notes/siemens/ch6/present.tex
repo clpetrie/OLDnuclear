@@ -21,7 +21,7 @@
 \frame{\frametitle{Interactions Beyond the Mean Field}
 \begin{itemize}
    \item The mean field approximation gives us basic features of nuclei. But now we're going to move beyond the mean field approximation.
-   \item The first thing we are going to do is look at the pairing term to the binding energy.
+   \item The first thing we are going to do is look at the pairing term to the binding energy (equation 4.3.2).
    \begin{equation}
       B_p = \frac{\left[(-1)^N+(-1)^Z\right]\delta}{A^{1/2}}
    \end{equation}
@@ -37,7 +37,7 @@
       H = H_{MF} + H_R
    \end{equation}
    \begin{itemize}
-      \item The eigenstates of $H_{MF}$ are Slater determinants (Correlated SD's?).
+      \item The eigenstates of $H_{MF}$ are Slater determinants (Uncorrelated SD's?).
    \end{itemize}
    \item One solution to this is to diagonalize $H_R$ in the $H_{MF}$ basis, but this requires large calculations.
    \item We are going to use other methods in this chapter. We will split (crudely) into long-range and short-range parts, and look at short-range parts here.
@@ -67,7 +67,7 @@
       &= \frac{V_0\left[1+(-1)^J\right](2j+1)^2}{32\pi (2J+1)}\left|\braket{j,\frac{1}{2},j,-\frac{1}{2}}{J,0}\right|^2 \int\limits_0^\infty r^{-2}u^4_{nlj(r) dr}
    \end{align}
    \item Note here that $E_R$ vanishes for odd values of $J$. This means that two identical Fermi particles in the same j-shell can only be in even angular-momentum states.
-   \item For an attractive force ($V_0$) the lowest energy has $J=0$ and the first excited state is $J=2$.
+   \item For an attractive force ($V_0<0$) the lowest energy has $J=0$ and the first excited state is $J=2$.
 \end{itemize}
 }
 
@@ -78,7 +78,7 @@
       \left|(E_2-E_0)/E_0\right| \approx \frac{3}{4}
    \end{equation}
    which is large as seen in figure 6.2 of the book.
-   \item The two nucleons have their largest spatial overlap in this state.
+   \item The two nucleons have their largest spatial overlap in this state ($J=0$).
    \item Thus an attractive $\delta$-interaction decreases the energy.
 \end{itemize}
 }
@@ -87,7 +87,7 @@
 \begin{itemize}
    \item A main feature of the $\delta$-force that is maintained in the pairing force is that it only has non-zero matrix elements between time-reversed states. Also, they non-zero elements are all identital
    \begin{equation}
-      \braket{jm_1\overline{jm_1}}{jm_2\overline{jm_2}} \equiv -G
+      \bra{jm_1\overline{jm_1}}V\ket{jm_2\overline{jm_2}} \equiv -G
    \end{equation}
    \item Let's use the basis states $j+\frac{1}{2} \equiv \Omega$. Now the Schr\"odinger equation becomes
    \begin{equation}
@@ -101,7 +101,7 @@
 \end{itemize}
 }
 
-\frame{\frametitle{The Degererate Pairing Model}
+\frame{\frametitle{The Degenerate Pairing Model}
 \begin{equation}
    -G(x_1 + \cdots + x_\Omega) = Ex_1 = Ex_2 = \cdots = Ex_\Omega
 \end{equation}
@@ -109,12 +109,48 @@
    \item This has solutions
    \begin{equation}
       E = -G\Omega, \qquad \vec{x} = \frac{1}{\sqrt{\Omega}}(1,1,\cdots,1)
+      \label{eq:groundenergy}
    \end{equation}
    and
    \begin{equation}
       E=0, \qquad x_1+x_2+\cdots+x_\Omega = 0.
+      \label{eq:excitedenergy}
    \end{equation}
+   \item Equation \ref{eq:groundenergy} refers to the $J=0$ state and the degerarate $J>0$ states have energy of equation \ref{eq:excitedenergy}.
 
+\end{itemize}
+}
+
+\frame{\frametitle{The Degenerate Pairing Model}
+\begin{itemize}
+   \item Now assume we have $n$ particles in the j-shell ($n\le2\Omega$), and $p$ pairs of particles, i.e. $J=0$ states.
+   \item Using equation \ref{eq:groundenergy} and the fact that $\Omega$ is the number of possible pairs we get
+   \begin{equation}
+      E(n,p)=-Gp\left(\Omega-n+p+1\right)
+   \end{equation}
+   \item Introduce \textit{seniority}, $S=n-2p$, the number of unpaired nucleons.
+   \begin{align}
+      E(n,S) &= -\frac{G}{4}(n-S)(2\Omega-n-S+2) \\
+      E(n,0) &= -\frac{1}{4}Gn(2\Omega-n+2) \\
+      E(2,0) &= -G\Omega \\
+      E(2\Omega,0) &= -Gn/2
+   \end{align}
+\end{itemize}
+}
+
+\frame{\frametitle{The Degenerate Pairing Model}
+\begin{itemize}
+   \item The pairing force creates as many pairs of particles as possible.
+   \item Even-even have zero spin.
+   \item Odd numbers of nuclei, spin is determined by unpaired nucleon.
+   \begin{equation}
+      E(2p+1,p)-E(2p,p) = Gp
+   \end{equation}
+   Which seems to agree with experiment
+   \item For even-even nuclei, the lowest excited state is that of one broken pair, which has symmetric energy
+   \begin{equation}
+      E(2p,p-1)-E(2p,p)=G\Omega
+   \end{equation}
 \end{itemize}
 }
 
