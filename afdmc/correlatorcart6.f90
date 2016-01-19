@@ -255,13 +255,13 @@ contains
       do k=1,npart
          sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
       enddo
+      kl=0
       do k=1,npart-1
          do kop=1,15
             call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxz0,k,sx15(:,kop,:,k),sp(:,k))
          enddo
          do l=k+1,npart
-   !Mathematica ij = FullSimplify[Sum[(npart - n), {n, 1, i - 1}] + (j - i)]
-            kl=l-k*(1+k-2*npart)/2-npart
+            kl=kl+1
             if (doft(kl)) then
                do kt=1,3
                   sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
@@ -339,38 +339,24 @@ contains
       enddo
       do j=i+1,npart
          ij=ij+1
-         if (doft(ij)) then
-            do it=1,2
-               fij=ft(ij)
+         if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
+            do it=1,3
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
                call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-               detrat=d15(3+it)*d2
-               fij=detrat*fij
+               fij=d15(3+it)*d2*ft(ij)
+               if (doftpp(ij) .and. it.eq.3) fij=fij+0.25_r8*ftpp(ij)
+               if (doftnn(ij) .and. it.eq.3) fij=fij+0.25_r8*ftnn(ij)
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
             enddo
-         endif
-         if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
-            it=3
-            fij=ft(ij)
-            if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
-            if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
-            sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
-            call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-            detrat=d15(3+it)*d2
-            fij=detrat*fij
-            call g1bval(d1b,sxzj,fij)
-            call g2bval(d2b,sxzj,fij)
-            call g3bval(d3b,sxzj,fij,.false.)
          endif
          if (dofs(ij)) then
             do is=1,3
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
                do js=1,3
                   call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
-                  detrat=d15(is)*d2
-                  fij=detrat*fs(is,js,ij)
+                  fij=d15(is)*d2*fs(is,js,ij)
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
@@ -384,8 +370,7 @@ contains
                   do js=1,3
                      call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
                         ,sx15j(:,3*js+it+3,:),sp(:,j))
-                     detrat=d15(3*is+it+3)*d2
-                     fij=detrat*fst(is,js,ij)
+                     fij=d15(3*is+it+3)*d2*fst(is,js,ij)
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
@@ -487,27 +472,6 @@ contains
    enddo
    end subroutine g2bval
 
-!   subroutine g2bvalip(d2b,sxz,fij,k,l)
-!   complex(kind=r8), intent(inout) :: d2b(:,:,:)
-!   complex(kind=r8), intent(in) :: sxz(:,:,:),fij
-!   integer(kind=i4) :: i,j,ij,js,k,l,ks,ls
-!   do i=1,npart-1
-!      if (k.le.i) cycle !only do independent pairs
-!      do j=i+1,npart
-!         if (k.eq.j .or. l.eq.j) cycle ! only do independent pairs
-!         ij=j-i*(1+i-2*npart)/2-npart
-!         do js=1,4
-!            do ks=1,4
-!               do ls=1,4
-!                  d2b(:,js,ij)=d2b(:,js,ij) &
-!                     +fij*(sxz(ks,k,k)*sxz(ls,l,l)-sxz(ks,k,l)*sxz(ls,l,k))
-!               enddo
-!            enddo
-!         enddo
-!      enddo
-!   enddo
-!   end subroutine g2bvalip
-
    subroutine g2bvalip(d2b,sxz,fij,k,l)
    complex(kind=r8), intent(inout) :: d2b(:,:,:)
    complex(kind=r8), intent(in) :: sxz(:,:,:),fij
@@ -516,14 +480,16 @@ contains
       if (k.le.i) cycle !only do independent pairs
       do j=i+1,npart
          if (k.eq.j .or. l.eq.j) cycle ! only do independent pairs
+!Mathematica ij = FullSimplify[Sum[(npart - n), {n, 1, i - 1}] + (j - i)]
          ij=j-i*(1+i-2*npart)/2-npart
          do js=1,4
-            do ks=1,4
-               do ls=1,4
+!            do ks=1,4
+!               do ls=1,4
                   d2b(:,js,ij)=d2b(:,js,ij) &
-                     +fij*(sxz(ks,k,k)*sxz(ls,l,l)-sxz(ks,k,l)*sxz(ls,l,k))
-               enddo
-            enddo
+!                     +fij*(sxz(ks,k,k)*sxz(ls,l,l)-sxz(ks,k,l)*sxz(ls,l,k))
+                     +fij*(sxz(:,i,i)*sxz(js,j,j)-sxz(:,i,j)*sxz(js,j,i))
+!               enddo
+!            enddo
          enddo
       enddo
    enddo
