@@ -254,11 +254,12 @@ contains
    d2b=czero
    d3b=czero
    call g1bval(d1b,sxz0,cone)
+   detrat=cone+fctau+sum(d1b*f1b)
    call g2bval(d2b,sxz0,cone)
    if (doindpair1) then
       call paircorrelation(sp,sxz0,cone,d2b,.true.)
    endif
-   detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
+   detrat=detrat+sum(d2b*f2b)
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
       detrat=detrat+sum(d3b*f3b)
@@ -370,7 +371,6 @@ contains
       call g2bval(d2b,sxzj,f1)
       call g3bval(d3b,sxzj,f1,.false.)
    enddo
-   if (doindpair2) then
    ij=0
    do i=1,npart-1
       do iop=1,15
@@ -378,27 +378,15 @@ contains
       enddo
       do j=i+1,npart
          ij=ij+1
-         if (doft(ij) .or. doftpp(ij) .or. doftnn(ij)) then
+         if (doft(ij).or.doftpp(ij).or.doftnn(ij)) then
             do it=1,3
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
                call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-               detrat=d15(3+it)*d2
-               fij=detrat*ft(ij)
-               if (doftpp(ij)) fij=fij+0.25_r8*ftpp(ij)
-               if (doftnn(ij)) fij=fij+0.25_r8*ftnn(ij)
+               fij=d15(3+it)*d2*ft(ij)
+               if (doftpp(ij) .and. it.eq.3) fij=fij+0.25_r8*ftpp(ij)
+               if (doftnn(ij) .and. it.eq.3) fij=fij+0.25_r8*ftnn(ij)
                call g1bval(d1b,sxzj,fij)
-               do m=1,npart-1
-                  if (i.le.m) cycle
-                  do n=m,npart
-                     if (i.eq.n .or. j.eq.n) cycle
-                     mn=n-m*(1+m-2*npart)/2-npart
-                     do kc=1,4
-                        d2b(:,kc,mn)=d2b(:,kc,mn) &
-                           +fij*(sxzj(:,m,m)*sxzj(kc,n,n)-sxzj(:,m,n)*sxzj(kc,n,m))
-                     enddo
-                  enddo
-               enddo
-               call paircorrelation(sp,sxzj,detrat,d2b,.false.)
+               call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
             enddo
          endif
@@ -407,47 +395,23 @@ contains
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
                do js=1,3
                   call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
-                  detrat=d15(is)*d2
-                  fij=detrat*fs(is,js,ij)
+                  fij=d15(is)*d2*fs(is,js,ij)
                   call g1bval(d1b,sxzj,fij)
-                  do m=1,npart-1
-                     if (i.le.m) cycle
-                     do n=m,npart
-                        if (i.eq.n .or. j.eq.n) cycle
-                        mn=n-m*(1+m-2*npart)/2-npart
-                        do kc=1,4
-                           d2b(:,kc,mn)=d2b(:,kc,mn) &
-                              +fij*(sxzj(:,m,m)*sxzj(kc,n,n)-sxzj(:,m,n)*sxzj(kc,n,m))
-                        enddo
-                     enddo
-                  enddo
-                  call paircorrelation(sp,sxzj,detrat,d2b,.false.)
+                  call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
                enddo
             enddo
-         endif         
-         if (dofst(ij)) then 
+         endif
+         if (dofst(ij)) then
             do it=1,3
                do is=1,3
                   sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3*is+it+3))))
                   do js=1,3
                      call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
                         ,sx15j(:,3*js+it+3,:),sp(:,j))
-                     detrat=d15(3*is+it+3)*d2
-                     fij=detrat*fst(is,js,ij)
+                     fij=d15(3*is+it+3)*d2*fst(is,js,ij)
                      call g1bval(d1b,sxzj,fij)
-                     do m=1,npart-1
-                        if (i.le.m) cycle
-                        do n=m,npart
-                           if (i.eq.n .or. j.eq.n) cycle
-                           mn=n-m*(1+m-2*npart)/2-npart
-                           do kc=1,4
-                              d2b(:,kc,mn)=d2b(:,kc,mn) &
-                                 +fij*(sxzj(:,m,m)*sxzj(kc,n,n)-sxzj(:,m,n)*sxzj(kc,n,m))
-                           enddo
-                        enddo
-                     enddo
-                     call paircorrelation(sp,sxzj,detrat,d2b,.false.)
+                     call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
                   enddo
                enddo
@@ -455,9 +419,6 @@ contains
          endif
       enddo
    enddo
-   else
-      call paircorrelation(sp,sxz0,cone,d2b,.false.)
-   endif
    if (.not.dof3) return !skip 3-body correlation
    do i=1,npart-2
       do is=1,3
