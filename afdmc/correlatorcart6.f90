@@ -251,48 +251,50 @@ contains
    d3b=czero
    call g1bval(d1b,sxz0,cone)
    call g2bval(d2b,sxz0,cone)
-   do k=1,npart
-      sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
-   enddo
-   do k=1,npart-1
-      do kop=1,15
-         call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxz0,k,sx15(:,kop,:,k),sp(:,k))
+   if (doindpair) then
+      do k=1,npart
+         sx15(:,:,:,k)=conjg(opmult(conjg(sxz0(:,k,:))))
       enddo
-      do l=k+1,npart
-!Mathematica ij = FullSimplify[Sum[(npart - n), {n, 1, i - 1}] + (j - i)]
-         kl=l-k*(1+k-2*npart)/2-npart
-         if (doft(kl)) then
-            do kt=1,3
-               sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
-               call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
-               fkl=d15(3+kt)*d2*ft(kl)
-               call g2bvalip(d2b,sxzl,fkl,k,l)
-            enddo
-         endif
-         if (dofs(kl)) then 
-            do ks=1,3
-               sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
-               do ls=1,3
-                  call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
-                  fkl=d15(ks)*d2*fs(ks,ls,kl)
+      do k=1,npart-1
+         do kop=1,15
+            call sxzupdate(sxzk(:,:,:,kop),d15(kop),sxz0,k,sx15(:,kop,:,k),sp(:,k))
+         enddo
+         do l=k+1,npart
+   !Mathematica ij = FullSimplify[Sum[(npart - n), {n, 1, i - 1}] + (j - i)]
+            kl=l-k*(1+k-2*npart)/2-npart
+            if (doft(kl)) then
+               do kt=1,3
+                  sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
+                  call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
+                  fkl=d15(3+kt)*d2*ft(kl)
                   call g2bvalip(d2b,sxzl,fkl,k,l)
                enddo
-            enddo
-         endif
-         if (dofst(kl)) then
-            do kt=1,3
+            endif
+            if (dofs(kl)) then 
                do ks=1,3
-                  sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
+                  sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
                   do ls=1,3
-                     call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
-                     fkl=d15(3*ks+kt+3)*d2*fst(ks,ls,kl)
+                     call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
+                     fkl=d15(ks)*d2*fs(ks,ls,kl)
                      call g2bvalip(d2b,sxzl,fkl,k,l)
                   enddo
                enddo
-            enddo
-         endif
+            endif
+            if (dofst(kl)) then
+               do kt=1,3
+                  do ks=1,3
+                     sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
+                     do ls=1,3
+                        call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
+                        fkl=d15(3*ks+kt+3)*d2*fst(ks,ls,kl)
+                        call g2bvalip(d2b,sxzl,fkl,k,l)
+                     enddo
+                  enddo
+               enddo
+            endif
+         enddo
       enddo
-   enddo
+   endif
    detrat=cone+fctau+sum(d1b*f1b)+sum(d2b*f2b)
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
@@ -485,14 +487,35 @@ contains
    enddo
    end subroutine g2bval
 
+!   subroutine g2bvalip(d2b,sxz,fij,k,l)
+!   complex(kind=r8), intent(inout) :: d2b(:,:,:)
+!   complex(kind=r8), intent(in) :: sxz(:,:,:),fij
+!   integer(kind=i4) :: i,j,ij,js,k,l,ks,ls
+!   do i=1,npart-1
+!      if (k.le.i) cycle !only do independent pairs
+!      do j=i+1,npart
+!         if (k.eq.j .or. l.eq.j) cycle ! only do independent pairs
+!         ij=j-i*(1+i-2*npart)/2-npart
+!         do js=1,4
+!            do ks=1,4
+!               do ls=1,4
+!                  d2b(:,js,ij)=d2b(:,js,ij) &
+!                     +fij*(sxz(ks,k,k)*sxz(ls,l,l)-sxz(ks,k,l)*sxz(ls,l,k))
+!               enddo
+!            enddo
+!         enddo
+!      enddo
+!   enddo
+!   end subroutine g2bvalip
+
    subroutine g2bvalip(d2b,sxz,fij,k,l)
    complex(kind=r8), intent(inout) :: d2b(:,:,:)
    complex(kind=r8), intent(in) :: sxz(:,:,:),fij
    integer(kind=i4) :: i,j,ij,js,k,l,ks,ls
    do i=1,npart-1
-      if (k.le.i .and. doindpair) cycle !only do independent pairs
+      if (k.le.i) cycle !only do independent pairs
       do j=i+1,npart
-         if ((k.eq.j .or. l.eq.j) .and. doindpair) cycle ! only do independent pairs
+         if (k.eq.j .or. l.eq.j) cycle ! only do independent pairs
          ij=j-i*(1+i-2*npart)/2-npart
          do js=1,4
             do ks=1,4

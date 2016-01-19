@@ -290,7 +290,8 @@ contains
                sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3+kt))))
                call sxzupdate(sxzl,d2,sxzk(:,:,:,3+kt),l,sx15l(:,3+kt,:),sp(:,l))
                detrat=detratin*d15(3+kt)*d2
-               fkl=detrat*ft(kl)
+               if (doindpair1) then fkl=detrat
+               if (doindpair2) then fkl=detrat*ft(kl)
                if (kt==3 .and. doftpp(kl)) fkl=fkl+0.25_r8*ftpp(kl)
                if (kt==3 .and. doftnn(kl)) fkl=fkl+0.25_r8*ftnn(kl)
 !              below is the same as g2bval but with independent pairs picked out
@@ -313,7 +314,8 @@ contains
                do ls=1,3
                   call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
                   detrat=detratin*d15(ks)*d2
-                  fkl=detrat*fs(ks,ls,kl)
+                  if (doindpair1) then fkl=detrat
+                  if (doindpair2) then fkl=detrat*fs(ks,ls,kl)
 !                 below is the same as g2bval but with independent pairs picked out
                   do i=1,npart-1
                      if (k.le.i .and. doindpair) cycle !only do independent pairs
@@ -336,7 +338,8 @@ contains
                   do ls=1,3
                      call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
                      detrat=detratin*d15(3*ks+kt+3)*d2
-                     fkl=detrat*fst(ks,ls,kl)
+                     if (doindpair1) then fkl=detrat
+                     if (doindpair2) then fkl=detrat*fst(ks,ls,kl)
 !                    below is the same as g2bval but with independent pairs picked out
                      do i=1,npart-1
                         if (k.le.i .and. doindpair) cycle !only do independent pairs
