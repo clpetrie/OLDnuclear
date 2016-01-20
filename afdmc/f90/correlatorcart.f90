@@ -34,7 +34,7 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
-   logical, private, save :: doindpair1 = .false. !CODY
+   logical, private, save :: doindpair1 = .true. !CODY
    logical, private, save :: doindpair2 = .false. !CODY
 contains
    subroutine initcormod(npartin,elin)
@@ -104,9 +104,12 @@ contains
          doft(ij)=abs(ftauin(i,j)).gt.cut
          doftpp(ij)=abs(ftauppin(i,j)).gt.cut
          doftnn(ij)=abs(ftaunnin(i,j)).gt.cut
+         dofst(ij)=.false. !2part
+         dofs(ij)=.false. !2part
+         doftpp(ij)=.false. !2part
+         doftnn(ij)=.false. !2part
          if (dofst(ij)) then
             fst(:,:,ij)=fsigtauin(:,i,:,j)
-            fst(:,:,ij)=cone !2part
             do is=1,3
                do js=1,3
                   do jz=1,4
@@ -127,7 +130,6 @@ contains
          endif
          if (dofs(ij)) then
             fs(:,:,ij)=fsigin(:,i,:,j)
-            fs(:,:,ij)=cone !2part
             do is=1,3
                do js=1,3
                   do jz=1,4
@@ -260,7 +262,7 @@ contains
       call paircorrelation(sp,sxz0,cone,d2b,.false.)
    endif
 !   detrat=detrat+sum(d2b*f2b)
-   detrat=detrat+3-2*sum(d2b*f2b)
+   detrat=detrat+3-2*sum(d2b*f2b) !2part
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
       detrat=detrat+sum(d3b*f3b)
