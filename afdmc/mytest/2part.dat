@@ -19,10 +19,10 @@
 11              # lpotpr 
 1.0             # central factor
 1.0             # tau factor
-1.0             # sigma factor
-1.0             # sigma tau factor
-1.0             # t factor
-1.0             # t tau factor
+0.0             # sigma factor 2part_1.0
+0.0             # sigma tau factor 2part_1.0
+0.0             # t factor 2part_1.0
+0.0             # t tau factor 2part_1.0
 0.0             # LS factor
 0.0             # LS tau tau factor
 no3
@@ -33,7 +33,7 @@ no3
 2000            # table points for radial functions
 20.0            # rmax for orbitals
 .true.          # divide by r?
-2               # particle number
+2               # particle number 2part_4
 0               # external potential
 1.0             # rcut in LS pair sampling
 5.0             # acut in LS pair sampling

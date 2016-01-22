@@ -1,0 +1,91 @@
+17              # A random number
+20.73554        # hbar^2/2m
+6               # 0 = vmc, 1=psitrial wt, 2 = elocal weight, 3 spazzatura
+.false.         # use lattice sites if true
+1000            # default number of walkers
+00              # equilibrium blocks
+50              # averaging blocks, if negative write out configurations after each block
+20              # steps/block, if negative don't compute averages and just write out confs
+0.00001         # time step
+0.2             # time step spin (vmc)
+-2.24           # trial energy
+0.0             # drift cut off
+1.1             # drastic walker upperbound
+0.9             # drastic walker lowerbound
+1.0             # rebalance if walker number fluctuate more than this % (per cpu)
+20.0            # weight cut off
+2000            # table points for jastrow and potential
+11              # Bob's potential number
+11              # lpotpr
+1.0             # central factor
+1.0             # tau factor
+1.0             # sigma factor
+1.0             # sigma tau factor
+1.0             # t factor
+1.0             # t tau factor
+1.0             # LS factor
+0.0             # LS tau tau factor
+no3
+0.0             # multiply A2pi by this
+0.0             # multiply A2pi_xd by this
+0.0             # multiply A2pi_dd by this
+0               # NOT USED
+10000           # table points for radial functions
+20.0            # rmax for orbitals
+.false.         # divide by r?
+2               # particle number
+0               # external potential
+1.0             # rcut in LS pair sampling
+5.0             # acut in LS pair sampling
+0.2             # a constant in psig
+3               # number of radial functions
+flat.orb     0  1.0 # radial file, then L
+f0.orb       0  1.0 # radial file, then L
+f2.orb       2  1.0 # radial file, then L
+4               # number of determinants
+2
+2    1.0
+2    1.0
+(0.707107,0.0)       # determinant coefficient
+1  1  0  1  f0.orb          # 2J,2M,L,tau radial_file for state
+1 -1  0 -1  flat.orb        # 2J,2M,L,tau radial_file for state
+(0.707107,0.0)       # determinant coefficient
+1 -1  0  1  f0.orb          # 2J,2M,L,tau radial_file for state
+1  1  0 -1  flat.orb        # 2J,2M,L,tau radial_file for state
+(-0.707107,0.0)       # determinant coefficient
+3 -1  2  1  f2.orb          # 2J,2M,L,tau radial_file for state
+1  1  0 -1  flat.orb        # 2J,2M,L,tau radial_file for state
+(0.707107,0.0)       # determinant coefficient
+3  1  2  1  f2.orb          # 2J,2M,L,tau radial_file for state
+1 -1  0 -1  flat.orb        # 2J,2M,L,tau radial_file for state
+ 0.0            # jastrow central healing distance
+ 6.46607502     # jastrow tensor healing distance
+ 1.63020774     # jastrow quencher central potential
+ 6.51012132     # jastrow quencher tau potential
+ 1.32466451     # jastrow quencher sigma potential
+ 0.86880397     # jastrow quencher sigma-tau potential
+ 0.21942887     # jastrow quencher tensor potential
+ 0.08763770     # jastrow quencher tensor-tau potential
+ 0.99999999     # jastrow quencher LS potential
+ 0.0            # jastrow quencher tau correlation
+ 0.0            # jastrow quencher sigma correlation
+ 0.0            # jastrow quencher sigma-tau correlation
+ 0.0            # jastrow quencher tensor correlation
+ 0.0            # jastrow quencher tensor-tau correlation
+ 0.0            # jastrow quencher LS correlation
+ 0.0            # q1c parameter in fijk
+ 0.0            # q2c parameter in fijk
+ 0.0            # q1p parameter in fijk
+ 0.0            # q2p parameter in fijk
+ 1.0            # rscal in tnicor
+ 0.0            # eps_anti in tnicor
+ 0.0            # eps_cent in tnicor
+ 0.0            # eps_tm in tnicor
+ 0.0            # eps_vd1 in tnicor
+ 0.0            # eps_vd2 in tnicor
+ 0.0            # eps_vdc3 in tnicor
+ 0.0            # eps_vec3 in tnicor
+ 0.0            # eps_ve in tnicor
+200             # number of iterations for optimization
+0.000075        # delta step in the optimization
+0.00001         # epsilon parameter to regularize the optimization

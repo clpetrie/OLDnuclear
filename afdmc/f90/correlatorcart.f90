@@ -34,7 +34,7 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
-   logical, private, save :: doindpair1 = .true. !CODY
+   logical, private, save :: doindpair1 = .false. !CODY
    logical, private, save :: doindpair2 = .false. !CODY
 contains
    subroutine initcormod(npartin,elin)
@@ -104,6 +104,7 @@ contains
          doft(ij)=abs(ftauin(i,j)).gt.cut
          doftpp(ij)=abs(ftauppin(i,j)).gt.cut
          doftnn(ij)=abs(ftaunnin(i,j)).gt.cut
+         doft(ij)=.true. !2part
          dofst(ij)=.false. !2part
          dofs(ij)=.false. !2part
          doftpp(ij)=.false. !2part
@@ -256,13 +257,14 @@ contains
    d2b=czero
    d3b=czero
    call g1bval(d1b,sxz0,cone)
-   detrat=cone+fctau+sum(d1b*f1b)
-   call g2bval(d2b,sxz0,cone)
+   detrat=fctau+sum(d1b*f1b)
+   call g2bval(d2b,sxz0,cone) 
    if (doindpair1) then
       call paircorrelation(sp,sxz0,cone,d2b,.false.)
    endif
-!   detrat=detrat+sum(d2b*f2b)
-   detrat=detrat+3-2*sum(d2b*f2b) !2part
+   detrat=detrat+cone+sum(d2b*f2b)
+!   detrat=detrat+4-sum(d2b*f2b) !2part
+!   detrat=detrat+1+3*17*17+(1-2*17)*sum(d2b*f2b) !2part
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
       detrat=detrat+sum(d3b*f3b)
@@ -536,7 +538,6 @@ contains
          do js=1,4
             d2b(:,js,ij)=d2b(:,js,ij) &
                +fij*(sxz(:,i,i)*sxz(js,j,j)-sxz(:,i,j)*sxz(js,j,i))
-            write(*,*) 'd2b=',fij*(sxz(:,i,i)*sxz(js,j,j)-sxz(:,i,j)*sxz(js,j,i))
          enddo
       enddo
    enddo
@@ -673,16 +674,17 @@ contains
             enddo
             do jc=1,3
                tau(ic,jc,ij)=sum(d2b(:,:,ij)*tz(:,:))
-               do k=1,4
-                  sz(:,k)=spx(:,ic,i)*spx(k,jc,j)
-               enddo
-               sigma(ic,jc,ij)=sum(d2b(:,:,ij)*sz(:,:))
-               do it=1,3
-                  do k=1,4
-                     stz(:,k)=spx(:,3*(ic-1)+it+6,i)*spx(k,3*(jc-1)+it+6,j)
-                  enddo
-                  sigtau(ic,jc,it,it,ij)=sum(d2b(:,:,ij)*stz(:,:))
-               enddo
+!               tau(ic,jc,ij)=3-2*sum(d2b(:,:,ij)*tz(:,:)) !2part
+!               do k=1,4
+!                  sz(:,k)=spx(:,ic,i)*spx(k,jc,j)
+!               enddo
+!               sigma(ic,jc,ij)=sum(d2b(:,:,ij)*sz(:,:))
+!               do it=1,3
+!                  do k=1,4
+!                     stz(:,k)=spx(:,3*(ic-1)+it+6,i)*spx(k,3*(jc-1)+it+6,j)
+!                  enddo
+!                  sigtau(ic,jc,it,it,ij)=sum(d2b(:,:,ij)*stz(:,:))
+!               enddo
             enddo
          enddo
          ppz=0.0_r8
