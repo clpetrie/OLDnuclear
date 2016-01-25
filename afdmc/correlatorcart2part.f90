@@ -35,7 +35,7 @@ module correlator
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
    logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .false. !CODY
+   logical, private, save :: doindpair2 = .true. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -104,9 +104,13 @@ contains
          doft(ij)=abs(ftauin(i,j)).gt.cut
          doftpp(ij)=abs(ftauppin(i,j)).gt.cut
          doftnn(ij)=abs(ftaunnin(i,j)).gt.cut
+         doft(ij)=.true. !2part
+         dofst(ij)=.false. !2part
+         dofs(ij)=.false. !2part
+         doftpp(ij)=.false. !2part
+         doftnn(ij)=.false. !2part
          if (dofst(ij)) then
             fst(:,:,ij)=fsigtauin(:,i,:,j)
-            !fst(:,:,ij)=cone !2part
             do is=1,3
                do js=1,3
                   do jz=1,4
@@ -127,7 +131,6 @@ contains
          endif
          if (dofs(ij)) then
             fs(:,:,ij)=fsigin(:,i,:,j)
-            !fs(:,:,ij)=cone !2part
             do is=1,3
                do js=1,3
                   do jz=1,4
@@ -146,7 +149,7 @@ contains
          endif
          if (doft(ij)) then
             ft(ij)=ftauin(i,j)
-            !ft(ij)=cone !2part
+            ft(ij)=cone*17.0 !2part
             do jz=1,4
                f2b(:,jz,ij)=f2b(:,jz,ij)+ft(ij)* &
                   (spx(:,4,i)*spx(jz,4,j)+spx(:,5,i)*spx(jz,5,j) &
@@ -254,12 +257,14 @@ contains
    d2b=czero
    d3b=czero
    call g1bval(d1b,sxz0,cone)
-   detrat=cone+fctau+sum(d1b*f1b)
-   call g2bval(d2b,sxz0,cone)
+   detrat=fctau+sum(d1b*f1b)
+   call g2bval(d2b,sxz0,cone) 
    if (doindpair1) then
-      call paircorrelation(sp,sxz0,cone,d2b,.true.)
+      call paircorrelation(sp,sxz0,cone,d2b,.false.)
    endif
-   detrat=detrat+sum(d2b*f2b)
+   detrat=detrat+cone+sum(d2b*f2b)
+!   detrat=detrat+4-sum(d2b*f2b) !2part
+!   detrat=detrat+1+3*17*17+(1-2*17)*sum(d2b*f2b) !2part
    if (dof3) then
       call g3bval(d3b,sxz0,cone,.true.)
       detrat=detrat+sum(d3b*f3b)
@@ -304,45 +309,46 @@ contains
                endif
             enddo
          endif
-         if (dofs(kl)) then
-            do ks=1,3
-               sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
-               do ls=1,3
-                  call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
-                  detrat=detratin*d15(ks)*d2
-                  fkl=detrat*fs(ks,ls,kl)
-                  if (doindpair) then
-                     call g2bvalip(d2b,sxzl,fkl,k,l)
-                  else
-                     call g2bval(d2b,sxzl,fkl)
-                  endif
-               enddo
-            enddo
-         endif
-         if (dofst(kl)) then
-            do kt=1,3
-               do ks=1,3
-                  sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
-                  do ls=1,3
-                     call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
-                     detrat=detratin*d15(3*ks+kt+3)*d2
-                     fkl=detrat*fst(ks,ls,kl)
-                     if (doindpair) then
-                        call g2bvalip(d2b,sxzl,fkl,k,l)
-                     else
-                        call g2bval(d2b,sxzl,fkl)
-                     endif
-                  enddo
-               enddo
-            enddo
-         endif
+!2part         if (dofs(kl)) then
+!            do ks=1,3
+!               sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,ks))))
+!               do ls=1,3
+!                  call sxzupdate(sxzl,d2,sxzk(:,:,:,ks),l,sx15l(:,ls,:),sp(:,l))
+!                  detrat=detratin*d15(ks)*d2
+!                  fkl=detrat*fs(ks,ls,kl)
+!                  if (doindpair) then
+!                     call g2bvalip(d2b,sxzl,fkl,k,l)
+!                  else
+!                     call g2bval(d2b,sxzl,fkl)
+!                  endif
+!               enddo
+!            enddo
+!         endif
+!         if (dofst(kl)) then
+!            do kt=1,3
+!               do ks=1,3
+!                  sx15l(:,:,:)=conjg(opmult(conjg(sxzk(:,l,:,3*ks+kt+3))))
+!                  do ls=1,3
+!                     call sxzupdate(sxzl,d2,sxzk(:,:,:,3*ks+kt+3),l,sx15l(:,3*ls+kt+3,:),sp(:,l))
+!                     detrat=detratin*d15(3*ks+kt+3)*d2
+!                     fkl=detrat*fst(ks,ls,kl)
+!                     if (doindpair) then
+!                        call g2bvalip(d2b,sxzl,fkl,k,l)
+!                     else
+!                        call g2bval(d2b,sxzl,fkl)
+!                     endif
+!                  enddo
+!               enddo
+!            enddo
+!         endif
       enddo
    enddo
    end subroutine paircorrelation
 
-   subroutine corpsi(sp,d1b,d2b,d3b)
+   subroutine corpsi(sp,d1b,d2b,d3b,d2b0) !2part
    complex(kind=r8), intent(in) :: sp(:,:)
    complex(kind=r8), intent(inout):: d1b(:,:),d2b(:,:,:),d3b(:,:,:,:)
+   complex(kind=r8), intent(inout) :: d2b0(:,:,:) !2part
    complex(kind=r8) :: fij,f1,fijk
    complex(kind=r8) :: detrat,sxzi(4,npart,npart,15)
    complex(kind=r8) :: sxzj(4,npart,npart),d1,d2,d15(15)
@@ -360,6 +366,8 @@ contains
    call g1bval(d1b,sxz0,cone+fctau)
    call g2bval(d2b,sxz0,cone+fctau)
    call g3bval(d3b,sxz0,cone+fctau,.false.)
+   ! Here d2b is non-zero !2part
+   d2b0=d2b !2part *This is used for 5tau.tau-sum(d2b*ft) in op2val
    do i=1,npart
       sx15(:,:,:,i)=conjg(opmult(conjg(sxz0(:,i,:))))
    enddo
@@ -371,6 +379,7 @@ contains
       call g2bval(d2b,sxzj,f1)
       call g3bval(d3b,sxzj,f1,.false.)
    enddo
+   ! the above correlations do nothing at least in 2part !2part
    ij=0
    do i=1,npart-1
       do iop=1,15
@@ -382,41 +391,51 @@ contains
             do it=1,3
                sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3+it))))
                call sxzupdate(sxzj,d2,sxzi(:,:,:,3+it),j,sx15j(:,3+it,:),sp(:,j))
-               fij=d15(3+it)*d2*ft(ij)
+               detrat=d15(3+it)*d2
+               fij=detrat*ft(ij)
                if (doftpp(ij) .and. it.eq.3) fij=fij+0.25_r8*ftpp(ij)
                if (doftnn(ij) .and. it.eq.3) fij=fij+0.25_r8*ftnn(ij)
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
+               if (doindpair2) then
+                  call paircorrelation(sp,sxzj,fij,d2b,.false.)
+               endif
             enddo
          endif
-         if (dofs(ij)) then
-            do is=1,3
-               sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
-               do js=1,3
-                  call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
-                  fij=d15(is)*d2*fs(is,js,ij)
-                  call g1bval(d1b,sxzj,fij)
-                  call g2bval(d2b,sxzj,fij)
-                  call g3bval(d3b,sxzj,fij,.false.)
-               enddo
-            enddo
-         endif
-         if (dofst(ij)) then
-            do it=1,3
-               do is=1,3
-                  sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3*is+it+3))))
-                  do js=1,3
-                     call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
-                        ,sx15j(:,3*js+it+3,:),sp(:,j))
-                     fij=d15(3*is+it+3)*d2*fst(is,js,ij)
-                     call g1bval(d1b,sxzj,fij)
-                     call g2bval(d2b,sxzj,fij)
-                     call g3bval(d3b,sxzj,fij,.false.)
-                  enddo
-               enddo
-            enddo
-         endif
+!2part         if (dofs(ij)) then
+!            do is=1,3
+!               sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,is))))
+!               do js=1,3
+!                  call sxzupdate(sxzj,d2,sxzi(:,:,:,is),j,sx15j(:,js,:),sp(:,j))
+!                  fij=d15(is)*d2*fs(is,js,ij)
+!                  call g1bval(d1b,sxzj,fij)
+!                  call g2bval(d2b,sxzj,fij)
+!                  call g3bval(d3b,sxzj,fij,.false.)
+!                  if (doindpair2) then
+!                     call paircorrelation(sp,sxzj,cone,d2b,.false.)
+!                  endif
+!               enddo
+!            enddo
+!         endif
+!         if (dofst(ij)) then
+!            do it=1,3
+!               do is=1,3
+!                  sx15j(:,:,:)=conjg(opmult(conjg(sxzi(:,j,:,3*is+it+3))))
+!                  do js=1,3
+!                     call sxzupdate(sxzj,d2,sxzi(:,:,:,3*is+it+3),j &
+!                        ,sx15j(:,3*js+it+3,:),sp(:,j))
+!                     fij=d15(3*is+it+3)*d2*fst(is,js,ij)
+!                     call g1bval(d1b,sxzj,fij)
+!                     call g2bval(d2b,sxzj,fij)
+!                     call g3bval(d3b,sxzj,fij,.false.)
+!                     if (doindpair2) then
+!                        call paircorrelation(sp,sxzj,cone,d2b,.false.)
+!                     endif
+!                  enddo
+!               enddo
+!            enddo
+!         endif
       enddo
    enddo
    if (.not.dof3) return !skip 3-body correlation
@@ -465,13 +484,14 @@ contains
    complex(kind=r8) :: sp(:,:),spx(4,15,npart)
    complex(kind=r8) :: cvs(:)
    complex(kind=r8) :: d1b(4,npart),d2b(4,4,npair),d3b(4,4,4,ntrip)
+   complex(kind=r8) :: d2b0(4,4,npair) !2part
    integer(kind=i4) :: i,j,ij,iop,is,it,js
    real(kind=r8) :: tnic
    complex(kind=r8) :: tni2pia,tni2pitm,tni2pic,tni2picxd,tni2picdd,tnivd1
    complex(kind=r8) :: tnivd2,tnive,tni2piaxd,tni2piadd
    complex(kind=r8) :: tni2piapr,tni2piaxdpr,tni2piaddpr
    real(kind=r8) :: v2(:,:),v3(:,:),v4(:,:),v5(:,:,:,:),v6(:,:,:,:)
-   call corpsi(sp,d1b,d2b,d3b)
+   call corpsi(sp,d1b,d2b,d3b,d2b0) !2part
    if (dov3.ne.0) then
       do i=1,ntrip
         if (dotrip(i)) d3b(:,:,:,i)=d3b(:,:,:,i)*probinvijk(i)
@@ -479,7 +499,7 @@ contains
    endif
    spx=opmult(sp)
    call op1val(d1b,spx)
-   call op2val(d2b,sp,spx)
+   call op2val(d2b,sp,spx,d2b0)
    cvs=czero
    call calpot(cvs,v2,v3,v4,v5,v6)
    call v3bval(x,spx,d2b,d3b,tnic,tni2pia,tni2pitm,tni2pic,tni2picxd,tni2picdd,&
@@ -646,8 +666,9 @@ contains
    enddo
    end subroutine op1val
 
-   subroutine op2val(d2b,sp,spx)
+   subroutine op2val(d2b,sp,spx,d2b0) !2part
    complex(kind=r8), intent(in) :: d2b(:,:,:),sp(:,:),spx(:,:,:)
+   complex(kind=r8), intent(in) :: d2b0(:,:,:) !2part
    integer(kind=i4) :: i,j,ic,jc,it,ij,k,js
    complex(kind=r8) :: tz(4,4),sz(4,4),stz(4,4),ppz(4,4),nnz(4,4),np0z(4,4),np1z(4,4)
    ij=0
@@ -660,16 +681,19 @@ contains
             enddo
             do jc=1,3
                tau(ic,jc,ij)=sum(d2b(:,:,ij)*tz(:,:))
-               do k=1,4
-                  sz(:,k)=spx(:,ic,i)*spx(k,jc,j)
-               enddo
-               sigma(ic,jc,ij)=sum(d2b(:,:,ij)*sz(:,:))
-               do it=1,3
-                  do k=1,4
-                     stz(:,k)=spx(:,3*(ic-1)+it+6,i)*spx(k,3*(jc-1)+it+6,j)
-                  enddo
-                  sigtau(ic,jc,it,it,ij)=sum(d2b(:,:,ij)*stz(:,:))
-               enddo
+!               tau(ic,jc,ij)=5*sum(d2b0(:,:,ij)*tz(:,:))-sum(d2b(:,:,ij)*tz(:,:)) !2part
+!               tau(ic,jc,ij)=(3*17*17+2*17)*sum(d2b0(:,:,ij)*tz(:,:))+(1-2*17)*sum(d2b(:,:,ij)*tz(:,:)) !2part
+!               tau(ic,jc,ij)=3-2*sum(d2b(:,:,ij)*tz(:,:)) !2part
+!               do k=1,4
+!                  sz(:,k)=spx(:,ic,i)*spx(k,jc,j)
+!               enddo
+!               sigma(ic,jc,ij)=sum(d2b(:,:,ij)*sz(:,:))
+!               do it=1,3
+!                  do k=1,4
+!                     stz(:,k)=spx(:,3*(ic-1)+it+6,i)*spx(k,3*(jc-1)+it+6,j)
+!                  enddo
+!                  sigtau(ic,jc,it,it,ij)=sum(d2b(:,:,ij)*stz(:,:))
+!               enddo
             enddo
          enddo
          ppz=0.0_r8
@@ -717,14 +741,18 @@ contains
             cvs(2)=cvs(2)+tau(it,it,ij)*v2(i,j)
             do is=1,3
                cvs(4)=cvs(4)+sigtau(is,is,it,it,ij)*v4(i,j)
+               cvs(4)=0 !2part
             enddo
          enddo
          do is=1,3
             cvs(3)=cvs(3)+sigma(is,is,ij)*v3(i,j)
+            cvs(3)=0 !2part
             do js=1,3
                cvs(5)=cvs(5)+sigma(is,js,ij)*v5(is,i,js,j)
+               cvs(5)=0 !2part
                do it=1,3
                   cvs(6)=cvs(6)+sigtau(is,js,it,it,ij)*v6(is,i,js,j)
+                  cvs(6)=0 !2part
                enddo
             enddo
          enddo

@@ -526,7 +526,6 @@ contains
       sxz=reshape(transpose(reshape(sxmallz,(/npart,4*npart/))),shape(sxz))
       !call cordet(detrat,sxz)
       call cordet(detrat,sxz,w%sp)
-!      detrat=3-2*detrat !2part
       tdet=tdet+det*detrat
       totdet(idet)=cdet0(idet)*det*detrat/cdet(idet)
       if (dopot) then
