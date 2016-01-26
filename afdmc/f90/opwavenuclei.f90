@@ -23,6 +23,7 @@ module wavefunction
    logical, private, save :: optv3,optcsb
    integer(kind=i4), private, save :: vexid
    real(kind=r8), private, save :: wsv0,wsrad,wss,hbari,hbarom
+   logical, private, save :: doip !CODY
 contains
    subroutine setpsi(npartin,elin,hbar,vlsin,noprotin,nprot,nneut)
    use mympi
@@ -48,6 +49,7 @@ contains
    nprot=0
    nneut=0
    if (myrank().eq.0) then
+      read (5,*) doip    !do independent pair correlations
       read (5,*) notab   !table points for orbitals
       read (5,*) romax   !rmax for orbitals
       read (5,*) rdiv    !divido orbitali per r?
@@ -184,6 +186,7 @@ contains
    call bcast(rcut)
    call bcast(acut)
    call bcast(a)
+   call bcast(doip)
    call bcast(notab)
    call bcast(romax)
    call bcast(nrad)
@@ -525,13 +528,13 @@ contains
            ,(/npart,4*npart/))),shape(sxmallz))
       sxz=reshape(transpose(reshape(sxmallz,(/npart,4*npart/))),shape(sxz))
       !call cordet(detrat,sxz)
-      call cordet(detrat,sxz,w%sp)
+      call cordet(detrat,sxz,w%sp,doip)
       tdet=tdet+det*detrat
       totdet(idet)=cdet0(idet)*det*detrat/cdet(idet)
       if (dopot) then
          call v6tot(w%x,w%sp,v2,v3,v4,v5,v6,cvs,tnic,tni2pia,tni2pitm,&
            tni2pic,tni2picxd,tni2picdd,tnivd1,tnivd2,tnive,tni2piaxd,&
-           tni2piadd,tni2piapr,tni2piaxdpr,tni2piaddpr)
+           tni2piadd,tni2piapr,tni2piaxdpr,tni2piaddpr,doip)
          ccvs=ccvs+det*cvs
          call getop1(csig1,ctau1,csigtau1)
          sig1=sig1+det*csig1

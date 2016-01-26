@@ -34,8 +34,6 @@ module correlator
    logical, private, save, allocatable :: dotrip(:)
 !  logical, private, save :: dof3 = .true.
    logical, private, save :: dof3
-   logical, private, save :: doindpair1 = .true. !CODY
-   logical, private, save :: doindpair2 = .true. !CODY
 contains
    subroutine initcormod(npartin,elin)
    integer(kind=i4) :: npartin
@@ -235,7 +233,7 @@ contains
    enddo
    end subroutine calfop
 
-   subroutine cordet(detrat,sxzin,sp) !CODY added sp here, make sure to remove all if you remove this
+   subroutine cordet(detrat,sxzin,sp,doindpair) !CODY added sp here, make sure to remove all if you remove this
 ! calfop must be called first
    complex(kind=r8) :: detrat,sxzin(:,:,:)
    complex(kind=r8) :: sxmall(npart,15,npart)
@@ -246,6 +244,7 @@ contains
    complex(kind=r8) :: sx15(4,15,npart,npart),sx15l(4,15,npart)
    complex(kind=r8) :: d15(15),fkl,sxzk(4,npart,npart,15),sxzl(4,npart,npart)
    complex(kind=r8), intent(in) :: sp(:,:)
+   logical, intent(in) :: doindpair
    sxz0=sxzin
    d1b=czero
    d2b=czero
@@ -253,7 +252,7 @@ contains
    call g1bval(d1b,sxz0,cone)
    detrat=fctau+sum(d1b*f1b)
    call g2bval(d2b,sxz0,cone) 
-   if (doindpair1) then
+   if (doindpair) then
       call paircorrelation(sp,sxz0,cone,d2b,.true.)
    endif
    detrat=detrat+cone+sum(d2b*f2b)
@@ -337,7 +336,7 @@ contains
    enddo
    end subroutine paircorrelation
 
-   subroutine corpsi(sp,d1b,d2b,d3b)
+   subroutine corpsi(sp,d1b,d2b,d3b,doindpair)
    complex(kind=r8), intent(in) :: sp(:,:)
    complex(kind=r8), intent(inout):: d1b(:,:),d2b(:,:,:),d3b(:,:,:,:)
    complex(kind=r8) :: fij,f1,fijk
@@ -350,6 +349,7 @@ contains
    complex(kind=r8) :: sxzj1(4,npart,npart),sxzj2(4,npart,npart)
    complex(kind=r8) :: sxzk(4,npart,npart),dj1,dj2,dk
    integer(kind=i4) :: i,j,ij,iop,is,it,js,k,ks,ijk,kc
+   logical, intent(in) :: doindpair
    d1b=czero
    d2b=czero
    d3b=czero
@@ -385,7 +385,7 @@ contains
                call g1bval(d1b,sxzj,fij)
                call g2bval(d2b,sxzj,fij)
                call g3bval(d3b,sxzj,fij,.false.)
-               if (doindpair2) then
+               if (doindpair) then
                   call paircorrelation(sp,sxzj,fij,d2b,.true.)
                endif
             enddo
@@ -400,7 +400,7 @@ contains
                   call g1bval(d1b,sxzj,fij)
                   call g2bval(d2b,sxzj,fij)
                   call g3bval(d3b,sxzj,fij,.false.)
-                  if (doindpair2) then
+                  if (doindpair) then
                      call paircorrelation(sp,sxzj,fij,d2b,.true.)
                   endif
                enddo
@@ -418,7 +418,7 @@ contains
                      call g1bval(d1b,sxzj,fij)
                      call g2bval(d2b,sxzj,fij)
                      call g3bval(d3b,sxzj,fij,.false.)
-                     if (doindpair2) then
+                     if (doindpair) then
                         call paircorrelation(sp,sxzj,fij,d2b,.true.)
                      endif
                   enddo
@@ -466,7 +466,7 @@ contains
 
    subroutine v6tot(x,sp,v2,v3,v4,v5,v6,cvs,tnic,tni2pia,tni2pitm,tni2pic,&
       tni2picxd,tni2picdd,tnivd1,tnivd2,tnive,tni2piaxd,tni2piadd,tni2piapr,&
-      tni2piaxdpr,tni2piaddpr)
+      tni2piaxdpr,tni2piaddpr,doindpair)
    use v3bpot
 ! calfop and cordet must be called first.
    real(kind=r8) :: x(:,:)
@@ -479,7 +479,8 @@ contains
    complex(kind=r8) :: tnivd2,tnive,tni2piaxd,tni2piadd
    complex(kind=r8) :: tni2piapr,tni2piaxdpr,tni2piaddpr
    real(kind=r8) :: v2(:,:),v3(:,:),v4(:,:),v5(:,:,:,:),v6(:,:,:,:)
-   call corpsi(sp,d1b,d2b,d3b)
+   logical, intent(in) :: doindpair
+   call corpsi(sp,d1b,d2b,d3b,doindpair)
    if (dov3.ne.0) then
       do i=1,ntrip
         if (dotrip(i)) d3b(:,:,:,i)=d3b(:,:,:,i)*probinvijk(i)
